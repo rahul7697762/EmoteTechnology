@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Adaptive Quiz Interface</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1289a1",
+                        "background-light": "#f9fafb",
+                        "background-dark": "#181d25",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .sidebar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+            gap: 8px;
+        }
+        .radio-checked-shadow {
+            box-shadow: 0 0 0 2px #1289a1;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Top Navigation Bar (Adaptive LMS Header) -->
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary text-white p-1.5 rounded-lg shadow-sm">
+<svg class="size-6" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 4C25.7818 14.2173 33.7827 22.2182 44 24C33.7827 25.7818 25.7818 33.7827 24 44C22.2182 33.7827 14.2173 25.7818 4 24C14.2173 22.2182 22.2182 14.2173 24 4Z" fill="currentColor"></path>
+</svg>
+</div>
+<h1 class="text-xl font-extrabold tracking-tight text-slate-800 dark:text-white">Adaptive <span class="text-primary">LMS</span></h1>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<nav class="flex items-center gap-6">
+<a class="text-sm font-semibold hover:text-primary transition-colors" href="#">Courses</a>
+<a class="text-sm font-semibold hover:text-primary transition-colors" href="#">Resources</a>
+</nav>
+<div class="h-6 w-px bg-slate-200 dark:bg-slate-700"></div>
+<div class="flex items-center gap-3">
+<div class="flex flex-col items-end">
+<p class="text-xs font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Session</p>
+<p class="text-sm font-bold text-slate-800 dark:text-white leading-none">John Doe</p>
+</div>
+<div class="size-10 rounded-full bg-primary/10 border-2 border-primary/20 bg-cover bg-center" data-alt="User profile picture placeholder" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCXQf02Q26aYqHrFO-REBOYmoUSHnuCacvrhWr2Tmbru3dWmQQu5VhoMlQm9hEEXhXAKXoeIZNr8uF7K14jO0mhus0ztlVX-gckiburcbk0k6C2Vp-eEsCPloQJP-PeIK8aazZn8ODfUIW8fOoNxfoJYworRVPEch-KChWgQ-cH2M45NxDhoM_Uh7Gcou3HDxiBrStiLcZQlOTthcwmChoONlugTmJtmS-e3D_1mGw00lVmWg0bVn7DtbbeLIQP526MGU8Y6_LSJZQ");'></div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left Sidebar: Progress & Navigation (Collapsible focus) -->
+<aside class="lg:col-span-3 space-y-6">
+<!-- Timer Card -->
+<div class="bg-white dark:bg-slate-900 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-2 mb-4 text-slate-500">
+<span class="material-symbols-outlined text-[20px]">timer</span>
+<span class="text-xs font-bold uppercase tracking-wider">Time Remaining</span>
+</div>
+<div class="flex gap-2">
+<div class="flex-1 bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 text-center border border-slate-100 dark:border-slate-800">
+<p class="text-2xl font-black text-slate-800 dark:text-white leading-none">14</p>
+<p class="text-[10px] font-bold text-slate-400 mt-1 uppercase">Min</p>
+</div>
+<div class="flex-none flex items-center text-xl font-bold text-slate-300">:</div>
+<div class="flex-1 bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 text-center border border-slate-100 dark:border-slate-800">
+<p class="text-2xl font-black text-slate-800 dark:text-white leading-none">02</p>
+<p class="text-[10px] font-bold text-slate-400 mt-1 uppercase">Sec</p>
+</div>
+</div>
+</div>
+<!-- Question Grid -->
+<div class="bg-white dark:bg-slate-900 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-800">
+<h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center justify-between">
+                    Assessment Map
+                    <span class="text-primary/80">12/25 Done</span>
+</h3>
+<div class="sidebar-grid">
+<!-- Numbers 1-25 representing questions -->
+<div class="size-8 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-400 border border-slate-200 dark:border-slate-700">01</div>
+<div class="size-8 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-400 border border-slate-200 dark:border-slate-700">02</div>
+<div class="size-8 flex items-center justify-center rounded-lg bg-primary text-[11px] font-bold text-white shadow-md shadow-primary/20">12</div>
+<div class="size-8 flex items-center justify-center rounded-lg bg-white dark:bg-slate-900 border-2 border-primary text-[11px] font-bold text-primary">13</div>
+<!-- Mocking some flagged/unvisited states -->
+<div class="size-8 flex items-center justify-center rounded-lg bg-yellow-100 text-[11px] font-bold text-yellow-700 border border-yellow-200">
+<span class="material-symbols-outlined text-[14px]">flag</span>
+</div>
+<div class="size-8 flex items-center justify-center rounded-lg border border-dashed border-slate-300 dark:border-slate-700 text-[11px] font-bold text-slate-300">15</div>
+<!-- Placeholder dots for brevity in layout -->
+<div class="size-8 flex items-center justify-center">...</div>
+<div class="size-8 flex items-center justify-center rounded-lg border border-dashed border-slate-300 dark:border-slate-700 text-[11px] font-bold text-slate-300">25</div>
+</div>
+<div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-3">
+<div class="flex items-center gap-1.5">
+<div class="size-2 rounded-full bg-primary"></div>
+<span class="text-[10px] font-bold text-slate-500">Current</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="size-2 rounded-full bg-slate-200"></div>
+<span class="text-[10px] font-bold text-slate-500">Answered</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="size-2 rounded-full bg-yellow-400"></div>
+<span class="text-[10px] font-bold text-slate-500">Flagged</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area: The Adaptive Quiz -->
+<section class="lg:col-span-9 space-y-6">
+<!-- Dynamic Progress Card -->
+<div class="bg-white dark:bg-slate-900 rounded-xl px-8 py-6 shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div>
+<span class="bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded mb-1 inline-block">Adaptive Engine Active</span>
+<h2 class="text-lg font-bold text-slate-800 dark:text-white">Cloud Infrastructure &amp; Scaling</h2>
+</div>
+<div class="text-right">
+<p class="text-sm font-semibold text-primary">Level: Intermediate</p>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Global Rank: Top 15%</p>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<p class="text-xs font-bold text-slate-500 uppercase">Question 12 of 25</p>
+<p class="text-xs font-black text-primary">48% Complete</p>
+</div>
+<div class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-500" style="width: 48%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Question & Options -->
+<div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="p-8 md:p-12">
+<h3 class="text-2xl md:text-[28px] font-bold text-slate-800 dark:text-white leading-tight mb-10">
+                        Analyze the following scenario regarding cloud architecture and determine the most cost-effective scaling strategy for a seasonal e-commerce platform.
+                    </h3>
+<div class="grid gap-4">
+<!-- Option A -->
+<label class="group relative flex items-center gap-4 rounded-xl border-2 border-slate-100 dark:border-slate-800 p-5 cursor-pointer hover:border-primary/40 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all duration-200">
+<input class="size-5 border-2 border-slate-300 bg-transparent text-primary focus:ring-primary checked:bg-primary checked:border-primary" name="quiz-option" type="radio"/>
+<div class="flex grow flex-col">
+<span class="text-base font-bold text-slate-800 dark:text-slate-200">Vertical scaling with reserved instances</span>
+<span class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">Best for predictable, steady-state loads with no volatility.</span>
+</div>
+<div class="text-slate-300 font-black text-xl group-hover:text-primary/20 transition-colors">A</div>
+</label>
+<!-- Option B (Selected State Example) -->
+<label class="group relative flex items-center gap-4 rounded-xl border-2 border-primary bg-primary/[0.03] p-5 cursor-pointer transition-all duration-200">
+<input checked="" class="size-5 border-2 border-primary bg-primary text-primary focus:ring-primary checked:bg-primary checked:border-primary" name="quiz-option" type="radio"/>
+<div class="flex grow flex-col">
+<span class="text-base font-bold text-slate-900 dark:text-white">Horizontal scaling with auto-scaling groups and spot instances</span>
+<span class="text-sm font-medium text-primary/80 mt-1">Optimizes costs for variable web traffic by leveraging elastic capacity.</span>
+</div>
+<div class="text-primary/20 font-black text-xl">B</div>
+</label>
+<!-- Option C -->
+<label class="group relative flex items-center gap-4 rounded-xl border-2 border-slate-100 dark:border-slate-800 p-5 cursor-pointer hover:border-primary/40 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all duration-200">
+<input class="size-5 border-2 border-slate-300 bg-transparent text-primary focus:ring-primary checked:bg-primary checked:border-primary" name="quiz-option" type="radio"/>
+<div class="flex grow flex-col">
+<span class="text-base font-bold text-slate-800 dark:text-slate-200">Serverless architecture using exclusively on-demand functions</span>
+<span class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">High flexibility but can become expensive for constant high-volume processing.</span>
+</div>
+<div class="text-slate-300 font-black text-xl group-hover:text-primary/20 transition-colors">C</div>
+</label>
+<!-- Option D -->
+<label class="group relative flex items-center gap-4 rounded-xl border-2 border-slate-100 dark:border-slate-800 p-5 cursor-pointer hover:border-primary/40 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all duration-200">
+<input class="size-5 border-2 border-slate-300 bg-transparent text-primary focus:ring-primary checked:bg-primary checked:border-primary" name="quiz-option" type="radio"/>
+<div class="flex grow flex-col">
+<span class="text-base font-bold text-slate-800 dark:text-slate-200">Hybrid cloud approach with permanent on-premise overflow</span>
+<span class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">Requires high initial capital expenditure (CapEx) for local hardware.</span>
+</div>
+<div class="text-slate-300 font-black text-xl group-hover:text-primary/20 transition-colors">D</div>
+</label>
+</div>
+</div>
+<!-- Footer Navigation / Actions -->
+<div class="px-8 py-6 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+<button class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 h-12 rounded-xl text-yellow-700 bg-yellow-400/10 hover:bg-yellow-400/20 font-bold transition-all border border-yellow-200 dark:border-yellow-900/50">
+<span class="material-symbols-outlined text-[20px]">flag</span>
+                        Flag for Review
+                    </button>
+<div class="flex items-center gap-3 w-full sm:w-auto">
+<button class="flex-1 sm:flex-none px-6 h-12 rounded-xl text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-all">
+                            Previous
+                        </button>
+<button class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-10 h-12 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 shadow-lg shadow-primary/30 transition-all">
+                            Save &amp; Next
+                            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Adaptive Feedback Subtle Notification -->
+<div class="flex items-center gap-3 p-4 rounded-xl bg-primary/5 border border-primary/20">
+<div class="bg-primary text-white size-8 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold text-slate-800 dark:text-slate-100 leading-tight">Difficulty Adjusted</p>
+<p class="text-xs text-slate-500 font-medium">Complexity increased based on your previous 3 correct answers. Keep it up!</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Context Floating Help -->
+<div class="fixed bottom-8 right-8 z-50">
+<button class="size-14 rounded-full bg-slate-900 dark:bg-primary text-white flex items-center justify-center shadow-2xl hover:scale-105 transition-transform">
+<span class="material-symbols-outlined">question_mark</span>
+</button>
+</div>
+</body></html>

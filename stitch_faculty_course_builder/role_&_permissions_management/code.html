@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Role &amp; Permissions Management | Bitlance LMS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#19e6c4", "background-light": "#f6f8f8", "background-dark": "#11211e", "surface-dark": "#2d323a", "accent-dark": "#14171b"}, fontFamily: {display: "Inter"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}}}};</script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-tab { border-bottom: 3px solid #ff5500; color: white; }
+        .sidebar-item:hover { background-color: rgba(255, 85, 0, 0.1); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #3a2d27; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex">
+<!-- Sidebar Component -->
+<aside class="w-72 bg-accent-dark border-r border-white/5 flex flex-col h-screen sticky top-0 overflow-y-auto custom-scrollbar">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-2xl">terminal</span>
+</div>
+<div>
+<h1 class="text-white text-base font-bold leading-none">Bitlance LMS</h1>
+<p class="text-slate-500 text-xs font-medium mt-1 uppercase tracking-wider">Admin Portal</p>
+</div>
+</div>
+<nav class="flex-1 px-4 py-4 space-y-1">
+<a class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 transition-all hover:text-white" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 transition-all hover:text-white" href="#">
+<span class="material-symbols-outlined">book_5</span>
+<span class="text-sm font-medium">Course Management</span>
+</a>
+<a class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 transition-all hover:text-white" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">User Management</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary border border-primary/20" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">verified_user</span>
+<span class="text-sm font-bold">Role &amp; Permissions</span>
+</a>
+<a class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 transition-all hover:text-white" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-sm font-medium">Reports</span>
+</a>
+<a class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 transition-all hover:text-white" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+<div class="p-4 mt-auto border-t border-white/5">
+<div class="flex items-center gap-3 p-3 bg-surface-dark/40 rounded-xl">
+<img alt="Admin Avatar" class="w-10 h-10 rounded-full" data-alt="Close up profile picture of a male administrator" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEYDvG9EBNYH6rG8t2Iieyb3v8cnR9gGYA5qWekX-aA035fkLp_VcDdKM_8JwnQ2VIh0RTmslhV8bE9kzE7XzjkQ2tNBD_j038rSSjAxF3T23pJCXfgOpCncZHe552DUse5wq9ccopKqImqgyTrC1Y2npvHF3aa11YH6Yg2LM6x4AXsdhX39SoVy2H-ebcIQScY6uXisRtzYPI0ul7a-tO8hpSqeEf4bk1uq3uA8cW6kJ9SyNIMEuptm5U3RMbMkmUzmUoghH2XzA"/>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-semibold truncate">Alex Rivera</p>
+<p class="text-xs text-slate-500 truncate">Super Admin</p>
+</div>
+<span class="material-symbols-outlined text-slate-500 text-lg cursor-pointer hover:text-white">logout</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col">
+<!-- Page Header -->
+<header class="p-8 pb-4">
+<div class="flex flex-wrap items-center justify-between gap-6 max-w-7xl mx-auto">
+<div>
+<h2 class="text-3xl font-black tracking-tight text-white">Role &amp; Permissions Management</h2>
+<p class="text-slate-400 mt-1">Configure access control levels and manage system user roles.</p>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">add_circle</span>
+                    Create New Role
+                </button>
+</div>
+</header>
+<!-- Tabs Section -->
+<div class="px-8 max-w-7xl mx-auto w-full">
+<div class="flex border-b border-white/10 gap-8">
+<a class="active-tab py-4 text-sm font-bold flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-lg">manage_accounts</span>
+                    User Management
+                </a>
+<a class="py-4 text-sm font-bold text-slate-500 hover:text-white transition-colors flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-lg">vpn_key</span>
+                    Global Permissions
+                </a>
+</div>
+</div>
+<!-- Filters & Search -->
+<section class="p-8 pt-6 max-w-7xl mx-auto w-full">
+<div class="bg-surface-dark/50 p-4 rounded-xl border border-white/5 flex flex-col md:flex-row gap-4">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">search</span>
+<input class="w-full bg-accent-dark/50 border-white/10 rounded-lg pl-12 pr-4 py-2.5 text-white placeholder:text-slate-500 focus:ring-primary focus:border-primary transition-all" placeholder="Search users by name, email or current role..." type="text"/>
+</div>
+<div class="flex flex-wrap gap-3">
+<div class="relative group">
+<button class="flex items-center gap-2 px-4 py-2.5 bg-accent-dark/50 border border-white/10 rounded-lg text-sm font-medium hover:border-white/20 transition-all">
+                            Role: All
+                            <span class="material-symbols-outlined text-slate-500">expand_more</span>
+</button>
+</div>
+<div class="relative group">
+<button class="flex items-center gap-2 px-4 py-2.5 bg-accent-dark/50 border border-white/10 rounded-lg text-sm font-medium hover:border-white/20 transition-all">
+                            Status: Active
+                            <span class="material-symbols-outlined text-slate-500">expand_more</span>
+</button>
+</div>
+<button class="px-4 py-2.5 text-slate-400 hover:text-white text-sm font-medium transition-colors">
+                        Clear All
+                    </button>
+</div>
+</div>
+</section>
+<!-- Data Table -->
+<section class="px-8 pb-12 max-w-7xl mx-auto w-full">
+<div class="bg-surface-dark/30 rounded-xl border border-white/5 overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-white/5">
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">User Details</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Email Address</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Role Assigned</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Current Status</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<!-- User Row 1 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold text-sm">JS</div>
+<div>
+<p class="text-sm font-bold">Jordan Smith</p>
+<p class="text-xs text-slate-500">ID: BL-4029</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-300">jordan.smith@bitlance.tech</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full text-xs font-bold uppercase">Administrator</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="text-sm text-slate-300">Active</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all" title="Edit Role">
+<span class="material-symbols-outlined text-xl">edit_square</span>
+</button>
+<button class="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all" title="View Activity">
+<span class="material-symbols-outlined text-xl">history</span>
+</button>
+<button class="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all" title="More Actions">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- User Row 2 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img alt="User Avatar" class="w-10 h-10 rounded-full" data-alt="Portrait of a female faculty member" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkcoaowbmdE2Oos8SuMlepT8hHBwrSLCJJ7zTDF3WqXAtQe5-j0MfTrjjiCnxFymMVzAJJmrMyeAvSWJyVT78UmI2d4IX7uRXXSmIRczIegEUedmWiCfzrnbQWpTpbiCqnKgbdfvTICeCnvwYx6OjCUvWpkx9fbjwgyQ3Iuuji41qvejHjWp7tMNN_2Bl6m2dw18ape6ucaSrDHVL6x0MYMdDwiWHuaaNslw0fN4i_-_CPL--AUTZ1EYoe9PIDkUYSG-8b3SaYVr4"/>
+<div>
+<p class="text-sm font-bold">Sarah Chen</p>
+<p class="text-xs text-slate-500">ID: BL-5182</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-300">s.chen@bitlance.tech</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-full text-xs font-bold uppercase">Faculty</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="text-sm text-slate-300">Active</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all" title="Edit Role">
+<span class="material-symbols-outlined text-xl">edit_square</span>
+</button>
+<button class="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all" title="View Activity">
+<span class="material-symbols-outlined text-xl">history</span>
+</button>
+<button class="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all" title="More Actions">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- User Row 3 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-indigo-700 flex items-center justify-center text-white font-bold text-sm">MK</div>
+<div>
+<p class="text-sm font-bold">Marcus Kane</p>
+<p class="text-xs text-slate-500">ID: BL-9210</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-300">m.kane@student.bitlance.tech</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-slate-500/20 text-slate-400 border border-slate-500/30 rounded-full text-xs font-bold uppercase">Student</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-slate-600"></span>
+<span class="text-sm text-slate-500">Suspended</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all" title="Edit Role">
+<span class="material-symbols-outlined text-xl">edit_square</span>
+</button>
+<button class="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all" title="View Activity">
+<span class="material-symbols-outlined text-xl">history</span>
+</button>
+<button class="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all" title="More Actions">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- User Row 4 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img alt="User Avatar" class="w-10 h-10 rounded-full" data-alt="Portrait of a young male student" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBj9OD8VUk__6JT-6W611WxZLoJjJTa88RolCfnJCFc9ik4cc6i9bsUC3kvZptmSB_giyLM7ZHMMxkbLxfG0_4vx-c-HLfP2myfUwfFtqTuZaHbPF4J4HRyaXHmtJZvhJreGhLJAPK-ScUfRUJRjBtXnxMJ2Hc3XNvY4koZViDgpDyBhAH7hBFBpyp8mtrUevWUmZKFRyRkDUKIFyFMghAOuIMMr6OMkAlSyJ0MPXaog5UW9Raq-uM3GBTB-ztMTA6eRRMhN50FX3s"/>
+<div>
+<p class="text-sm font-bold">Leo Martinez</p>
+<p class="text-xs text-slate-500">ID: BL-3381</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-300">leo.m@student.bitlance.tech</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-slate-500/20 text-slate-400 border border-slate-500/30 rounded-full text-xs font-bold uppercase">Student</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="text-sm text-slate-300">Active</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all" title="Edit Role">
+<span class="material-symbols-outlined text-xl">edit_square</span>
+</button>
+<button class="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all" title="View Activity">
+<span class="material-symbols-outlined text-xl">history</span>
+</button>
+<button class="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all" title="More Actions">
+<span class="material-symbols-outlined text-xl">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination Placeholder -->
+<div class="px-6 py-4 bg-white/2 border-t border-white/5 flex items-center justify-between">
+<p class="text-xs text-slate-500 font-medium tracking-wide">SHOWING 1-10 OF 1,420 USERS</p>
+<div class="flex gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-white/10 text-slate-500 hover:border-white/20 transition-all">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-white font-bold text-xs">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-white/10 text-slate-400 hover:border-white/20 transition-all font-bold text-xs">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-white/10 text-slate-400 hover:border-white/20 transition-all font-bold text-xs">3</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-white/10 text-slate-500 hover:border-white/20 transition-all">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Permissions Quick Access Footer (Hidden by default, shown on select) -->
+<footer class="mt-auto p-6 bg-accent-dark/80 border-t border-white/10 backdrop-blur-md sticky bottom-0">
+<div class="max-w-7xl mx-auto flex items-center justify-between">
+<div class="flex items-center gap-6">
+<div class="flex -space-x-3 overflow-hidden">
+<img alt="" class="inline-block h-8 w-8 rounded-full ring-2 ring-accent-dark" data-alt="Small profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1mcUOi0iSm_UIU1uRkD6cTSbRxkgjZgb4ixny0YU4SuTYl-6v9q6ZUA5Hf1BK3Z_xscR16ebAbGvOh1DrL7Ny_F9JuMt-TJdmjhv4vUEYaCkBWa0X049bMcj_YdBSUjjm3ifHmWiT3ppPNNjoWr1aFhSYM2Dspjtco7_vAiuxqXAi48d8H12EM0EMiNl4jelxkgy7IqxcHpc6BUtNgkdnAVu2y_ad1Wq_2141A3xg228pMD3q0-zxGLGZR51MaZce61ALIcnUjgE"/>
+<img alt="" class="inline-block h-8 w-8 rounded-full ring-2 ring-accent-dark" data-alt="Small profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCf8wBaDsly2SAZFFLQDG2mx45T64vTfDb_Q_pEe5y64YNTpIsWCy8kAgm-vOXm35IRzL61ClcvBF47f1PGqgvQs2sZPf1YvVmwe30aShhpJiZgOb6425vAvhlTwAP1YkL_GbY7SPqlKd31TkgYd-LO37hPwUiCVgwg5vPyX79otANc2j85WLN_DPrItsSI_mT1cShqA_kGkzPAhy_Vw9vyYg497BTySGPgU86YXFC7GlK6TfZOP1cAooaASb4JVGEINwPtXIIZtk4"/>
+<div class="h-8 w-8 rounded-full ring-2 ring-accent-dark bg-slate-800 flex items-center justify-center text-[10px] text-slate-400 font-bold">+12</div>
+</div>
+<p class="text-sm font-medium text-slate-300">Quick Actions: <span class="text-primary font-bold">14 selected</span></p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-sm font-bold transition-all">Bulk Edit Role</button>
+<button class="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-lg text-sm font-bold transition-all">Suspend Selected</button>
+</div>
+</div>
+</footer>
+</main>
+</body></html>

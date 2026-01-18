@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Course Completion &amp; Certificate - Bitlance Tech Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;700;800&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#19e6c4",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#11211e",
+                        "accent-coral": "#ff8e8e",
+                        "accent-gold": "#ffd700",
+                    },
+                    fontFamily: {
+                        "display": ["Epilogue", "sans-serif"],
+                        "sans": ["Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .confetti-bg {
+            background-image: radial-gradient(circle at 20% 30%, rgba(25, 230, 196, 0.15) 0%, transparent 20%),
+                              radial-gradient(circle at 80% 10%, rgba(255, 142, 142, 0.15) 0%, transparent 20%),
+                              radial-gradient(circle at 50% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 30%);
+        }
+        .cert-glow {
+            box-shadow: 0 20px 50px rgba(25, 230, 196, 0.12);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#111817] dark:text-white transition-colors duration-300">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Minimal Top Navigation -->
+<header class="sticky top-0 z-50 w-full border-b border-solid border-[#f0f4f4] dark:border-[#1e3330] bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 md:px-20 py-3">
+<div class="max-w-[1200px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-tight">Bitlance Tech Hub</h2>
+</div>
+<div class="flex items-center gap-6">
+<a class="hidden md:block text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium flex items-center gap-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">arrow_back</span>
+                        Back to Courses
+                    </a>
+<div class="h-8 w-[1px] bg-gray-200 dark:bg-gray-700 mx-2"></div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ring-2 ring-primary/20" data-alt="Student profile picture avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBZmKuYIxqjRxnxMFuZcQWo3Z1FSfQqiWS4l2j2HICGcDNJbWwZCM7S9WXjCdNV0uvLT2jiUWCSDu9Wp19vKo_o1YheayGHR-RZBKhgZ36_nyMCxMtFg-1yPdjdKdPvnqpiIn1j9iD9_jurss2xhQBBiTiv3sDtuc3cmZUpsZlDmyhP8Y7cMktPwftzOaobTiy36WgX6UOqoLrLgkYbFwBAiCX3U3zQp74XoPu1vTPIXHwXq5EtGZe_21x-9DNM-3dO_08YYVWB9yI");'></div>
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col items-center">
+<!-- Celebratory Hero Banner -->
+<section class="w-full pt-16 pb-10 px-4 text-center confetti-bg relative">
+<div class="flex justify-center mb-6">
+<div class="bg-primary/20 p-4 rounded-full border-2 border-primary animate-pulse">
+<span class="material-symbols-outlined text-4xl text-primary" style="font-variation-settings: 'FILL' 1">emoji_events</span>
+</div>
+</div>
+<h1 class="text-[#111817] dark:text-white tracking-tight text-[40px] md:text-[56px] font-extrabold leading-tight pb-3">
+                    Congratulations, Alex Johnson!
+                </h1>
+<p class="text-[#638882] dark:text-gray-400 text-lg md:text-xl font-normal max-w-2xl mx-auto leading-relaxed px-4">
+                    You've successfully mastered <span class="text-[#111817] dark:text-primary font-bold">Advanced Frontend Engineering</span> and earned your professional certification.
+                </p>
+</section>
+<!-- Certificate Preview Section -->
+<section class="w-full max-w-[1000px] px-4 pb-12">
+<div class="relative group">
+<!-- Certificate Card -->
+<div class="cert-glow rounded-xl overflow-hidden bg-white dark:bg-[#1a2e2a] border border-[#e0e7e6] dark:border-[#2a4540] flex flex-col">
+<!-- Image Container with Bitlance Watermark effect -->
+<div class="relative aspect-[1.414/1] w-full bg-[#f9fbfb] dark:bg-[#0d1a18] flex items-center justify-center p-8 md:p-12">
+<div class="absolute inset-0 opacity-5 pointer-events-none overflow-hidden flex flex-wrap justify-around items-center">
+<span class="material-symbols-outlined text-[120px] -rotate-45">verified_user</span>
+<span class="material-symbols-outlined text-[120px] rotate-12">school</span>
+<span class="material-symbols-outlined text-[120px] -rotate-12">workspace_premium</span>
+</div>
+<div class="relative z-10 w-full h-full border-[12px] border-[#19e6c4]/10 rounded shadow-inner bg-white p-8 md:p-16 flex flex-col items-center justify-between text-center">
+<div class="flex flex-col items-center gap-2">
+<div class="size-12 text-[#111817]">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
+</svg>
+</div>
+<p class="text-[10px] tracking-[0.2em] uppercase font-bold text-[#111817]">Bitlance Tech Hub Certification</p>
+</div>
+<div class="flex flex-col gap-4">
+<p class="text-sm italic font-serif text-gray-500">This certifies that</p>
+<h2 class="text-4xl md:text-6xl font-bold font-serif text-[#111817]">Alex Johnson</h2>
+<div class="h-[1px] w-24 bg-primary mx-auto my-2"></div>
+<p class="text-lg font-medium text-gray-700">Has successfully completed the prescribed course of study in</p>
+<h3 class="text-2xl md:text-3xl font-bold text-[#111817]">Advanced Frontend Engineering</h3>
+</div>
+<div class="w-full flex justify-between items-end mt-12 px-4 md:px-12">
+<div class="text-left">
+<div class="font-serif text-xl border-b border-gray-300 pb-1 mb-1">Jane Doe</div>
+<p class="text-[10px] uppercase font-bold text-gray-400">Lead Instructor</p>
+</div>
+<div class="flex flex-col items-center">
+<div class="size-16 bg-primary/10 rounded-full border-2 border-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">verified</span>
+</div>
+<p class="text-[8px] mt-2 text-gray-400">CERT ID: BTH-77291-XY</p>
+</div>
+<div class="text-right">
+<div class="font-bold text-lg border-b border-gray-300 pb-1 mb-1">Oct 24, 2023</div>
+<p class="text-[10px] uppercase font-bold text-gray-400">Date Issued</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Card Footer/Actions -->
+<div class="p-6 bg-white dark:bg-[#1a2e2a] flex flex-col md:flex-row items-center justify-between gap-6 border-t border-[#f0f4f4] dark:border-[#2a4540]">
+<div class="flex flex-col gap-1 text-center md:text-left">
+<p class="text-[#111817] dark:text-white text-lg font-bold leading-tight">Digital Certificate of Completion</p>
+<p class="text-[#638882] dark:text-gray-400 text-sm">Recognized globally by Bitlance partner companies</p>
+</div>
+<div class="flex gap-3 flex-wrap justify-center">
+<button class="flex min-w-[140px] items-center justify-center gap-2 rounded-lg h-12 px-6 bg-primary text-[#111817] text-base font-bold transition-all hover:scale-[1.02] active:scale-95 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">download</span>
+<span>Download PDF</span>
+</button>
+<button class="flex min-w-[140px] items-center justify-center gap-2 rounded-lg h-12 px-6 bg-[#f0f4f4] dark:bg-[#2a4540] text-[#111817] dark:text-white text-base font-bold transition-all hover:bg-[#e0e7e6] dark:hover:bg-[#365852] active:scale-95">
+<span class="material-symbols-outlined">share</span>
+<span>Share on LinkedIn</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- What's Next Section -->
+<section class="w-full max-w-[960px] px-4 pb-24">
+<div class="bg-primary/5 dark:bg-primary/10 rounded-2xl p-8 border border-primary/10 flex flex-col md:flex-row items-center justify-between gap-8">
+<div class="flex flex-col gap-2 max-w-lg text-center md:text-left">
+<h4 class="text-xl font-bold text-[#111817] dark:text-white">Ready for your next challenge?</h4>
+<p class="text-[#638882] dark:text-gray-300">Continue your learning path by exploring related courses in the Engineering track.</p>
+</div>
+<button class="flex items-center justify-center gap-2 rounded-full h-12 px-8 bg-transparent border-2 border-primary text-primary text-base font-bold transition-all hover:bg-primary hover:text-[#111817]">
+<span>Browse Engineering Courses</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<!-- Course Recommendations Preview -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+<div class="group cursor-pointer rounded-xl overflow-hidden bg-white dark:bg-[#1a2e2a] border border-[#f0f4f4] dark:border-[#2a4540] transition-shadow hover:shadow-xl">
+<div class="h-32 bg-center bg-cover" data-alt="System design architectural diagram placeholder" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB-8EQC323KlMARRJq3RLQz_U6eXkcKIkOU_wt-hy12SgaktG_NL8eruIcukDzg1oH8vWGwUahEEfyJ2VldZlGyY25somMDbggg3i7wFhaWtZdd4TnWiAEhlLWI6cZynjgHUfwVwG7gJ0ZqmCniyKjcjeHAfWViluvju4lhRFsAhQYRnpfvLwuGI0Jdnu50WSooU0-1dJxLKAKHyQi2QzenppfM3upj8cGnVGKYYez4VYnHjkv-Dg2vR_UYV1DOaoAErtohLFdVGPg');"></div>
+<div class="p-4">
+<h5 class="font-bold text-sm mb-1 group-hover:text-primary transition-colors">System Design Masterclass</h5>
+<p class="text-xs text-gray-500">12 Modules • Intermediate</p>
+</div>
+</div>
+<div class="group cursor-pointer rounded-xl overflow-hidden bg-white dark:bg-[#1a2e2a] border border-[#f0f4f4] dark:border-[#2a4540] transition-shadow hover:shadow-xl">
+<div class="h-32 bg-center bg-cover" data-alt="Typescript code on a screen" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC6uIdwwYgKy006C4PNzvahVqWi0nlmvQ5Uecry8o4AGzccOUiXCbBCW81wLgMfTZQ4qXKenGQqHX1fqZ__3pOYsFGbnLBTYXZPbXIekdtyhs6YQ9UD6hitaODcqcr7OSHLJHEe8iKqJS9fc9VQ47M6LmLEOtxmWx-oZ0cFT9s_h9ZZa8IzMthxyv2H3u68bpH3MVsOOaXW0guXxen02jOZ4rdlzNCQkz0fU2F_lMI1hc0quH-_pHIP0nLP3KBvb3PWdilJKb_KMkQ');"></div>
+<div class="p-4">
+<h5 class="font-bold text-sm mb-1 group-hover:text-primary transition-colors">Typescript Architecture</h5>
+<p class="text-xs text-gray-500">8 Modules • Advanced</p>
+</div>
+</div>
+<div class="group cursor-pointer rounded-xl overflow-hidden bg-white dark:bg-[#1a2e2a] border border-[#f0f4f4] dark:border-[#2a4540] transition-shadow hover:shadow-xl">
+<div class="h-32 bg-center bg-cover" data-alt="React logo and abstract ui nodes" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDE8nkyuzoyOwH2lXNFsymqIWMQBbGcIle1Y9tI9BgekpyklZzqlHsaJbVqdN-ki-of8iFYMv12NX5iH02Isvi42dbqT1H5ECwugo2szR3adDiLAMODjjQUWT_zjgHMBNL-o002fwsHWf9UhXlFF4fCCFlKXdLTIkkkHvCnbGaSNPG6pQ-39Ab75rXXoxFMt6VsfC-HJho0eKjpkuHlGx9IEfoCcf_TMaPdU5YtHvFzzQIN8FSd_VUJvspO6Cbm_5uJI4J_h713wOY');"></div>
+<div class="p-4">
+<h5 class="font-bold text-sm mb-1 group-hover:text-primary transition-colors">React Design Patterns</h5>
+<p class="text-xs text-gray-500">10 Modules • Advanced</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="w-full py-10 px-6 border-t border-[#f0f4f4] dark:border-[#1e3330] text-center">
+<p class="text-sm text-gray-500 dark:text-gray-400">© 2023 Bitlance Tech Hub. All rights reserved. Professional Certifications for the Future of Tech.</p>
+</footer>
+</div>
+</body></html>

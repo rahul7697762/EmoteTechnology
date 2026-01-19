@@ -1,66 +1,31 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
+import cookieParser from 'cookie-parser'; // Ensure this is imported
 
 /**
  * Protect middleware - Verifies JWT token and authenticates user
  */
 export const protect = async (req, res, next) => {
     try {
-        let token;
-
-        // Check for token in Authorization header
-        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-            token = req.headers.authorization.split(' ')[1];
+        // Ensure req.cookies is defined
+        if (!req.cookies || !req.cookies.jwt) {
+            return res.status(401).json({ message: "Not authorized, no token" });
         }
 
-        if (!token) {
-            return res.status(401).json({
-                success: false,
-                message: 'You are not logged in. Please log in to access this resource.'
-            });
-        }
+        const token = req.cookies.jwt;
 
-        // Verify token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.userId);
 
-        // Check if user still exists
-        const user = await User.findById(decoded.id).select('+password');
         if (!user) {
-            return res.status(401).json({
-                success: false,
-                message: 'The user belonging to this token no longer exists.'
-            });
+            return res.status(401).json({ message: "Not authorized, token failed" });
         }
 
-        // Check if user account is active
-        if (user.accountStatus !== 'ACTIVE') {
-            return res.status(403).json({
-                success: false,
-                message: `Account is ${user.accountStatus.toLowerCase()}. Please contact support.`
-            });
-        }
-
-        // Grant access to protected route
         req.user = user;
         next();
     } catch (error) {
-        if (error.name === 'JsonWebTokenError') {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid token. Please log in again.'
-            });
-        }
-        if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({
-                success: false,
-                message: 'Your token has expired. Please log in again.'
-            });
-        }
-        return res.status(500).json({
-            success: false,
-            message: 'Authentication failed',
-            error: error.message
-        });
+        console.log("Error in protectRoute", error);
+        return res.status(401).json({ message: "Not authorized, token failed" });
     }
 };
 

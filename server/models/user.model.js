@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -29,15 +28,27 @@ const userSchema = new mongoose.Schema({
     },
 
     profile: {
-        avatar: String,
+        avatar:{
+            type: String,
+            default: null
+        },
         bio: {
             type: String,
             default: "",
             maxlength: 500,
         },
-        phone: String,
-        country: String,
-        timezone: String,
+        phone:{
+            type: String,
+            default: null
+        },
+        country: {
+            type: String,
+            default: null
+        },
+        timezone: {
+            type: String,
+            default: null
+        }
     },
 
     facultyProfile: {
@@ -74,11 +85,22 @@ const userSchema = new mongoose.Schema({
         default: null
     },
 
-    deletedAt: Date,
+    deletedAt:{
+        type: Date,
+    },
 
-    emailVerificationToken: String,
-    passwordResetToken: String,
-    passwordResetExpires: Date,
+    emailVerificationToken:{
+        type: String,
+        select: false
+    },
+    passwordResetOtp:{
+        type: String,
+        select: false
+    },
+    passwordResetOTPExpires:{
+        type: Date,
+        select: false
+    },
 
 }, {
     timestamps: true
@@ -86,37 +108,10 @@ const userSchema = new mongoose.Schema({
 );
 
 /* =======================
-   PASSWORD METHODS
-======================= */
-
-// Hash password before saving
-userSchema.pre('save', async function () {
-    // Only hash if password is modified
-    if (!this.isModified('password')) {
-        return;
-    }
-
-    // Check if password exists
-    if (!this.password) {
-        throw new Error('Password is required');
-    }
-
-    // Hash password with cost of 12
-    this.password = await bcrypt.hash(this.password, 12);
-});
-
-// Compare password method
-userSchema.methods.comparePassword = async function (candidatePassword) {
-    return await bcrypt.compare(candidatePassword, this.password);
-};
-
-
-/* =======================
    INDEXES
 ======================= */
 
 // Auth & identity
-userSchema.index({ email: 1 }, { unique: true });
 userSchema.index({ email: 1, accountStatus: 1 });
 
 // RBAC & moderation

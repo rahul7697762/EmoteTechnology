@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { connectDB } from './config/database.js';
 import authRoutes from './routes/auth.routes.js';
+import cookieParser from 'cookie-parser';
 
 // Load environment variables
 dotenv.config();
@@ -26,18 +27,13 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(cookieParser());
 
 // Connect to MongoDB
 connectDB();
 
 // API Routes
 app.use('/api/auth', authRoutes);
-
-// Test signup endpoint
-app.post('/api/test/signup', async (req, res) => {
-    console.log('Test signup hit with body:', req.body);
-    res.json({ success: true, message: 'Test endpoint works', body: req.body });
-});
 
 // Health check route
 app.get('/api/health', (req, res) => {

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Zap, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Zap, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import RoleSelector from './RoleSelector';
 import SocialLogin from './SocialLogin';
 import { roles } from './data';
@@ -11,14 +13,36 @@ const LoginForm = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [selectedRole, setSelectedRole] = useState('student');
+    const [error, setError] = useState('');
 
-    const handleSubmit = (e) => {
+    const navigate = useNavigate();
+    const { login } = useAuth();
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setTimeout(() => {
+        setError('');
+
+        try {
+            const roleMap = {
+                'student': 'STUDENT',
+                'faculty': 'FACULTY',
+                'admin': 'ADMIN'
+            };
+
+            const result = await login(email, password, roleMap[selectedRole]);
+
+            if (result.success) {
+                // Redirect to home page after successful login
+                navigate('/');
+            } else {
+                setError(result.error);
+            }
+        } catch (err) {
+            setError('An unexpected error occurred. Please try again.');
+        } finally {
             setLoading(false);
-            alert(`Login as ${selectedRole.toUpperCase()}\nEmail: ${email}`);
-        }, 1500);
+        }
     };
 
     const selectedRoleData = roles.find(r => r.id === selectedRole);
@@ -49,6 +73,14 @@ const LoginForm = () => {
 
                 {/* Role Selector */}
                 <RoleSelector selectedRole={selectedRole} setSelectedRole={setSelectedRole} />
+
+                {/* Error Message */}
+                {error && (
+                    <div className="bg-red-500/10 border border-red-500/50 rounded-xl p-4 flex items-start gap-3">
+                        <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
+                        <p className="text-red-500 text-sm">{error}</p>
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     {/* Email */}

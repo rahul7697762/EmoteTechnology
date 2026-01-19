@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Zap, Mail, Lock, User, Eye, EyeOff, ArrowRight, Phone } from 'lucide-react';
-
+import { Zap, Mail, Lock, User, Eye, EyeOff, ArrowRight, Phone, AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import SocialLogin from '../login/SocialLogin';
 
 const SignupForm = () => {
@@ -11,14 +12,30 @@ const SignupForm = () => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    const handleSubmit = (e) => {
+    const navigate = useNavigate();
+    const { signup } = useAuth();
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setTimeout(() => {
+        setError('');
+
+        try {
+            const result = await signup(name, email, password, phone);
+
+            if (result.success) {
+                // Redirect to home page after successful signup
+                navigate('/');
+            } else {
+                setError(result.error);
+            }
+        } catch (err) {
+            setError('An unexpected error occurred. Please try again.');
+        } finally {
             setLoading(false);
-            alert(`Account created for ${name}\nEmail: ${email}\nPhone: ${phone}`);
-        }, 1500);
+        }
     };
 
     return (
@@ -44,6 +61,14 @@ const SignupForm = () => {
                     <h2 className="text-2xl font-bold text-white mb-2">Create Account</h2>
                     <p className="text-gray-400">Join as a Student</p>
                 </div>
+
+                {/* Error Message */}
+                {error && (
+                    <div className="bg-red-500/10 border border-red-500/50 rounded-xl p-4 flex items-start gap-3 mb-5">
+                        <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
+                        <p className="text-red-500 text-sm">{error}</p>
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     {/* Name */}

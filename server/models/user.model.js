@@ -73,7 +73,6 @@ const userSchema = new mongoose.Schema({
         default: false
     },
 
-
     accountStatus: {
         type: String,
         enum: ["ACTIVE", "SUSPENDED", "DEACTIVATED"],
@@ -88,16 +87,27 @@ const userSchema = new mongoose.Schema({
     deletedAt:{
         type: Date,
     },
-
+    // to verift email 
     emailVerificationToken:{
         type: String,
         select: false
     },
+    // OPT when user forgets password
     passwordResetOtp:{
         type: String,
         select: false
     },
+    // OPT expiry time when user forgets password 
     passwordResetOTPExpires:{
+        type: Date,
+        select: false
+    },
+    // reset token and its expiry for password change
+    resetToken:{
+        type: String,
+        select: false
+    },
+    resetTokenExpiry:{
         type: Date,
         select: false
     },

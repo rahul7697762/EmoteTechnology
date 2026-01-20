@@ -57,3 +57,12 @@ export const verifyOTPValidation = [
         .notEmpty().withMessage('OTP is required')
         .isLength({ min: 6, max: 6 }).withMessage('OTP must be 6 digits long'),
 ]
+
+export const resetPasswordValidation = [
+    body('newPassword')
+        .notEmpty().withMessage('Password is required')
+        .isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+
+    body('resetToken')
+        .notEmpty().withMessage('Reset token is required'),
+];

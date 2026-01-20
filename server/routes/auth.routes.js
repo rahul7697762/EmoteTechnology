@@ -1,15 +1,23 @@
 import express from 'express';
-import { signupValidation, signupHandler, login, logout, getMe } from '../controllers/auth.controller.js';
+import {signup, login, logout, getMe, forgetPassword, verifyOTP, resetPassword, sendVerificationEmail, verifyEmail } from '../controllers/auth.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
+import { forgotPasswordValidation, loginValidation, resetPasswordValidation, signupValidation, verifyOTPValidation } from '../validators/auth.validator.js';
+import { validate } from '../middleware/validate.middleware.js';
 
 const router = express.Router();
 
 // Public routes
-router.post('/signup', signupHandler); // Testing without validation
-router.post('/login', login);
+router.post('/signup', signupValidation, validate, signup);
+router.post('/login', loginValidation, validate, login);
+router.post('/forgot-password', forgotPasswordValidation, validate, forgetPassword);
+router.post('/verify-otp', verifyOTPValidation, validate, verifyOTP);
+router.post('/reset-password',resetPasswordValidation,validate, resetPassword);
+router.post('/verify-email', verifyEmail);
+
 
 // Protected routes
 router.get('/me', protect, getMe);
 router.post('/logout', protect, logout);
+router.get('/send-verification-email', protect, sendVerificationEmail);
 
 export default router;

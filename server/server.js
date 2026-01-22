@@ -5,7 +5,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { connectDB } from './config/database.js';
 import authRoutes from './routes/auth.routes.js';
+import userRoutes from './routes/user.routes.js';
 import cookieParser from 'cookie-parser';
+import { globalRateLimiter } from './middleware/rateLimiter.middleware.js';
 
 // Load environment variables
 dotenv.config();
@@ -24,6 +26,9 @@ const corsOptions = {
     optionsSuccessStatus: 200
 };
 
+// rate limit middleware
+app.use(globalRateLimiter)
+
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -34,6 +39,7 @@ connectDB();
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

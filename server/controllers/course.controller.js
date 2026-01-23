@@ -1,0 +1,537 @@
+import Course from "../models/course.model.js";
+import { uploadFileToBunny, deleteFileFromBunny } from "../services/bunny.service.js";
+import { Review } from "../models/review.model.js";
+
+
+/**
+ * @route   POST /api/courses/
+ * @desc    creating a new course
+ * @access  Private - FACULTY | ADMIN
+ */
+export const createCourse = async (req, res) => {
+    try {
+        // getting user and destructuring course data
+        const user = req.user;
+        const {
+            title, description, level, language, currency,
+            discount, tags, requirements, learningOutcomes,
+            certificateEnabled, price, category, instructor
+        } = req.body;
+
+        // uploading thumbnail and preview video to bunny CDN
+        let thumbnailUrl = "";
+        let previewVideoUrl = "";
+
+        if (req.files) {
+            // uploading thumbnail
+            if (req.files.thumbnail && req.files.thumbnail[0]) {
+                const thumbnailFile = req.files.thumbnail[0];
+                const fileName = `thumbnail-${Date.now()}-${thumbnailFile.originalname}`;
+                thumbnailUrl = await uploadFileToBunny("thumbnails", thumbnailFile.buffer, fileName);
+            }
+
+            // uploading preview video
+            if (req.files.previewVideo && req.files.previewVideo[0]) {
+                const videoFile = req.files.previewVideo[0];
+                const fileName = `video-${Date.now()}-${videoFile.originalname}`;
+                previewVideoUrl = await uploadFileToBunny("video", videoFile.buffer, fileName);
+            }
+        }
+
+        // creating course
+        const courseData = {
+            title,
+            description,
+            category,
+            price,
+            instructor: instructor || user._id,
+            createdBy: user._id,
+
+            thumbnail: thumbnailUrl,
+            previewVideo: previewVideoUrl,
+            level,
+            language,
+            currency,
+            discount: discount || 0,
+            tags: tags || [],
+            requirements: requirements || [],
+            learningOutcomes: learningOutcomes || [],
+            certificateEnabled: certificateEnabled !== undefined ? certificateEnabled : true,
+        };
+
+        // saving course
+        const course = await Course.create(courseData);
+
+        res.status(201).json({
+            success: true,
+            message: "Course created successfully",
+            course
+        });
+
+    } catch (error) {
+        console.log("error in createCourse controller", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+/**
+ * @route   GET /api/courses/faculty/my-courses
+ * @desc    get courses created by the logged-in faculty
+ * @access  Private - FACULTY | ADMIN
+ */
+export const getFacultyCourses = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const courses = await Course.find({ createdBy: userId }).sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: courses.length,
+            courses
+        });
+    } catch (error) {
+        console.log("error in getInstructorCourses controller", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+/**
+ * @route   PUT /api/courses/:id
+ * @desc    Update course details, thumbnail, and preview video
+ * @access  Private - FACULTY (Owner) | ADMIN
+ */
+export const updateCourse = async (req, res) => {
+    try {
+        const courseId = req.params.id;
+        const {
+            title, description, level, language, currency,
+            discount, tags, requirements, learningOutcomes,
+            certificateEnabled, price, category
+        } = req.body;
+
+        let course = await Course.findById(courseId);
+
+        if (!course) {
+            return res.status(404).json({ success: false, message: "Course not found" });
+        }
+
+        // Check ownership (or admin)
+        if (course.instructor.toString() !== req.user._id.toString() && req.user.role !== 'ADMIN') {
+            return res.status(403).json({ success: false, message: "Not authorized to update this course" });
+        }
+
+        // Handle File Uploads
+        let thumbnailUrl = course.thumbnail;
+        let previewVideoUrl = course.previewVideo;
+
+        if (req.files) {
+            // Update thumbnail
+            if (req.files.thumbnail && req.files.thumbnail[0]) {
+                // Delete old thumbnail if exists
+                if (course.thumbnail) {
+                    try {
+                        const oldThumbnailPath = new URL(course.thumbnail).pathname.substring(1);
+                        await deleteFileFromBunny(oldThumbnailPath);
+                    } catch (error) {
+                        console.log("Error deleting old thumbnail:", error);
+                        // Continue even if delete fails
+                    }
+                }
+
+                const thumbnailFile = req.files.thumbnail[0];
+                const fileName = `thumbnail-${Date.now()}-${thumbnailFile.originalname}`;
+                thumbnailUrl = await uploadFileToBunny("thumbnails", thumbnailFile.buffer, fileName);
+            }
+
+            // Update preview video
+            if (req.files.previewVideo && req.files.previewVideo[0]) {
+                // Delete old video if exists
+                if (course.previewVideo) {
+                    try {
+                        const oldVideoPath = new URL(course.previewVideo).pathname.substring(1);
+                        await deleteFileFromBunny(oldVideoPath);
+                    } catch (error) {
+                        console.log("Error deleting old video:", error);
+                        // Continue even if delete fails
+                    }
+                }
+
+                const videoFile = req.files.previewVideo[0];
+                const fileName = `video-${Date.now()}-${videoFile.originalname}`;
+                previewVideoUrl = await uploadFileToBunny("video", videoFile.buffer, fileName);
+            }
+        }
+
+        // Prepare update object
+        const updateData = {
+            title, description, level, language, currency,
+            discount, tags, requirements, learningOutcomes,
+            certificateEnabled, price, category,
+            thumbnail: thumbnailUrl,
+            previewVideo: previewVideoUrl
+        };
+
+
+        // Remove undefined fields
+        Object.keys(updateData).forEach(key => updateData[key] === undefined && delete updateData[key]);
+
+
+        course = await Course.findByIdAndUpdate(courseId, updateData, { new: true });
+
+        res.status(200).json({
+            success: true,
+            message: "Course updated successfully",
+            course
+        });
+
+    } catch (error) {
+        console.log("error in updateCourse controller", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+
+/**
+ * @route   PATCH /api/courses/:id/status
+ * @desc    Change course status (e.g., Submit for Review)
+ * @access  Private - FACULTY (Owner) | ADMIN
+ */
+export const updateCourseStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        const userId = req.user._id;
+
+        let course = await Course.findById(id);
+
+        if (!course) {
+            return res.status(404).json({ success: false, message: "Course not found" });
+        }
+
+        if (course.instructor.toString() !== userId.toString() && req.user.role !== 'ADMIN') {
+            return res.status(403).json({ success: false, message: "Not authorized" });
+        }
+
+        // Validation logic for transitions can go here
+
+        course.status = status;
+        await course.save();
+
+        res.status(200).json({
+            success: true,
+            message: `Course status updated to ${status}`,
+            course
+        });
+
+    } catch (error) {
+        console.log("error in updateCourseStatus controller", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+
+/**
+ * @route   DELETE /api/courses/:id
+ * @desc    Delete a course (Faculty Owner)
+ * @access  Private - FACULTY (Owner)
+ */
+export const deleteCourse = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user._id;
+
+        const course = await Course.findOne({ _id: id });
+
+        if (!course) {
+            return res.status(404).json({ success: false, message: "Course not found" });
+        }
+
+        if (course.instructor.toString() !== userId.toString() && req.user.role !== 'ADMIN') {
+            return res.status(403).json({ success: false, message: "Not authorized to delete this course" });
+        }
+
+        // Check for enrollments before deleting?
+        if (course.enrolledCount > 0) {
+            return res.status(400).json({ success: false, message: "Cannot delete course with enrolled students. Contact Admin." });
+        }
+
+        // todo : clear all module and submodule and all files from bunny.net
+
+        await Course.findByIdAndDelete(id);
+
+        res.status(200).json({
+            success: true,
+            message: "Course deleted successfully"
+        });
+
+    } catch (error) {
+        console.log("error in deleteCourse controller", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+/**
+ * @route   GET /api/courses/
+ * @desc    get all courses which are published and user can access
+ * @access  Public
+ */
+
+export const getAllCourses = async (req, res) => {
+    try {
+        // implement pagination logic here
+        // todo : pagination logic
+
+        // fetching 10 latest courses
+
+        //todo : get only those course which are published in future
+        const courses = await Course.find({ status: "PUBLISHED" }).select('title description category price instructor createdAt thumbnail slug').sort({ createdAt: -1 }).limit(10);
+
+        if (!courses || courses.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No courses found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            courses: courses
+        });
+    } catch (error) {
+        console.log("error in getAllCourses controller", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+/**
+ * @route   GET /api/courses/:id
+ * @desc    get course by id
+ * @access  Public
+ */
+export const getCourseById = async (req, res) => {
+    try {
+        // getting course id from req params
+        const courseId = req.params.id;
+
+        // getting course by id
+        const course = await Course.findOne({ _id: courseId, status: "PUBLISHED" })
+            .populate('instructor', 'name profile.avatar facultyProfile.expertize')
+            // .populate('modules');
+
+        // if course not found then return 404
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: 'Course not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            course: course
+        });
+    } catch (error) {
+        console.log("error in getCourseById controller", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+/**
+ * @route   GET /api/courses/slug/:slug
+ * @desc    get course by slug
+ * @access  Public
+ */
+export const getCourseBySlug = async (req, res) => {
+    try {
+        const { slug } = req.params;
+        // getting course by slug with instructor and modules
+        const course = await Course.findOne({ slug, status: "PUBLISHED" })
+            .populate('instructor', 'name profile.avatar facultyProfile.expertize')
+            // .populate('modules');
+
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: 'Course not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            course
+        });
+    } catch (error) {
+        console.log("error in getCourseBySlug controller", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+
+/**
+ * @route   GET /api/courses/search
+ * @desc    search courses by query, category, level
+ * @access  Public
+ */
+export const searchCourses = async (req, res) => {
+    try {
+        const { query, category, level } = req.query;
+        const filter = { status: "PUBLISHED" };
+
+        if (query) {
+            filter.$or = [
+                { title: { $regex: query, $options: 'i' } },
+                { tags: { $regex: query, $options: 'i' } }
+            ];
+        }
+
+        // getting courses by category and level
+        if (category) filter.category = category;
+        if (level) filter.level = level;
+
+        const courses = await Course.find(filter)
+            .select('title description category price instructor thumbnail slug rating level')
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: courses.length,
+            courses
+        });
+    } catch (error) {
+        console.log("error in searchCourses controller", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+/**
+ * @route   GET /api/courses/:id/reviews
+ * @desc    get reviews for a course
+ * @access  Public
+ */
+export const getCourseReviews = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const reviews = await Review.find({ courseId: id, status: "ACTIVE" })
+            .populate('userId', 'name profile.avatar')
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: reviews.length,
+            reviews
+        });
+    } catch (error) {
+        console.log("error in getCourseReviews controller", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+/**
+ * @route   GET /api/courses/admin/all
+ * @desc    get all courses (Draft, Pending, Published, Rejected) for admin
+ * @access  Private - ADMIN
+ */
+export const getAllCoursesAdmin = async (req, res) => {
+    try {
+        const courses = await Course.find()
+            .populate('instructor', 'name email')
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: courses.length,
+            courses
+        });
+    } catch (error) {
+        console.log("error in getAllCoursesAdmin controller", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+/**
+ * @route   PATCH /api/courses/:id/approve
+ * @desc    Approve a pending/draft course
+ * @access  Private - ADMIN
+ */
+export const approveCourse = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const course = await Course.findByIdAndUpdate(
+            id,
+            { status: "PUBLISHED", rejectionReason: null, publishedAt: Date.now() },
+            { new: true }
+        );
+
+        if (!course) {
+            return res.status(404).json({ success: false, message: "Course not found" });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Course approved and published successfully",
+            course
+        });
+    } catch (error) {
+        console.log("error in approveCourse controller", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+/**
+ * @route   PATCH /api/courses/:id/reject
+ * @desc    Reject a course with reason
+ * @access  Private - ADMIN
+ */
+export const rejectCourse = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { rejectionReason } = req.body;
+
+        const course = await Course.findByIdAndUpdate(
+            id,
+            { status: "REJECTED", rejectionReason },
+            { new: true }
+        );
+
+        if (!course) {
+            return res.status(404).json({ success: false, message: "Course not found" });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Course rejected successfully",
+            course
+        });
+    } catch (error) {
+        console.log("error in rejectCourse controller", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+
+/**
+ * @route   DELETE /api/courses/admin/:id
+ * @desc    Force delete a course
+ * @access  Private - ADMIN
+ */
+export const deleteCourseAdmin = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const course = await Course.findByIdAndDelete(id);
+
+        if (!course) {
+            return res.status(404).json({ success: false, message: "Course not found" });
+        }
+
+        // TODO: Clean up related resources (files in BunnyCDN, reviews, enrollments etc.) if hard deleting
+        // Ideally invoke a service method that handles cleanup
+
+        res.status(200).json({
+            success: true,
+            message: "Course deleted successfully"
+        });
+    } catch (error) {
+        console.log("error in deleteCourseAdmin controller", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+}
+

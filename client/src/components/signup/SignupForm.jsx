@@ -9,6 +9,7 @@ const SignupForm = () => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
+    const [role, setRole] = useState('STUDENT');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -23,11 +24,15 @@ const SignupForm = () => {
         setError('');
 
         try {
-            const result = await signup(name, email, password, phone);
+            const result = await signup(name, email, password, phone, role);
 
             if (result.success) {
-                // Redirect to home page after successful signup
-                navigate('/');
+                // Redirect based on role
+                if (role === 'FACULTY') {
+                    navigate('/dashboard');
+                } else {
+                    navigate('/');
+                }
             } else {
                 setError(result.error);
             }
@@ -59,7 +64,31 @@ const SignupForm = () => {
             <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-2xl">
                 <div className="text-center mb-8">
                     <h2 className="text-2xl font-bold text-white mb-2">Create Account</h2>
-                    <p className="text-gray-400">Join as a Student</p>
+                    <p className="text-gray-400">Join as a {role === 'FACULTY' ? 'Instructor' : 'Student'}</p>
+                </div>
+
+                {/* Role Selection */}
+                <div className="flex bg-white/5 p-1 rounded-xl mb-6">
+                    <button
+                        type="button"
+                        onClick={() => setRole('STUDENT')}
+                        className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${role === 'STUDENT'
+                            ? 'bg-teal-500 text-white shadow-lg'
+                            : 'text-gray-400 hover:text-white'
+                            }`}
+                    >
+                        Student
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setRole('FACULTY')}
+                        className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${role === 'FACULTY'
+                            ? 'bg-teal-500 text-white shadow-lg'
+                            : 'text-gray-400 hover:text-white'
+                            }`}
+                    >
+                        Instructor
+                    </button>
                 </div>
 
                 {/* Error Message */}

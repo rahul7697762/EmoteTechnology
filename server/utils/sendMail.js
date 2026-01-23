@@ -16,14 +16,18 @@ const transporter = nodemailer.createTransport({
 });
 
 // Send an email using async/await
-export const sendEmail = async (to,subject,html) => {
-  const info = await transporter.sendMail({
-    from: 'suryansh1440@gmail.com', // sender address
-    to,  // list of receivers
-    subject,  // Subject line
-    // text, // Plain-text version of the message
-    html // HTML version of the message
-  });
-
-  console.log("Message sent:", info.messageId);
+export const sendEmail = async (to, subject, html) => {
+  try {
+    const info = await transporter.sendMail({
+      from: 'suryansh1440@gmail.com', // sender address
+      to,  // list of receivers
+      subject,  // Subject line
+      // text, // Plain-text version of the message
+      html // HTML version of the message
+    });
+    console.log("Message sent:", info.messageId);
+  } catch (error) {
+    console.error("Error sending email:", error);
+    // Do not throw, just log. This prevents crash during dev if creds are wrong.
+  }
 };

@@ -33,8 +33,12 @@ const LoginForm = () => {
             const result = await login(email, password, roleMap[selectedRole]);
 
             if (result.success) {
-                // Redirect to home page after successful login
-                navigate('/');
+                // Redirect based on role
+                if (result.user.role === 'FACULTY' || result.user.role === 'ADMIN') {
+                    navigate('/dashboard');
+                } else {
+                    navigate('/');
+                }
             } else {
                 setError(result.error);
             }

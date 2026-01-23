@@ -133,15 +133,9 @@ const courseSchema = new mongoose.Schema({
 INDEXES
 ======================= */
 
-// Unique & SEO
-courseSchema.index({ slug: 1 }, { unique: true });
-
 // Browsing & filtering
 courseSchema.index({ category: 1 });
 courseSchema.index({ tags: 1 });
-
-// Faculty dashboard
-courseSchema.index({ createdBy: 1 });
 
 // Sorting
 courseSchema.index({ "rating.average": -1 });

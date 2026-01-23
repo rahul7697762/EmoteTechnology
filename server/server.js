@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { connectDB } from './config/database.js';
 import authRoutes from './routes/auth.routes.js';
+import facultyRoutes from './routes/faculty.routes.js';
 import cookieParser from 'cookie-parser';
 
 // Load environment variables
@@ -34,6 +35,7 @@ connectDB();
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/faculty', facultyRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

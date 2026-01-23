@@ -21,7 +21,12 @@ export const signupValidation = [
     body('phone')
         .trim()
         .notEmpty().withMessage('Phone is required')
-        .isMobilePhone().withMessage('Please provide a valid phone number')
+        .isMobilePhone().withMessage('Please provide a valid phone number'),
+
+    body('role')
+        .optional()
+        .trim()
+        .isIn(['STUDENT', 'FACULTY', 'ADMIN']).withMessage('Invalid role'),
 ];
 
 // login validation rules

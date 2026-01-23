@@ -58,7 +58,7 @@ export const updateUserProfile = async (req, res) => {
                 const fileExtension = req.file.originalname.split('.').pop();
                 const fileName = `avatar-${user._id}-${Date.now()}.${fileExtension}`;
 
-                const fileUrl = await uploadFileToBunny("images", req.file.buffer, fileName);
+                const fileUrl = await uploadFileToBunny("avatar", req.file.buffer, fileName);
                 user.profile.avatar = fileUrl;
             }
 

@@ -15,7 +15,6 @@ const courseSchema = new mongoose.Schema({
         unique: true,
         lowercase: true,
         trim: true,
-        index: true
     },
 
     description: {
@@ -25,7 +24,7 @@ const courseSchema = new mongoose.Schema({
     },
 
     thumbnail: String,
-    previewVideoUrl: String,
+    previewVideo: String,
 
     category: {
         type: String,
@@ -64,6 +63,13 @@ const courseSchema = new mongoose.Schema({
         default: 0,
         min: 0,
         max: 100
+    },
+
+    instructor: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+        index: true
     },
 
     createdBy: {
@@ -133,15 +139,10 @@ const courseSchema = new mongoose.Schema({
 INDEXES
 ======================= */
 
-// Unique & SEO
-courseSchema.index({ slug: 1 }, { unique: true });
 
 // Browsing & filtering
 courseSchema.index({ category: 1 });
 courseSchema.index({ tags: 1 });
-
-// Faculty dashboard
-courseSchema.index({ createdBy: 1 });
 
 // Sorting
 courseSchema.index({ "rating.average": -1 });
@@ -151,7 +152,7 @@ HOOKS & VIRTUALS
 ======================= */
 
 // Auto-generate slug
-courseSchema.pre("validate", function (next) {
+courseSchema.pre("validate", async function () {
     if (!this.slug) {
         const now = new Date();
         const year = now.getFullYear();
@@ -164,11 +165,10 @@ courseSchema.pre("validate", function (next) {
 
         this.slug = `${baseSlug}-${year}-${month}`;
     }
-    next();
 });
 // Ensure unique slug
-courseSchema.pre("save", async function (next) {
-    if (!this.isNew) return next();
+courseSchema.pre("save", async function () {
+    if (!this.isNew) return;
 
     let uniqueSlug = this.slug;
     let counter = 1;
@@ -179,7 +179,6 @@ courseSchema.pre("save", async function (next) {
     }
 
     this.slug = uniqueSlug;
-    next();
 });
 
 // Final price after discount

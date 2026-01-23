@@ -97,6 +97,14 @@ export const login = async (req, res) => {
             });
         }
 
+        //checkng if user account is active
+        if(user.accountStatus !== "ACTIVE"){
+            return res.status(403).json({
+                success: false,
+                message: `Your account is ${user.accountStatus}. Please contact support.`
+            });
+        }
+
         // updating last login time
         user.lastLoginAt = new Date();
         await user.save();
@@ -328,6 +336,7 @@ export const sendVerificationEmail = async (req, res) => {
 
         // saving verification token and its expiry to user
         user.emailVerificationToken = verificationToken;
+        user.emailVerificationTokenExpires = Date.now() + 60 * 60 * 1000; // 1 hour
         await user.save();
 
         // creating verification link
@@ -362,6 +371,7 @@ export const verifyEmail = async (req, res) => {
         // finding user with valid verification token
         const user = await User.findOne({
             emailVerificationToken: token,
+            emailVerificationTokenExpires: { $gt: Date.now() }
         });
 
         if (!user) {
@@ -376,6 +386,7 @@ export const verifyEmail = async (req, res) => {
 
         //removing verification token fields
         user.emailVerificationToken = undefined;
+        user.emailVerificationTokenExpires = undefined;
         await user.save();
 
         return res.status(200).json({

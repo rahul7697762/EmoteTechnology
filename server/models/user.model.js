@@ -55,16 +55,21 @@ const userSchema = new mongoose.Schema({
         category: {
             type: String,
             enum: ["TECH", "NON-TECH", "ASSESSMENT"],
+            default: null
         },
         expertise: [String],
-        yearsOfExperience: Number,
+        yearsOfExperience: {
+            type: Number,
+            default: null
+        },
         rating: {
             type: Number,
             default: 0,
         },
         approvedBy: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            ref: "User",
+            default: null
         }
     },
 
@@ -86,10 +91,15 @@ const userSchema = new mongoose.Schema({
 
     deletedAt:{
         type: Date,
+        default: null
     },
     // to verift email 
     emailVerificationToken:{
         type: String,
+        select: false
+    },
+    emailVerificationTokenExpires:{
+        type: Date,
         select: false
     },
     // OPT when user forgets password

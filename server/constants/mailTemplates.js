@@ -285,3 +285,123 @@ export const verificationMailTemplate = (name, verifyLink) => {
   </html>
   `;
 };
+
+export const accountStatusMailTemplate = (name, status) => {
+  const statusColor =
+    status === "ACTIVE"
+      ? "#16a34a"
+      : status === "SUSPENDED"
+      ? "#f59e0b"
+      : "#ef4444";
+
+  return `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Account Status Update</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f4f6f8;font-family:Arial,sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding:20px 0;">
+      <tr>
+        <td align="center">
+          <table width="600" style="background:#fff;border-radius:10px;overflow:hidden;">
+            
+            <tr>
+              <td style="background:#4f46e5;padding:24px;text-align:center;color:#fff;">
+                <h1 style="margin:0;">Emote Technology</h1>
+                <p style="margin-top:6px;font-size:14px;">Account Status Update</p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:30px;">
+                <h2>Hello ${name},</h2>
+
+                <p style="font-size:15px;color:#374151;">
+                  Your account status has been updated by our team.
+                </p>
+
+                <p style="font-size:16px;margin:20px 0;">
+                  <strong>Status:</strong>
+                  <span style="color:${statusColor};font-weight:bold;">
+                    ${status}
+                  </span>
+                </p>
+
+                <p style="font-size:14px;color:#6b7280;">
+                  If you believe this was a mistake or need assistance, please contact our support team.
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="background:#f9fafb;padding:16px;text-align:center;font-size:12px;color:#6b7280;">
+                © ${new Date().getFullYear()} Emote Technology
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+  </html>
+  `;
+};
+
+export const accountDeletedMailTemplate = (name) => {
+  return `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Account Deleted</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f4f6f8;font-family:Arial,sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding:20px 0;">
+      <tr>
+        <td align="center">
+          <table width="600" style="background:#fff;border-radius:10px;overflow:hidden;">
+
+            <tr>
+              <td style="background:#ef4444;padding:24px;text-align:center;color:#fff;">
+                <h1 style="margin:0;">Account Deleted</h1>
+                <p style="margin-top:6px;font-size:14px;">Emote Technology</p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:30px;">
+                <h2>Goodbye ${name},</h2>
+
+                <p style="font-size:15px;color:#374151;">
+                  Your Emote Technology account has been successfully deleted.
+                </p>
+
+                <p style="font-size:14px;color:#6b7280;">
+                  We’re sorry to see you go. If this was a mistake or you change your mind,
+                  you can contact our support team within the recovery period.
+                </p>
+
+                <p style="font-size:14px;color:#6b7280;">
+                  Thank you for learning with us and being part of our community.
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="background:#f9fafb;padding:16px;text-align:center;font-size:12px;color:#6b7280;">
+                © ${new Date().getFullYear()} Emote Technology
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+  </html>
+  `;
+};
+

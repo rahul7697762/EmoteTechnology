@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { authAPI } from '../utils/api';
+import toast from 'react-hot-toast';
 
 const AuthContext = createContext(null);
 
@@ -19,59 +20,52 @@ export const AuthProvider = ({ children }) => {
     // Check if user is logged in on mount
     useEffect(() => {
         const checkAuth = async () => {
-            const token = localStorage.getItem('token');
-            const savedUser = localStorage.getItem('user');
-
-            if (token && savedUser) {
-                try {
-                    // Verify token is still valid
-                    const response = await authAPI.getMe();
-                    setUser(response.user);
-                } catch (err) {
-                    // Token is invalid, clear storage
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('user');
+            try {
+                setLoading(true);
+                const res = await authAPI.getMe();
+                if (res.success) {
+                    setUser(res.user);
+                } else {
                     setUser(null);
                 }
-            }
-            setLoading(false);
-        };
 
+            } catch (error) {
+                setError(error.response?.data?.message || 'Failed to load user');
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
+        }
         checkAuth();
     }, []);
 
-    const login = async (email, password, role) => {
+
+    const login = async (email, password) => {
         try {
             setError(null);
-            const response = await authAPI.login({ email, password, role });
-
-            // Save token and user to localStorage
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('user', JSON.stringify(response.user));
-
+            const response = await authAPI.login({ email, password});
             setUser(response.user);
+            toast.success(response.message);
             return { success: true, user: response.user };
         } catch (err) {
             const errorMessage = err.response?.data?.message || 'Login failed. Please try again.';
             setError(errorMessage);
+            toast.error(errorMessage);
             return { success: false, error: errorMessage };
         }
     };
 
-    const signup = async (name, email, password, phone, role) => {
+    const signup = async (name, email, password, phone) => {
         try {
             setError(null);
-            const response = await authAPI.signup({ name, email, password, phone, role });
-
-            // Save token and user to localStorage
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('user', JSON.stringify(response.user));
-
+            const response = await authAPI.signup({ name, email, password, phone});
             setUser(response.user);
+            toast.success(response.message)
             return { success: true, user: response.user };
         } catch (err) {
             const errorMessage = err.response?.data?.message || 'Signup failed. Please try again.';
             setError(errorMessage);
+            toast.error(errorMessage);
             return { success: false, error: errorMessage };
         }
     };
@@ -79,12 +73,10 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
         try {
             await authAPI.logout();
+            toast.success("Logout successful")
         } catch (err) {
             console.error('Logout error:', err);
         } finally {
-            // Clear local storage and state
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
             setUser(null);
         }
     };

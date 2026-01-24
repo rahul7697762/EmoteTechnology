@@ -30,7 +30,7 @@ const LoginForm = () => {
                 'admin': 'ADMIN'
             };
 
-            const result = await login(email, password, roleMap[selectedRole]);
+            const result = await login(email, password);
 
             if (result.success) {
                 // Redirect based on role

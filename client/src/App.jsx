@@ -9,6 +9,7 @@ import CoursePreview from './pages/CoursePreview';
 import MyCourses from './pages/MyCourses';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
+import {Toaster} from 'react-hot-toast'
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
+      <Toaster/>
     </AuthProvider>
   );
 }

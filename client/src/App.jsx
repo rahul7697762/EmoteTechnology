@@ -14,6 +14,7 @@ import StudentCertificates from './pages/StudentCertificates';
 import StudentQuizzes from './pages/StudentQuizzes';
 import SettingsPage from './pages/Settings';
 import './App.css';
+import {Toaster} from 'react-hot-toast'
 
 function App() {
   return (
@@ -83,6 +84,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
+      <Toaster/>
     </AuthProvider>
   );
 }

@@ -28,16 +28,21 @@ const userSchema = new mongoose.Schema({
     },
 
     profile: {
-        avatar:{
+        avatar: {
             type: String,
             default: null
+        },
+        title: {
+            type: String,
+            default: "Student",
+            maxlength: 50
         },
         bio: {
             type: String,
             default: "",
             maxlength: 500,
         },
-        phone:{
+        phone: {
             type: String,
             default: null
         },
@@ -89,35 +94,35 @@ const userSchema = new mongoose.Schema({
         default: null
     },
 
-    deletedAt:{
+    deletedAt: {
         type: Date,
         default: null
     },
     // to verift email 
-    emailVerificationToken:{
+    emailVerificationToken: {
         type: String,
         select: false
     },
-    emailVerificationTokenExpires:{
+    emailVerificationTokenExpires: {
         type: Date,
         select: false
     },
     // OPT when user forgets password
-    passwordResetOtp:{
+    passwordResetOtp: {
         type: String,
         select: false
     },
     // OPT expiry time when user forgets password 
-    passwordResetOTPExpires:{
+    passwordResetOTPExpires: {
         type: Date,
         select: false
     },
     // reset token and its expiry for password change
-    resetToken:{
+    resetToken: {
         type: String,
         select: false
     },
-    resetTokenExpiry:{
+    resetTokenExpiry: {
         type: Date,
         select: false
     },

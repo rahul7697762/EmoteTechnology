@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import { saveCourse, getCourseDetails } from '../services/courseService';
 import { useAuth } from '../context/AuthContext';
 import Sidebar from '../components/dashboard/Sidebar';
 import {
@@ -245,11 +245,10 @@ const CreateCourse = () => {
             if (existingCourseId) {
                 try {
                     console.log("Fetching course:", existingCourseId);
-                    const res = await axios.get(`${apiUrl}/faculty/course/${existingCourseId}`, {
-                        withCredentials: true
-                    });
-                    if (res.data.success) {
-                        const { course: fetchedCourse, modules: fetchedModules } = res.data.data;
+                    console.log("Fetching course:", existingCourseId);
+                    const res = await getCourseDetails(existingCourseId);
+                    if (res.success) {
+                        const { course: fetchedCourse, modules: fetchedModules } = res.data;
 
                         // Merge fetched data
                         setCourse({
@@ -319,12 +318,10 @@ const CreateCourse = () => {
                 }))
             };
 
-            const res = await axios.post(`${apiUrl}/faculty/save-course`, payload, {
-                withCredentials: true
-            });
+            const res = await saveCourse(payload);
 
-            if (res.data.success) {
-                const savedId = res.data.data.courseId;
+            if (res.success) {
+                const savedId = res.data.courseId;
                 setCourse(prev => ({ ...prev, _id: savedId, status: statusOverride || prev.status }));
 
                 // Clear local draft to avoid confusion? 

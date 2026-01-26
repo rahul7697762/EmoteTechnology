@@ -12,6 +12,7 @@ const Sidebar = () => {
         { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
         { icon: BookOpen, label: 'My Courses', path: '/my-courses' },
         { icon: PlusCircle, label: 'Create Course', path: '/create-course' },
+        { icon: Settings, label: 'Settings', path: '/settings' },
     ];
 
     return (

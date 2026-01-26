@@ -45,7 +45,7 @@ export const signup = async (req, res) => {
         const newUser = await User.create(user);
 
         // sending token in cookie
-        generateToken(newUser._id, res);
+        const token = generateToken(newUser._id, res);
 
         // remove the password field before sending response
         newUser.password = undefined;
@@ -56,7 +56,8 @@ export const signup = async (req, res) => {
         return res.status(201).json({
             success: true,
             message: 'User registered successfully',
-            user: newUser
+            user: newUser,
+            token
         });
     } catch (error) {
         console.error('Signup error:', error);
@@ -98,7 +99,7 @@ export const login = async (req, res) => {
         }
 
         //checkng if user account is active
-        if(user.accountStatus !== "ACTIVE"){
+        if (user.accountStatus !== "ACTIVE") {
             return res.status(403).json({
                 success: false,
                 message: `Your account is ${user.accountStatus}. Please contact support.`
@@ -110,7 +111,7 @@ export const login = async (req, res) => {
         await user.save();
 
         // sending token in cookie
-        generateToken(user._id, res);
+        const token = generateToken(user._id, res);
 
         // remove the password field before sending response
         user.password = undefined;
@@ -118,7 +119,8 @@ export const login = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: 'Logged in successfully',
-            user
+            user,
+            token
         });
     } catch (error) {
         console.error('Login error:', error);

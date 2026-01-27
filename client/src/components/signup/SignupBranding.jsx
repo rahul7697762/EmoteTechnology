@@ -9,20 +9,7 @@ const SignupBranding = () => {
 
     return (
         <div className="hidden lg:flex flex-1 relative z-10 flex-col justify-between p-12">
-            {/* Logo */}
-            <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-3 cursor-pointer"
-                onClick={() => navigate('/')}
-            >
-                <div className="w-12 h-12 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/30">
-                    <Zap size={26} className="text-white" />
-                </div>
-                <span className="text-2xl font-bold text-white">
-                    Emote<span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">Technology</span>
-                </span>
-            </motion.div>
+
 
             {/* Hero Content */}
             <motion.div

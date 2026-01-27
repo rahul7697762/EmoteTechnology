@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/dashboard/Sidebar';
 import StatsCard from '../components/dashboard/StatsCard';
 import { Users, BookOpen, DollarSign, Star, Clock } from 'lucide-react';
-import axios from 'axios';
+import { getFacultyCourses, getDashboardStats } from '../services/courseService';
 import { useAuth } from '../context/AuthContext';
 
 const FacultyDashboard = () => {
@@ -24,50 +24,22 @@ const FacultyDashboard = () => {
                 // Use environment variable for API URL or fallback to localhost
                 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-                // 1. Fetch from API (Best effort)
-                let apiData = [];
-                try {
-                    const coursesRes = await axios.get(`${apiUrl}/faculty/my-courses`, {
-                        withCredentials: true
-                    });
-                    if (coursesRes.data.success) {
-                        apiData = coursesRes.data.data;
-                    }
+                const [coursesResult, statsResult] = await Promise.allSettled([
+                    getFacultyCourses(),
+                    getDashboardStats()
+                ]);
 
-                    const statsRes = await axios.get(`${apiUrl}/faculty/dashboard-stats`, {
-                        withCredentials: true
-                    });
-                    if (statsRes.data.success) {
-                        setStats(statsRes.data.data);
-                    }
-                } catch (apiError) {
-                    console.warn("API not available, using local data only.");
+                if (coursesResult.status === 'fulfilled' && coursesResult.value.success) {
+                    setCourses(coursesResult.value.courses);
+                } else {
+                    console.error("Failed to fetch courses", coursesResult.reason);
                 }
 
-                // 2. Load Local Draft
-                let localCourses = [];
-                const savedDraft = localStorage.getItem('courseDraft');
-                if (savedDraft) {
-                    try {
-                        const parsed = JSON.parse(savedDraft);
-                        if (parsed.course) {
-                            localCourses.push({
-                                _id: 'local-draft',
-                                title: parsed.course.title || "Untitled Draft",
-                                price: 0, // Placeholder
-                                enrolledCount: 0,
-                                status: parsed.course.status || "DRAFT",
-                                rating: { average: 0 },
-                                thumbnail: parsed.course.thumbnail || null
-                            });
-                        }
-                    } catch (e) {
-                        console.error("Failed to parse local draft", e);
-                    }
+                if (statsResult.status === 'fulfilled' && statsResult.value.success) {
+                    setStats(statsResult.value.data);
+                } else {
+                    console.error("Failed to fetch stats", statsResult.reason);
                 }
-
-                // 3. Merge (Local drafts first)
-                setCourses([...localCourses, ...apiData]);
 
             } catch (error) {
                 console.error("Unexpected error loading dashboard", error);

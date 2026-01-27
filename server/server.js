@@ -10,6 +10,7 @@ import userRoutes from './routes/user.routes.js';
 import cookieParser from 'cookie-parser';
 import { globalRateLimiter } from './middleware/rateLimiter.middleware.js';
 import courseRoutes from './routes/course.routes.js';
+import studentRoutes from './routes/student.routes.js';
 
 // Load environment variables
 dotenv.config();
@@ -44,6 +45,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/faculty', facultyRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/courses', courseRoutes);
+app.use('/api/student', studentRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

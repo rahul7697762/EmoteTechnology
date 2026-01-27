@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import RoleSelector from './RoleSelector';
 import SocialLogin from './SocialLogin';
-import { roles } from './data';
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [selectedRole, setSelectedRole] = useState('student');
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
@@ -24,18 +21,16 @@ const LoginForm = () => {
         setError('');
 
         try {
-            const roleMap = {
-                'student': 'STUDENT',
-                'faculty': 'FACULTY',
-                'admin': 'ADMIN'
-            };
 
-            const result = await login(email, password, roleMap[selectedRole]);
+
+            const result = await login(email, password);
 
             if (result.success) {
                 // Redirect based on role
                 if (result.user.role === 'FACULTY' || result.user.role === 'ADMIN') {
                     navigate('/dashboard');
+                } else if (result.user.role === 'STUDENT') {
+                    navigate('/student-dashboard');
                 } else {
                     navigate('/');
                 }
@@ -62,7 +57,7 @@ const LoginForm = () => {
         }
     };
 
-    const selectedRoleData = roles.find(r => r.id === selectedRole);
+
 
     return (
         <motion.div
@@ -85,11 +80,8 @@ const LoginForm = () => {
             <div className="bg-white dark:bg-white/5 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-3xl p-8 shadow-2xl">
                 <div className="text-center mb-8">
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Sign In</h2>
-                    <p className="text-gray-500 dark:text-gray-400">Choose your role to continue</p>
                 </div>
 
-                {/* Role Selector */}
-                <RoleSelector selectedRole={selectedRole} setSelectedRole={setSelectedRole} />
 
                 {/* Error Message */}
                 {error && (
@@ -148,9 +140,9 @@ const LoginForm = () => {
                             />
                             Remember me
                         </label>
-                        <a href="#" className="text-teal-400 hover:text-teal-300 transition-colors">
-                            Forgot password?
-                        </a>
+                        <Link to="/forgot-password" className="text-teal-400 hover:text-teal-300 transition-colors">
+                            Forgot Password?
+                        </Link>
                     </div>
 
                     {/* Submit Button */}
@@ -161,7 +153,7 @@ const LoginForm = () => {
                         whileTap={{ scale: loading ? 1 : 0.98 }}
                         className={`
                             w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center gap-2
-                            bg-gradient-to-r ${selectedRoleData?.gradient} shadow-xl ${selectedRoleData?.glow}
+                            bg-gradient-to-r from-teal-500 to-cyan-500 shadow-xl shadow-teal-500/30
                             hover:shadow-2xl transition-all disabled:opacity-70
                         `}
                     >
@@ -169,34 +161,29 @@ const LoginForm = () => {
                             <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                         ) : (
                             <>
-                                Sign in as {selectedRoleData?.label}
+                                Sign in
                                 <ArrowRight size={20} />
                             </>
                         )}
                     </motion.button>
                 </form>
 
-                {/* Divider - Only for Student */}
-                {selectedRole === 'student' && (
-                    <>
-                        <div className="flex items-center my-8">
-                            <div className="flex-1 h-px bg-gray-200 dark:bg-white/10"></div>
-                            <span className="px-4 text-sm text-gray-500">Or continue with</span>
-                            <div className="flex-1 h-px bg-gray-200 dark:bg-white/10"></div>
-                        </div>
+                <div className="flex items-center my-8">
+                    <div className="flex-1 h-px bg-gray-200 dark:bg-white/10"></div>
+                    <span className="px-4 text-sm text-gray-500">Or continue with</span>
+                    <div className="flex-1 h-px bg-gray-200 dark:bg-white/10"></div>
+                </div>
 
-                        {/* Social Login */}
-                        <SocialLogin />
+                {/* Social Login */}
+                <SocialLogin />
 
-                        {/* Sign Up Link */}
-                        <p className="text-center text-gray-600 dark:text-gray-400 mt-8 text-sm">
-                            Don't have an account?{' '}
-                            <a href="/signup" className="text-teal-400 font-semibold hover:text-teal-300 transition-colors">
-                                Sign up for free
-                            </a>
-                        </p>
-                    </>
-                )}
+                {/* Sign Up Link */}
+                <p className="text-center text-gray-600 dark:text-gray-400 mt-8 text-sm">
+                    Don't have an account?{' '}
+                    <Link to="/signup" className="text-teal-400 font-semibold hover:text-teal-300 transition-colors">
+                        Sign up for free
+                    </Link>
+                </p>
             </div>
         </motion.div>
     );

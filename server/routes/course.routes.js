@@ -75,7 +75,7 @@ router.put('/:id',
 router.patch('/:id/status',
     statusCourseValidation,
     validate,
-    protect, restrictTo('FACULTY'),
+    protect, restrictTo('FACULTY','ADMIN'),
     updateCourseStatus
 );
 

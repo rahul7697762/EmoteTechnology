@@ -1,43 +1,16 @@
 import axios from 'axios';
 
-// Get API URL from environment variable or fallback to localhost
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Get API URL from environment variable 
+// Support both VITE_API_URL and VITE_BACKEND_URL to stay compatible with team conventions
+const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000/api';
 
-// Create axios instance with base configuration
-const api = axios.create({
+export const api = axios.create({
     baseURL: API_URL,
+    withCredentials: true,
     headers: {
         'Content-Type': 'application/json'
     }
 });
-
-// Request interceptor to add token to requests
-api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
-
-// Response interceptor to handle errors
-api.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            // Token expired or invalid, clear storage and redirect to login
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
-        }
-        return Promise.reject(error);
-    }
-);
 
 // Auth API calls
 export const authAPI = {
@@ -61,7 +34,28 @@ export const authAPI = {
     getMe: async () => {
         const response = await api.get('/auth/me');
         return response.data;
+    },
+
+    forgotPassword: async (email) => {
+        const response = await api.post('/auth/forgot-password', { email });
+        return response.data;
+    },
+
+    verifyOTP: async (email, otp) => {
+        const response = await api.post('/auth/verify-otp', { email, otp });
+        return response.data;
+    },
+
+    resetPassword: async (password, token) => {
+        const response = await api.post('/auth/reset-password', { newPassword: password, resetToken: token });
+        return response.data;
+    },
+
+    verifyEmail: async (token) => {
+        const response = await api.post('/auth/verify-email', { token });
+        return response.data;
     }
 };
 
+// Default export for backward compatibility with my recent changes
 export default api;

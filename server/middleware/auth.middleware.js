@@ -7,12 +7,17 @@ import cookieParser from 'cookie-parser'; // Ensure this is imported
  */
 export const protect = async (req, res, next) => {
     try {
-        // Ensure req.cookies is defined
-        if (!req.cookies || !req.cookies.jwt) {
-            return res.status(401).json({ message: "Not authorized, no token" });
+        let token;
+
+        if (req.cookies && req.cookies.jwt) {
+            token = req.cookies.jwt;
+        } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+            token = req.headers.authorization.split(' ')[1];
         }
 
-        const token = req.cookies.jwt;
+        if (!token) {
+            return res.status(401).json({ message: "Not authorized, no token" });
+        }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const user = await User.findById(decoded.userId);

@@ -43,7 +43,20 @@ const LoginForm = () => {
                 setError(result.error);
             }
         } catch (err) {
-            setError('An unexpected error occurred. Please try again.');
+            // Extract detailed error message from server response
+            let errorMessage = 'An unexpected error occurred. Please try again.';
+
+            if (err.response?.data) {
+                if (err.response.data.message) {
+                    errorMessage = err.response.data.message;
+                }
+                // If there are validation errors, show the first one
+                if (err.response.data.errors && err.response.data.errors.length > 0) {
+                    errorMessage = err.response.data.errors[0].msg || errorMessage;
+                }
+            }
+
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }

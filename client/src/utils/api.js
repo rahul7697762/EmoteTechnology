@@ -47,7 +47,9 @@ export const authAPI = {
     },
 
     login: async (data) => {
+        console.log('Login API called with data:', data);
         const response = await api.post('/auth/login', data);
+        console.log('Login API response:', response.data);
         return response.data;
     },
 

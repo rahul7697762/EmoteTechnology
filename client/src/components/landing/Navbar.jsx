@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Zap, Sun, Moon } from 'lucide-react';
+import { Zap, Sun, Moon, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -28,19 +28,32 @@ const Navbar = () => {
                     <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="hidden md:flex items-center gap-1 bg-gray-100 dark:bg-white/5 backdrop-blur-xl rounded-full px-2 py-2 border border-gray-200 dark:border-white/10"
+                        className="hidden md:flex items-center gap-6"
                     >
-                        {['Home', 'Courses', 'Mentors', 'Pricing', 'About'].map((item, i) => (
-                            <button
-                                key={item}
-                                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${i === 0
+                        <div className="flex items-center gap-1 bg-gray-100 dark:bg-white/5 backdrop-blur-xl rounded-full px-2 py-2 border border-gray-200 dark:border-white/10">
+                            {['Home', 'Courses', 'Jobs', 'AI interview'].map((item, i) => (
+                                <button
+                                    key={item}
+                                    className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${i === 0
                                         ? 'bg-white dark:bg-white/10 text-gray-900 dark:text-white shadow-sm'
                                         : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/5'
-                                    }`}
-                            >
-                                {item}
-                            </button>
-                        ))}
+                                        }`}
+                                >
+                                    {item}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="relative group">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Search className="h-4 w-4 text-gray-400 group-focus-within:text-teal-500 transition-colors" />
+                            </div>
+                            <input
+                                type="text"
+                                className="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-white/10 rounded-full leading-5 bg-gray-100 dark:bg-white/5 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent sm:text-sm transition-all w-64"
+                                placeholder="Search courses, jobs..."
+                            />
+                        </div>
                     </motion.div>
 
                     <div className="flex items-center gap-4">
@@ -50,15 +63,6 @@ const Navbar = () => {
                         >
                             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                         </button>
-
-                        <motion.button
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            onClick={() => navigate('/login')}
-                            className="group relative px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full font-semibold text-sm text-white overflow-hidden shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:scale-105"
-                        >
-                            <span className="relative z-10">Get Started</span>
-                        </motion.button>
                     </div>
                 </div>
             </div>

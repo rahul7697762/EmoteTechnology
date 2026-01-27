@@ -43,7 +43,8 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password, role) => {
         try {
             setError(null);
-            const response = await authAPI.login({ email, password, role });
+            // Note: role is not sent to backend for login, authentication is based on the user's stored role
+            const response = await authAPI.login({ email, password });
 
             // Save token and user to localStorage
             localStorage.setItem('token', response.token);

@@ -8,13 +8,18 @@ import CreateCourse from './pages/CreateCourse';
 import CoursePreview from './pages/CoursePreview';
 import MyCourses from './pages/MyCourses';
 import ProtectedRoute from './components/ProtectedRoute';
+import PublicRoute from './components/PublicRoute';
 import StudentDashboard from './pages/StudentDashboard';
 import StudentCourses from './pages/StudentCourses';
 import StudentCertificates from './pages/StudentCertificates';
 import StudentQuizzes from './pages/StudentQuizzes';
 import SettingsPage from './pages/Settings';
+import ForgotPassword from './pages/ForgotPassword';
+import VerifyOTP from './pages/VerifyOTP';
+import ResetPassword from './pages/ResetPassword';
+import VerifyEmail from './pages/VerifyEmail';
 import './App.css';
-import {Toaster} from 'react-hot-toast'
+import { Toaster } from 'react-hot-toast'
 
 function App() {
   return (
@@ -22,8 +27,34 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/login" element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          } />
+          <Route path="/signup" element={
+            <PublicRoute>
+              <SignupPage />
+            </PublicRoute>
+          } />
+
+          <Route path="/forgot-password" element={
+            <PublicRoute>
+              <ForgotPassword />
+            </PublicRoute>
+          } />
+          <Route path="/verify-otp" element={
+            <PublicRoute>
+              <VerifyOTP />
+            </PublicRoute>
+          } />
+          <Route path="/reset-password" element={
+            <PublicRoute>
+              <ResetPassword />
+            </PublicRoute>
+          } />
+          <Route path="/verify-email" element={<VerifyEmail />
+        } />
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={
@@ -84,7 +115,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
-      <Toaster/>
+      <Toaster />
     </AuthProvider>
   );
 }

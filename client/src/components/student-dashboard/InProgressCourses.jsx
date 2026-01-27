@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Play } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const CircularProgress = ({ value, color }) => {
@@ -52,8 +53,8 @@ const CourseCard = ({ course }) => {
             <div className="flex justify-between items-start mb-4">
                 <CircularProgress value={course.progress} color={course.color} />
                 <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${course.status === 'High Priority'
-                        ? 'bg-sky-100 text-sky-600 dark:bg-sky-900/30 dark:text-sky-400'
-                        : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
+                    ? 'bg-sky-100 text-sky-600 dark:bg-sky-900/30 dark:text-sky-400'
+                    : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
                     }`}>
                     {course.status}
                 </span>
@@ -63,8 +64,8 @@ const CourseCard = ({ course }) => {
             <p className="text-sm text-gray-500 dark:text-gray-400 italic mb-6">Last accessed: {course.lastAccessed}</p>
 
             <button className={`w-full py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold transition-colors ${course.active
-                    ? 'bg-teal-600 hover:bg-teal-700 text-white'
-                    : 'bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+                ? 'bg-teal-600 hover:bg-teal-700 text-white'
+                : 'bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                 }`}>
                 {course.active ? <Play size={16} fill="currentColor" /> : <Play size={16} />}
                 {course.actionText}
@@ -125,7 +126,7 @@ const InProgressCourses = () => {
         <section className="mb-8">
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">In-Progress Courses</h2>
-                <a href="#" className="text-teal-600 dark:text-teal-400 text-sm font-semibold hover:underline">View All</a>
+                <Link to="/student-courses" className="text-teal-600 dark:text-teal-400 text-sm font-semibold hover:underline">View All</Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

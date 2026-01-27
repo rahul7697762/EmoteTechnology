@@ -2,9 +2,9 @@ import React from 'react';
 import LoginBackground from '../components/login/LoginBackground';
 import Navbar from '../components/landing/Navbar';
 import LoginBranding from '../components/login/LoginBranding';
-import LoginForm from '../components/login/LoginForm';
+import ForgotPasswordForm from '../components/forgot-password/ForgotPasswordForm';
 
-const LoginPage = () => {
+const ForgotPassword = () => {
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] flex overflow-hidden pt-20">
             <Navbar />
@@ -16,12 +16,12 @@ const LoginPage = () => {
             {/* Left Panel - Branding */}
             <LoginBranding />
 
-            {/* Right Panel - Login Form */}
+            {/* Right Panel - Form */}
             <div className="flex-1 flex items-center justify-center p-6 lg:p-12 relative z-10">
-                <LoginForm />
+                <ForgotPasswordForm />
             </div>
         </div>
     );
 };
 
-export default LoginPage;
+export default ForgotPassword;

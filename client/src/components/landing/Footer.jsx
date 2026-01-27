@@ -1,4 +1,5 @@
 import { Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
     return (
@@ -28,9 +29,9 @@ const Footer = () => {
                             <ul className="space-y-3">
                                 {col.links.map((link, j) => (
                                     <li key={j}>
-                                        <a href="#" className="text-gray-600 dark:text-gray-500 hover:text-teal-600 dark:hover:text-teal-400 transition-colors text-sm">
+                                        <Link to="#" className="text-gray-600 dark:text-gray-500 hover:text-teal-600 dark:hover:text-teal-400 transition-colors text-sm">
                                             {link}
-                                        </a>
+                                        </Link>
                                     </li>
                                 ))}
                             </ul>
@@ -42,9 +43,9 @@ const Footer = () => {
                         © {new Date().getFullYear()} EmoteTechnology. All rights reserved.
                     </p>
                     <div className="flex items-center gap-6 text-gray-600 dark:text-gray-500 text-sm">
-                        <a href="#" className="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy</a>
-                        <a href="#" className="hover:text-gray-900 dark:hover:text-white transition-colors">Terms</a>
-                        <a href="#" className="hover:text-gray-900 dark:hover:text-white transition-colors">Cookies</a>
+                        <Link to="#" className="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy</Link>
+                        <Link to="#" className="hover:text-gray-900 dark:hover:text-white transition-colors">Terms</Link>
+                        <Link to="#" className="hover:text-gray-900 dark:hover:text-white transition-colors">Cookies</Link>
                     </div>
                 </div>
             </div>

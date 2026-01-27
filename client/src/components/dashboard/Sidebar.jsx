@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { LayoutDashboard, BookOpen, PlusCircle, Settings, LogOut, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -18,10 +18,12 @@ const Sidebar = () => {
     return (
         <aside className="w-64 bg-white dark:bg-[#1a1c23] border-r border-gray-200 dark:border-gray-800 h-screen fixed left-0 top-0 overflow-y-auto z-20 hidden md:block">
             <div className="p-6">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">
-                    EmoteTechnology
-                </h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Faculty Portal</p>
+                <Link to="/">
+                    <h1 className="text-2xl font-bold bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">
+                        EmoteTechnology
+                    </h1>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Faculty Portal</p>
+                </Link>
             </div>
 
             <nav className="mt-6 px-4 space-y-2">

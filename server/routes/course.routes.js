@@ -3,7 +3,8 @@ import {
     createCourse, getAllCourses, getCourseBySlug, searchCourses,
     getCourseReviews, getCourseById, getAllCoursesAdmin,
     approveCourse, rejectCourse, deleteCourseAdmin,
-    getFacultyCourses, updateCourse, updateCourseStatus, deleteCourse
+    getFacultyCourses, updateCourse, updateCourseStatus, deleteCourse,
+    getFacultyCourseById
 } from "../controllers/course.controller.js";
 import { upload } from "../middleware/upload.middleware.js";
 import {
@@ -43,6 +44,12 @@ STUDENTS ROUTES
 FACULTY ROUTES
 ===============*/
 
+// Get instructor courses
+router.get('/faculty/my-courses', protect, restrictTo('FACULTY', 'ADMIN'), getFacultyCourses);
+
+// Get course by ID for Faculty (Draft/Published)
+router.get('/faculty/:id', protect, restrictTo('FACULTY', 'ADMIN'), getFacultyCourseById);
+
 // create course and upload thumbnail and preview video
 router.post("/",
     upload.fields([
@@ -55,9 +62,6 @@ router.post("/",
     restrictTo('FACULTY', 'ADMIN'),
     createCourse
 );
-
-// Get instructor courses
-router.get('/faculty/my-courses', protect, restrictTo('FACULTY', 'ADMIN'), getFacultyCourses);
 
 // Update course (Details + Thumbnail/Video) - Combined
 router.put('/:id',
@@ -75,7 +79,7 @@ router.put('/:id',
 router.patch('/:id/status',
     statusCourseValidation,
     validate,
-    protect, restrictTo('FACULTY','ADMIN'),
+    protect, restrictTo('FACULTY', 'ADMIN'),
     updateCourseStatus
 );
 
@@ -84,7 +88,7 @@ router.delete('/:id', protect, restrictTo('FACULTY', 'ADMIN'), deleteCourse);
 
 /*================
 ADMIN ROUTES
-================*/  
+================*/
 
 // Get all courses (Admin)
 router.get('/admin/all', protect, restrictTo('ADMIN'), getAllCoursesAdmin);

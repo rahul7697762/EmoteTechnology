@@ -6,6 +6,6 @@ const storage = multer.memoryStorage();
 export const upload = multer({
   storage,
   limits: {
-    fileSize: 100 * 1024 * 1024, // 10MB
+    fileSize: 500 * 1024 * 1024, // 500MB
   },
 });

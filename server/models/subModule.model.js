@@ -26,7 +26,7 @@ const subModuleSchema = new mongoose.Schema({
 
     type: {
         type: String,
-        enum: ["VIDEO", "ARTICLE", "QUIZ"],
+        enum: ["VIDEO", "ARTICLE"],
         required: true
     },
 
@@ -40,11 +40,10 @@ const subModuleSchema = new mongoose.Schema({
 
         provider: {
             type: String,
-            enum: ["CLOUDINARY", "AWS_S3", "VIMEO", "YOUTUBE"]
+            enum: ["CLOUDINARY", "AWS_S3", "VIMEO", "YOUTUBE","BUNNY_CDN"]
         }
     },
-
-    // markdown / html
+    // html content for article
     content: {
         type: String
     },

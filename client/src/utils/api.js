@@ -57,5 +57,171 @@ export const authAPI = {
     }
 };
 
+// Course API calls
+export const courseAPI = {
+    // Create new course (metadata only)
+    createCourse: async (courseData) => {
+        // Handle multipart/form-data if courseData contains files
+        const config = {};
+        if (courseData instanceof FormData) {
+            config.headers = { 'Content-Type': 'multipart/form-data' };
+        }
+        const response = await api.post('/courses', courseData, config);
+        return response.data;
+    },
+
+    // Get all courses created by the faculty
+    getMyCourses: async () => {
+        const response = await api.get('/courses/faculty/my-courses');
+        return response.data;
+    },
+
+    // Get course details by ID
+    getCourseById: async (id) => {
+        const response = await api.get(`/courses/${id}`);
+        return response.data;
+    },
+
+    // Get course by ID (for Faculty - protected)
+    getFacultyCourseById: async (id) => {
+        const response = await api.get(`/courses/faculty/${id}`);
+        return response.data;
+    },
+
+    // Update course (details, thumbnail, video)
+    updateCourse: async (id, courseData) => {
+        const config = {};
+        if (courseData instanceof FormData) {
+            config.headers = { 'Content-Type': 'multipart/form-data' };
+        }
+        const response = await api.put(`/courses/${id}`, courseData, config);
+        return response.data;
+    },
+
+    // Update course status (e.g., to PUBLISHED)
+    updateCourseStatus: async (id, status) => {
+        const response = await api.patch(`/courses/${id}/status`, { status });
+        return response.data;
+    },
+
+    // Delete course
+    deleteCourse: async (id) => {
+        const response = await api.delete(`/courses/${id}`);
+        return response.data;
+    }
+};
+
+// Module API calls
+// Module API calls
+export const moduleAPI = {
+    // Create Module: /api/module/:courseId/create
+    createModule: async (courseId, moduleData) => {
+        const response = await api.post(`/module/${courseId}/create`, moduleData);
+        return response.data;
+    },
+
+    // Get All Modules by Course: /api/module/:courseId
+    getModulesByCourse: async (courseId) => {
+        const response = await api.get(`/module/${courseId}`);
+        return response.data;
+    },
+
+    // Get Single Module: /api/module/:id
+    getModuleById: async (id) => {
+        const response = await api.get(`/module/${id}`);
+        return response.data;
+    },
+
+    // Update Module: /api/module/:id
+    updateModule: async (id, moduleData) => {
+        const response = await api.patch(`/module/${id}`, moduleData);
+        return response.data;
+    },
+
+    // Publish Module: /api/module/:id/publish
+    publishModule: async (id) => {
+        const response = await api.patch(`/module/${id}/publish`);
+        return response.data;
+    },
+
+    // Unpublish Module: /api/module/:id/unpublish
+    unpublishModule: async (id) => {
+        const response = await api.patch(`/module/${id}/unpublish`);
+        return response.data;
+    },
+
+    // Delete Module: /api/module/:id
+    deleteModule: async (id) => {
+        const response = await api.delete(`/module/${id}`);
+        return response.data;
+    },
+
+    // Reorder Modules: /api/module/:courseId/reorder
+    reorderModules: async (courseId, modules) => {
+        const response = await api.patch(`/module/${courseId}/reorder`, { modules });
+        return response.data;
+    }
+};
+
+// SubModule (Lesson) API calls
+export const subModuleAPI = {
+    // Create: /api/submodule
+    // data can be JSON or FormData (if video file included)
+    createSubModule: async (data) => {
+        const config = {};
+        if (data instanceof FormData) {
+            config.headers = { 'Content-Type': 'multipart/form-data' };
+        }
+        const response = await api.post('/submodule', data, config);
+        return response.data;
+    },
+
+    // Get All by Module: /api/submodule/module/:moduleId
+    getSubModulesByModule: async (moduleId) => {
+        const response = await api.get(`/submodule/module/${moduleId}`);
+        return response.data;
+    },
+
+    // Get One: /api/submodule/:id
+    getSubModuleById: async (id) => {
+        const response = await api.get(`/submodule/${id}`);
+        return response.data;
+    },
+
+    // Update: /api/submodule/:id
+    updateSubModule: async (id, data) => {
+        const config = {};
+        if (data instanceof FormData) {
+            config.headers = { 'Content-Type': 'multipart/form-data' };
+        }
+        const response = await api.patch(`/submodule/${id}`, data, config);
+        return response.data;
+    },
+
+    // Publish: /api/submodule/:id/publish
+    publishSubModule: async (id) => {
+        const response = await api.patch(`/submodule/${id}/publish`);
+        return response.data;
+    },
+
+    // Unpublish: /api/submodule/:id/unpublish
+    unpublishSubModule: async (id) => {
+        const response = await api.patch(`/submodule/${id}/unpublish`);
+        return response.data;
+    },
+
+    // Delete: /api/submodule/:id
+    deleteSubModule: async (id) => {
+        const response = await api.delete(`/submodule/${id}`);
+        return response.data;
+    },
+
+    // Reorder: /api/submodule/reorder
+    reorderSubModules: async (moduleId, subModules) => {
+        const response = await api.patch('/submodule/reorder', { moduleId, subModules });
+        return response.data;
+    }
+};
+
 // Default export for backward compatibility with my recent changes
 export default api;

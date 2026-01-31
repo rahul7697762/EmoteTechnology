@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Download } from 'lucide-react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
 
 const CertificateItem = ({ cert }) => (
@@ -28,12 +28,7 @@ const RecentCertificates = () => {
     useEffect(() => {
         const fetchCertificates = async () => {
             try {
-                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                const token = localStorage.getItem('token');
-
-                const response = await axios.get(`${apiUrl}/student/certificates`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const response = await api.get('/student/certificates');
 
                 if (response.data.success) {
                     // Take only the first 2 certificates

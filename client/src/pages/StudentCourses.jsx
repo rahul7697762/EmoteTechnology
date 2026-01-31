@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import StudentSidebar from '../components/student-dashboard/StudentSidebar';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import api from '../utils/api';
 import { Search, Filter, BookOpen, Clock, Award, ChevronRight } from 'lucide-react';
 
 const StudentCourses = () => {
@@ -14,13 +14,8 @@ const StudentCourses = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                const token = localStorage.getItem('token');
-
                 // We'll create a new endpoint for all enrolled courses
-                const response = await axios.get(`${apiUrl}/student/enrolled-courses`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const response = await api.get('/student/enrolled-courses');
 
                 if (response.data.success) {
                     setCourses(response.data.data);
@@ -59,8 +54,8 @@ const StudentCourses = () => {
                                 key={tab}
                                 onClick={() => setFilter(tab)}
                                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${filter === tab
-                                        ? 'bg-white dark:bg-gray-800 text-teal-600 dark:text-teal-400 shadow-sm'
-                                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                                    ? 'bg-white dark:bg-gray-800 text-teal-600 dark:text-teal-400 shadow-sm'
+                                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                                     }`}
                             >
                                 {tab === 'ALL' ? 'All Courses' : tab.charAt(0) + tab.slice(1).toLowerCase()}
@@ -98,8 +93,8 @@ const StudentCourses = () => {
                                     )}
                                     <div className="absolute top-3 right-3">
                                         <span className={`px-2 py-1 text-xs font-bold rounded-lg uppercase tracking-wide backdrop-blur-md ${course.status === 'COMPLETED'
-                                                ? 'bg-green-500/20 text-green-700 dark:text-green-300'
-                                                : 'bg-teal-500/90 text-white'
+                                            ? 'bg-green-500/20 text-green-700 dark:text-green-300'
+                                            : 'bg-teal-500/90 text-white'
                                             }`}>
                                             {course.status}
                                         </span>

@@ -10,6 +10,8 @@ import WeeklyStreak from '../components/student-dashboard/WeeklyStreak';
 import { Search, Bell, Settings, LogOut } from 'lucide-react'; // Added icons for reuse
 import { useAuth } from '../context/AuthContext';
 
+import api from '../utils/api'; // Import centralized api
+
 const StudentDashboard = () => {
     const { user, logout } = useAuth();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -27,20 +29,10 @@ const StudentDashboard = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                const token = localStorage.getItem('token');
-                if (!token) return;
+                const response = await api.get('/student/dashboard-stats');
 
-                // Import axios if not already imported at top, or assume it is available
-                // Note: We need to make sure axios is imported.
-                // Assuming I need to add axios import in a separate edit if missing
-                const response = await fetch(`${apiUrl}/student/dashboard-stats`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    setStats(data.data);
+                if (response.data.success) {
+                    setStats(response.data.data);
                 }
             } catch (error) {
                 console.error("Failed to fetch dashboard stats", error);

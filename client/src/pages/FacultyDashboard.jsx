@@ -1,55 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import Sidebar from '../components/dashboard/Sidebar';
 import StatsCard from '../components/dashboard/StatsCard';
-import { Users, BookOpen, DollarSign, Star, Clock } from 'lucide-react';
-import { getFacultyCourses, getDashboardStats } from '../services/courseService';
-import { useAuth } from '../context/AuthContext';
+import { Users, BookOpen, DollarSign, Star } from 'lucide-react';
+import { getFacultyCourses, getDashboardStats } from '../redux/slices/courseSlice';
 
 const FacultyDashboard = () => {
-    const { user } = useAuth();
+    const { user } = useSelector((state) => state.auth);
+    const { courses, stats, loading } = useSelector((state) => state.course);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [stats, setStats] = useState({
-        totalStudents: 0,
-        totalCourses: 0,
-        totalRevenue: 0,
-        averageRating: 0
-    });
-    const [courses, setCourses] = useState([]);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchDashboardData = async () => {
-            try {
-                // Use environment variable for API URL or fallback to localhost
-                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-
-                const [coursesResult, statsResult] = await Promise.allSettled([
-                    getFacultyCourses(),
-                    getDashboardStats()
-                ]);
-
-                if (coursesResult.status === 'fulfilled' && coursesResult.value.success) {
-                    setCourses(coursesResult.value.courses);
-                } else {
-                    console.error("Failed to fetch courses", coursesResult.reason);
-                }
-
-                if (statsResult.status === 'fulfilled' && statsResult.value.success) {
-                    setStats(statsResult.value.data);
-                } else {
-                    console.error("Failed to fetch stats", statsResult.reason);
-                }
-
-            } catch (error) {
-                console.error("Unexpected error loading dashboard", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchDashboardData();
-    }, []);
+        dispatch(getFacultyCourses());
+        dispatch(getDashboardStats());
+    }, [dispatch]);
 
     if (loading) {
         return (
@@ -77,25 +43,25 @@ const FacultyDashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                     <StatsCard
                         title="Total Revenue"
-                        value={`$${stats.totalRevenue.toLocaleString()}`}
+                        value={`$${(stats?.totalRevenue || 0).toLocaleString()}`}
                         icon={DollarSign}
                         color="emerald"
                     />
                     <StatsCard
                         title="Total Students"
-                        value={stats.totalStudents}
+                        value={stats?.totalStudents || 0}
                         icon={Users}
                         color="blue"
                     />
                     <StatsCard
                         title="Active Courses"
-                        value={stats.totalCourses}
+                        value={stats?.totalCourses || 0}
                         icon={BookOpen}
                         color="purple"
                     />
                     <StatsCard
                         title="Average Rating"
-                        value={stats.averageRating}
+                        value={stats?.averageRating || 0}
                         icon={Star}
                         color="amber"
                     />
@@ -114,7 +80,7 @@ const FacultyDashboard = () => {
                     </div>
 
                     <div className="bg-white dark:bg-[#1a1c23] rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-                        {courses.length > 0 ? (
+                        {courses && courses.length > 0 ? (
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left">
                                     <thead className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800">

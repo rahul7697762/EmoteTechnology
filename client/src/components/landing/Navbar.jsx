@@ -1,14 +1,15 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Sun, Moon, Search, Menu, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '../../context/ThemeContext';
-import { useAuth } from '../../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleTheme } from '../../redux/slices/themeSlice';
 import { useState } from 'react';
 
 const Navbar = () => {
     const navigate = useNavigate();
-    const { theme, toggleTheme } = useTheme();
-    const { user } = useAuth();
+    const dispatch = useDispatch();
+    const { theme } = useSelector((state) => state.theme);
+    const { user } = useSelector((state) => state.auth);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -65,7 +66,7 @@ const Navbar = () => {
 
                     <div className="flex items-center gap-4">
                         <button
-                            onClick={toggleTheme}
+                            onClick={() => dispatch(toggleTheme())}
                             className="p-2 rounded-full bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:text-teal-500 dark:hover:text-teal-400 transition-colors hidden md:block"
                         >
                             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
@@ -139,7 +140,7 @@ const Navbar = () => {
                             <div className="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-white/5">
                                 <span className="text-gray-600 dark:text-gray-400 font-medium">Appearance</span>
                                 <button
-                                    onClick={toggleTheme}
+                                    onClick={() => dispatch(toggleTheme())}
                                     className="p-2 rounded-full bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:text-teal-500 dark:hover:text-teal-400 transition-colors"
                                 >
                                     {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}

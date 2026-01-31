@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Mail, Lock, User, Eye, EyeOff, ArrowRight, Phone, AlertCircle } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { signup } from '../../redux/slices/authSlice';
 import SocialLogin from '../login/SocialLogin';
+import toast from 'react-hot-toast';
 
 const SignupForm = () => {
     const [name, setName] = useState('');
@@ -11,36 +13,28 @@ const SignupForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-
-    const navigate = useNavigate();
-    const { signup } = useAuth();
+    const { isSigningUp } = useSelector((state) => state.auth);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
-        setError('');
 
         try {
-            const result = await signup(name, email, password, phone);
+            const user = await dispatch(signup({ name, email, password, phone })).unwrap();
 
-            if (result.success) {
+            if (user) {
+                toast.success('Account created successfully!');
                 // Redirect based on role
-                if (result.user.role === 'FACULTY' || result.user.role === 'ADMIN') {
+                if (user.role === 'FACULTY' || user.role === 'ADMIN') {
                     navigate('/dashboard');
-                } else if (result.user.role === 'STUDENT') {
+                } else if (user.role === 'STUDENT') {
                     navigate('/student-dashboard');
                 } else {
                     navigate('/');
                 }
-            } else {
-                setError(result.error);
             }
         } catch (err) {
-            setError('An unexpected error occurred. Please try again.');
-        } finally {
-            setLoading(false);
+            console.error('Signup failed:', err);
+            toast.error(err?.message || err || 'Signup failed. Please try again.');
         }
     };
 
@@ -70,13 +64,7 @@ const SignupForm = () => {
 
 
 
-                {/* Error Message */}
-                {error && (
-                    <div className="bg-red-500/10 border border-red-500/50 rounded-xl p-4 flex items-start gap-3 mb-5">
-                        <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
-                        <p className="text-red-500 text-sm">{error}</p>
-                    </div>
-                )}
+
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     {/* Name */}
@@ -153,16 +141,16 @@ const SignupForm = () => {
                     {/* Submit Button */}
                     <motion.button
                         type="submit"
-                        disabled={loading}
-                        whileHover={{ scale: loading ? 1 : 1.02 }}
-                        whileTap={{ scale: loading ? 1 : 0.98 }}
+                        disabled={isSigningUp}
+                        whileHover={{ scale: isSigningUp ? 1 : 1.02 }}
+                        whileTap={{ scale: isSigningUp ? 1 : 0.98 }}
                         className={`
                             w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center gap-2
                             bg-gradient-to-r from-teal-500 to-cyan-500 shadow-xl shadow-teal-500/30
                             hover:shadow-2xl transition-all disabled:opacity-70
                         `}
                     >
-                        {loading ? (
+                        {isSigningUp ? (
                             <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                         ) : (
                             <>

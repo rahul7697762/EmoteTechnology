@@ -1,12 +1,14 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, BookOpen, Award, ClipboardList, Settings, LogOut, Sun, Moon } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { useTheme } from '../../context/ThemeContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../redux/slices/authSlice';
+import { toggleTheme } from '../../redux/slices/themeSlice';
 
 const StudentSidebar = () => {
-    const { logout } = useAuth();
-    const { theme, toggleTheme } = useTheme();
+    const dispatch = useDispatch();
+    const { theme } = useSelector((state) => state.theme);
+    const { isLoggingOut } = useSelector((state) => state.auth);
 
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/student-dashboard' },
@@ -73,18 +75,19 @@ const StudentSidebar = () => {
 
             <div className="absolute bottom-8 left-0 right-0 px-4 space-y-2">
                 <button
-                    onClick={toggleTheme}
+                    onClick={() => dispatch(toggleTheme())}
                     className="flex items-center space-x-3 px-4 py-3 w-full text-left text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200 rounded-xl transition-colors"
                 >
                     {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                     <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
                 </button>
                 <button
-                    onClick={logout}
-                    className="flex items-center space-x-3 px-4 py-3 w-full text-left text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-colors font-medium"
+                    onClick={() => dispatch(logout())}
+                    disabled={isLoggingOut}
+                    className="flex items-center space-x-3 px-4 py-3 w-full text-left text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-colors font-medium disabled:opacity-50"
                 >
                     <LogOut size={20} />
-                    <span>Logout</span>
+                    <span>{isLoggingOut ? 'Logging out...' : 'Logout'}</span>
                 </button>
             </div>
         </aside>

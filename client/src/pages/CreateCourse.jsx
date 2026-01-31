@@ -1,16 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { saveCourse, getCourseDetails } from '../services/courseService';
-import { useAuth } from '../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { saveCourse, getCourseDetails } from '../redux/slices/courseSlice';
 import Sidebar from '../components/dashboard/Sidebar';
 import {
     Save, Eye, ChevronRight, MoreVertical, Plus,
     Video, FileText, HelpCircle, Upload, GripVertical,
     Filter, ChevronDown, LayoutGrid, List, Trash2, Image as ImageIcon
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const CreateCourse = () => {
-    const { user } = useAuth();
+    const { user } = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const { state: navState } = useLocation();
     const existingCourseId = navState?.courseId;
@@ -245,8 +247,7 @@ const CreateCourse = () => {
             if (existingCourseId) {
                 try {
                     console.log("Fetching course:", existingCourseId);
-                    console.log("Fetching course:", existingCourseId);
-                    const res = await getCourseDetails(existingCourseId);
+                    const res = await dispatch(getCourseDetails(existingCourseId)).unwrap();
                     if (res.success) {
                         const { course: fetchedCourse, modules: fetchedModules } = res.data;
 
@@ -277,7 +278,7 @@ const CreateCourse = () => {
                     }
                 } catch (error) {
                     console.error("Failed to fetch course:", error);
-                    alert("Failed to load course details.");
+                    toast.error("Failed to load course details.");
                 }
             } else {
                 // Try Local Draft
@@ -318,7 +319,7 @@ const CreateCourse = () => {
                 }))
             };
 
-            const res = await saveCourse(payload);
+            const res = await dispatch(saveCourse(payload)).unwrap();
 
             if (res.success) {
                 const savedId = res.data.courseId;
@@ -333,11 +334,13 @@ const CreateCourse = () => {
                     // users often stay on page to continue editing
                 }
 
+                toast.success(statusOverride === 'PUBLISHED' ? 'Course published successfully!' : 'Course saved successfully!');
                 return true;
             }
         } catch (error) {
             console.error("Save failed:", error);
-            alert("Failed to save course: " + (error.response?.data?.message || error.message));
+            const errorMessage = error?.message || (typeof error === 'string' ? error : 'Failed to save course');
+            toast.error(errorMessage);
             return false;
         } finally {
             setIsSaving(false);
@@ -360,7 +363,6 @@ const CreateCourse = () => {
         if (window.confirm("Are you sure you want to publish this course?")) {
             const success = await saveCourseToBackend("PUBLISHED");
             if (success) {
-                alert("Success! Your course has been published.");
                 navigate('/dashboard');
             }
         }
@@ -479,7 +481,7 @@ const CreateCourse = () => {
                                     <div
                                         onClick={() => handleModuleClick(module.id)}
                                         className={`p-3 rounded-lg flex items-center justify-between cursor-pointer transition-all duration-200 ${module.active
-                                            ? 'bg-gradient-to-r from-teal-50 to-transparent dark:from-teal-900/20 border-l-4 border-teal-500 shadow-sm pl-2'
+                                            ? 'bg-linear-to-r from-teal-50 to-transparent dark:from-teal-900/20 border-l-4 border-teal-500 shadow-sm pl-2'
                                             : 'hover:bg-gray-50 dark:hover:bg-white/5 border-l-4 border-transparent pl-3'
                                             }`}>
                                         <div className="flex items-center gap-3 overflow-hidden">

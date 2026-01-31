@@ -2,58 +2,40 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../../redux/slices/authSlice';
 import SocialLogin from './SocialLogin';
+import toast from 'react-hot-toast';
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-
+    const { isLoggingIn } = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
-        setError('');
 
         try {
+            const response = await dispatch(login({ email, password })).unwrap();
 
-
-            const result = await login(email, password);
-
-            if (result.success) {
+            if (response && response.user) {
+                const { user } = response;
+                toast.success('Login successful!');
                 // Redirect based on role
-                if (result.user.role === 'FACULTY' || result.user.role === 'ADMIN') {
+                if (user.role === 'FACULTY' || user.role === 'ADMIN') {
                     navigate('/dashboard');
-                } else if (result.user.role === 'STUDENT') {
+                } else if (user.role === 'STUDENT') {
                     navigate('/student-dashboard');
                 } else {
                     navigate('/');
                 }
-            } else {
-                setError(result.error);
             }
         } catch (err) {
-            // Extract detailed error message from server response
-            let errorMessage = 'An unexpected error occurred. Please try again.';
-
-            if (err.response?.data) {
-                if (err.response.data.message) {
-                    errorMessage = err.response.data.message;
-                }
-                // If there are validation errors, show the first one
-                if (err.response.data.errors && err.response.data.errors.length > 0) {
-                    errorMessage = err.response.data.errors[0].msg || errorMessage;
-                }
-            }
-
-            setError(errorMessage);
-        } finally {
-            setLoading(false);
+            console.error('Login failed:', err);
+            toast.error(err?.message || err || 'Login failed. Please try again.');
         }
     };
 
@@ -83,13 +65,7 @@ const LoginForm = () => {
                 </div>
 
 
-                {/* Error Message */}
-                {error && (
-                    <div className="bg-red-500/10 border border-red-500/50 rounded-xl p-4 flex items-start gap-3">
-                        <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
-                        <p className="text-red-500 text-sm">{error}</p>
-                    </div>
-                )}
+
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     {/* Email */}
@@ -148,16 +124,16 @@ const LoginForm = () => {
                     {/* Submit Button */}
                     <motion.button
                         type="submit"
-                        disabled={loading}
-                        whileHover={{ scale: loading ? 1 : 1.02 }}
-                        whileTap={{ scale: loading ? 1 : 0.98 }}
+                        disabled={isLoggingIn}
+                        whileHover={{ scale: isLoggingIn ? 1 : 1.02 }}
+                        whileTap={{ scale: isLoggingIn ? 1 : 0.98 }}
                         className={`
                             w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center gap-2
                             bg-gradient-to-r from-teal-500 to-cyan-500 shadow-xl shadow-teal-500/30
                             hover:shadow-2xl transition-all disabled:opacity-70
                         `}
                     >
-                        {loading ? (
+                        {isLoggingIn ? (
                             <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                         ) : (
                             <>

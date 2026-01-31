@@ -1,11 +1,11 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
-    const { user, loading } = useAuth();
+    const { user, isLoadingUser } = useSelector((state) => state.auth);
 
-    if (loading) {
+    if (isLoadingUser) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#0a0a0f]">
                 <div className="text-center">

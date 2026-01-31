@@ -4,6 +4,7 @@ import LandingPage from './pages/LandingPage';
 import SignupPage from './pages/Signup';
 import FacultyDashboard from './pages/FacultyDashboard';
 import CreateCourse from './pages/CreateCourse';
+import EditCourse from './pages/EditCourse';
 import CoursePreview from './pages/CoursePreview';
 import MyCourses from './pages/MyCourses';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -90,6 +91,12 @@ function App() {
           <Route path="/create-course" element={
             <ProtectedRoute allowedRoles={['FACULTY', 'ADMIN']}>
               <CreateCourse />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/edit-course/:id" element={
+            <ProtectedRoute allowedRoles={['FACULTY', 'ADMIN']}>
+              <EditCourse />
             </ProtectedRoute>
           } />
 

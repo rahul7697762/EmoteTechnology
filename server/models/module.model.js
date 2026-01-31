@@ -14,11 +14,6 @@ const moduleSchema = new mongoose.Schema({
         trim: true
     },
 
-    description: {
-        type: String,
-        trim: true
-    },
-
     order: {
         type: Number,
         required: true
@@ -47,9 +42,13 @@ const moduleSchema = new mongoose.Schema({
 ======================= */
 
 // Course content ordering
+// Course content ordering - Unique only for active modules
 moduleSchema.index(
     { courseId: 1, order: 1 },
-    { unique: true }
+    {
+        unique: true,
+        partialFilterExpression: { deletedAt: null } // Ignore deleted modules
+    }
 );
 
 // Filter published modules

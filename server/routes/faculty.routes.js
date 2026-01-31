@@ -1,6 +1,6 @@
 import express from 'express';
 import { protect } from '../middleware/auth.middleware.js';
-import { getDashboardStats, getFacultyCourses, upsertCourse, getCourseDetails } from '../controllers/faculty.controller.js';
+import { getDashboardStats} from '../controllers/faculty.controller.js';
 
 const router = express.Router();
 
@@ -8,8 +8,4 @@ const router = express.Router();
 router.use(protect);
 
 router.get('/dashboard-stats', getDashboardStats);
-router.get('/my-courses', getFacultyCourses);
-router.post('/save-course', upsertCourse);
-router.get('/course/:id', getCourseDetails);
-
 export default router;

@@ -8,7 +8,7 @@ import { getFacultyCourses, getDashboardStats } from '../redux/slices/courseSlic
 
 const FacultyDashboard = () => {
     const { user } = useSelector((state) => state.auth);
-    const { courses, stats, loading } = useSelector((state) => state.course);
+    const { myCourses: courses, stats, isFetchingCourses, isFetchingStats } = useSelector((state) => state.course);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -17,7 +17,7 @@ const FacultyDashboard = () => {
         dispatch(getDashboardStats());
     }, [dispatch]);
 
-    if (loading) {
+    if (isFetchingCourses && isFetchingStats) {
         return (
             <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] flex items-center justify-center">
                 <div className="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>

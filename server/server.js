@@ -60,6 +60,19 @@ app.get('/api/data', (req, res) => {
     res.json({ message: 'Here is some data from the backend', localTime: new Date().toISOString() });
 });
 
+// Debug endpoint to test login request body
+app.post('/api/test-login', (req, res) => {
+    console.log('=== TEST LOGIN ENDPOINT ===');
+    console.log('Request body:', req.body);
+    console.log('Request headers:', req.headers['content-type']);
+    res.json({
+        success: true,
+        receivedBody: req.body,
+        bodyKeys: Object.keys(req.body),
+        contentType: req.headers['content-type']
+    });
+});
+
 // Serve static files from the React client
 app.use(express.static(path.join(__dirname, '../client/dist')));
 

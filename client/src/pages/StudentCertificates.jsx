@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import StudentSidebar from '../components/student-dashboard/StudentSidebar';
 import { useAuth } from '../context/AuthContext';
-import api from '../utils/api';
+import axios from 'axios';
 import { Award, Download, Calendar, Search, Filter } from 'lucide-react';
 
 const StudentCertificates = () => {
-    const { user } = useAuth();
+    const { user } = useSelector((state) => state.auth);
     const [certificates, setCertificates] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');

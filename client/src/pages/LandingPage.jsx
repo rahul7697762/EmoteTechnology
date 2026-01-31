@@ -2,9 +2,11 @@
 import Background from '../components/landing/Background';
 import Navbar from '../components/landing/Navbar';
 import Hero from '../components/landing/Hero';
-import Stats from '../components/landing/Stats';
-import Features from '../components/landing/Features';
-import CTA from '../components/landing/CTA';
+import Courses from '../components/landing/Courses';
+import Jobs from '../components/landing/Jobs';
+import UniversityCollabs from '../components/landing/UniversityCollabs';
+import CompanyCollabs from '../components/landing/CompanyCollabs';
+import AboutUs from '../components/landing/AboutUs';
 import Footer from '../components/landing/Footer';
 
 const LandingPage = () => {
@@ -13,9 +15,11 @@ const LandingPage = () => {
             <Background />
             <Navbar />
             <Hero />
-            <Stats />
-            <Features />
-            <CTA />
+            <Courses />
+            <Jobs />
+            <UniversityCollabs />
+            <CompanyCollabs />
+            <AboutUs />
             <Footer />
         </div>
     );

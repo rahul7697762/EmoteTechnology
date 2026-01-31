@@ -8,12 +8,15 @@ import UpcomingQuizzes from '../components/student-dashboard/UpcomingQuizzes';
 import RecentCertificates from '../components/student-dashboard/RecentCertificates';
 import WeeklyStreak from '../components/student-dashboard/WeeklyStreak';
 import { Search, Bell, Settings, LogOut } from 'lucide-react'; // Added icons for reuse
-import { useAuth } from '../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../redux/slices/authSlice';
+import { Link } from 'react-router-dom';
 
 import api from '../utils/api'; // Import centralized api
 
 const StudentDashboard = () => {
-    const { user, logout } = useAuth();
+    const dispatch = useDispatch();
+    const { user } = useSelector((state) => state.auth);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [stats, setStats] = useState({
         hoursSpent: 0,
@@ -55,7 +58,7 @@ const StudentDashboard = () => {
     }, []);
 
     const handleLogout = () => {
-        logout();
+        dispatch(logout());
         // optionally navigate if logout logic doesn't auto-redirect
     };
 
@@ -110,9 +113,10 @@ const StudentDashboard = () => {
                             {isProfileOpen && (
                                 <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-[#1a1c23] rounded-xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-100">
                                     <div className="p-2">
-                                        <a href="/settings" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors">
-                                            <Settings size={16} /> Settings
-                                        </a>
+                                        <Link to="/settings" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                                            <Settings size={18} />
+                                            <span>Settings</span>
+                                        </Link>
                                         <button
                                             onClick={handleLogout}
                                             className="w-full flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors text-left"

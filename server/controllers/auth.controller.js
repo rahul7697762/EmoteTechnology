@@ -77,6 +77,7 @@ export const signup = async (req, res) => {
 // Login controller function
 export const login = async (req, res) => {
     try {
+        console.log('Login request received:', req.body);
         const { email, password } = req.body;
 
         // checking if user exists

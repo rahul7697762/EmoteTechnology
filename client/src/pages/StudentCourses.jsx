@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import StudentSidebar from '../components/student-dashboard/StudentSidebar';
+<<<<<<< HEAD
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
+=======
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+>>>>>>> fc478cdc7a59d858f07cbeb06b734b44a6bb36cb
 import { Search, Filter, BookOpen, Clock, Award, ChevronRight } from 'lucide-react';
 
 const StudentCourses = () => {
-    const { user } = useAuth();
+    const { user } = useSelector((state) => state.auth);
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');

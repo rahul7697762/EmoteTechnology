@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { getMe } from '../redux/slices/authSlice';
 import api from '../utils/api';
 import Sidebar from '../components/dashboard/Sidebar';
 import StudentSidebar from '../components/student-dashboard/StudentSidebar';
@@ -8,7 +9,8 @@ import { User, Mail, Phone, MapPin, Briefcase, Award, Loader2, Camera, Save } fr
 import { toast, Toaster } from 'react-hot-toast';
 
 const Settings = () => {
-    const { user, login } = useAuth(); // Re-fetch user or update context if needed
+    const dispatch = useDispatch();
+    const { user } = useSelector((state) => state.auth);
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -106,12 +108,8 @@ const Settings = () => {
 
             if (response.data.success) {
                 toast.success('Profile updated successfully!');
-                // Ideally refresh user context here
-                // For now, we rely on page reload or user effect
-                // A better approach would be to have a updateUser method in AuthContext
-
-                // Force reload to get fresh data in context (simple solution)
-                // window.location.reload(); 
+                // Refresh user data in Redux store
+                dispatch(getMe());
             }
         } catch (error) {
             console.error('Error updating profile:', error);

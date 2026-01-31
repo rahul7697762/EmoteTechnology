@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
 import LoginPage from './pages/Login';
 import LandingPage from './pages/LandingPage';
 import SignupPage from './pages/Signup';
@@ -8,22 +7,72 @@ import CreateCourse from './pages/CreateCourse';
 import CoursePreview from './pages/CoursePreview';
 import MyCourses from './pages/MyCourses';
 import ProtectedRoute from './components/ProtectedRoute';
+import PublicRoute from './components/PublicRoute';
 import StudentDashboard from './pages/StudentDashboard';
 import StudentCourses from './pages/StudentCourses';
 import StudentCertificates from './pages/StudentCertificates';
 import StudentQuizzes from './pages/StudentQuizzes';
 import SettingsPage from './pages/Settings';
+import ForgotPassword from './pages/ForgotPassword';
+import VerifyOTP from './pages/VerifyOTP';
+import ResetPassword from './pages/ResetPassword';
+import VerifyEmail from './pages/VerifyEmail';
 import './App.css';
-import {Toaster} from 'react-hot-toast'
+import { Toaster } from 'react-hot-toast'
+import { useDispatch, useSelector } from 'react-redux';
+import { getMe } from './redux/slices/authSlice';
+import { useEffect } from 'react';
 
 function App() {
+  const dispatch = useDispatch();
+  const { theme } = useSelector((state) => state.theme);
+
+  useEffect(() => {
+    dispatch(getMe());
+  }, [dispatch]);
+
+  // Sync theme to DOM on mount and changes
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
   return (
-    <AuthProvider>
+
+    <>
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/login" element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          } />
+          <Route path="/signup" element={
+            <PublicRoute>
+              <SignupPage />
+            </PublicRoute>
+          } />
+
+          <Route path="/forgot-password" element={
+            <PublicRoute>
+              <ForgotPassword />
+            </PublicRoute>
+          } />
+          <Route path="/verify-otp" element={
+            <PublicRoute>
+              <VerifyOTP />
+            </PublicRoute>
+          } />
+          <Route path="/reset-password" element={
+            <PublicRoute>
+              <ResetPassword />
+            </PublicRoute>
+          } />
+          <Route path="/verify-email" element={<VerifyEmail />
+          } />
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={
@@ -84,8 +133,9 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
-      <Toaster/>
-    </AuthProvider>
+      <Toaster />
+    </>
+
   );
 }
 

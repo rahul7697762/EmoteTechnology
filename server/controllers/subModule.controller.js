@@ -126,7 +126,7 @@ export const getSubModuleById = async (req, res) => {
 // 4. Update SubModule
 export const updateSubModule = async (req, res) => {
     try {
-        const { title, description, content, isPreview, video } = req.body;
+        const { title, description, content, isPreview} = req.body;
         const subModule = await SubModule.findOne({ _id: req.params.id, deletedAt: null });
 
         if (!subModule) return res.status(404).json({ message: "Lesson not found" });

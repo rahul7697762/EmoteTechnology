@@ -100,6 +100,12 @@ function App() {
             </ProtectedRoute>
           } />
 
+          <Route path="/preview/course/:id" element={
+            <ProtectedRoute allowedRoles={['FACULTY', 'ADMIN']}>
+              <CoursePreview />
+            </ProtectedRoute>
+          } />
+
           <Route path="/course-preview" element={
             <ProtectedRoute allowedRoles={['FACULTY', 'ADMIN']}>
               <CoursePreview />

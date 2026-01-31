@@ -57,4 +57,16 @@ moduleSchema.index({ courseId: 1, status: 1 });
 // Soft delete
 moduleSchema.index({ deletedAt: 1 });
 
+// Virtual for subModules
+moduleSchema.virtual('subModules', {
+    ref: 'SubModule',
+    localField: '_id',
+    foreignField: 'moduleId',
+    options: { sort: { order: 1 } }
+});
+
+// Configure toJSON and toObject
+moduleSchema.set('toObject', { virtuals: true });
+moduleSchema.set('toJSON', { virtuals: true });
+
 export const Module = mongoose.model("Module", moduleSchema);

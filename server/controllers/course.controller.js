@@ -84,7 +84,16 @@ export const getFacultyCourseById = async (req, res) => {
         const courseId = req.params.id;
         const course = await Course.findById(courseId)
             .populate('instructor', 'name profile.avatar facultyProfile.expertize')
-        // .populate('modules');
+            .populate({
+                path: 'modules',
+                match: { deletedAt: null },
+                options: { sort: { order: 1 } },
+                populate: {
+                    path: 'subModules',
+                    match: { deletedAt: null },
+                    options: { sort: { order: 1 } }
+                }
+            });
 
         // if course not found then return 404
         if (!course) {
@@ -346,7 +355,11 @@ export const getCourseById = async (req, res) => {
         // getting course by id
         const course = await Course.findOne({ _id: courseId, status: "PUBLISHED" })
             .populate('instructor', 'name profile.avatar facultyProfile.expertize')
-        // .populate('modules');
+            .populate({
+                path: 'modules',
+                select: 'title subModulesCount order',
+                options: { sort: { order: 1 } }
+            });
 
         // if course not found then return 404
         if (!course) {
@@ -377,7 +390,11 @@ export const getCourseBySlug = async (req, res) => {
         // getting course by slug with instructor and modules
         const course = await Course.findOne({ slug, status: "PUBLISHED" })
             .populate('instructor', 'name profile.avatar facultyProfile.expertize')
-        // .populate('modules');
+            .populate({
+                path: 'modules',
+                select: 'title subModulesCount order',
+                options: { sort: { order: 1 } }
+            });
 
         if (!course) {
             return res.status(404).json({

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Upload, FileText, Video, Eye, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const SubModuleModal = ({ isOpen, onClose, onSubmit, initialData = null, isLoading = false }) => {
     if (!isOpen) return null;
@@ -175,11 +177,13 @@ const SubModuleModal = ({ isOpen, onClose, onSubmit, initialData = null, isLoadi
                             </div>
                         ) : (
                             <div className="animate-in fade-in slide-in-from-top-4 duration-300 flex flex-col h-[500px]">
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Article Content (HTML)</label>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    Article Content (Markdown supported)
+                                </label>
                                 <textarea
                                     value={articleContent}
                                     onChange={(e) => setArticleContent(e.target.value)}
-                                    placeholder="<p>Write your content here...</p>"
+                                    placeholder="# Introduction&#10;&#10;Write your content in **Markdown**..."
                                     className="flex-1 w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-mono text-sm outline-none focus:ring-2 focus:ring-violet-500 dark:text-white resize-none"
                                 />
                             </div>
@@ -234,10 +238,15 @@ const SubModuleModal = ({ isOpen, onClose, onSubmit, initialData = null, isLoadi
                                         )}
                                     </div>
                                 ) : (
-                                    <div
-                                        className="prose prose-lg dark:prose-invert max-w-none mb-6"
-                                        dangerouslySetInnerHTML={{ __html: articleContent || "<p class='text-slate-400 italic'>Start typing to see article preview...</p>" }}
-                                    />
+                                    <div className="prose prose-lg dark:prose-invert max-w-none mb-6">
+                                        {articleContent ? (
+                                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                {articleContent}
+                                            </ReactMarkdown>
+                                        ) : (
+                                            <p className='text-slate-400 italic'>Start typing to see article preview...</p>
+                                        )}
+                                    </div>
                                 )}
 
                                 <div className="p-4 bg-slate-50 dark:bg-slate-700/30 rounded-lg border border-slate-100 dark:border-slate-700/50">

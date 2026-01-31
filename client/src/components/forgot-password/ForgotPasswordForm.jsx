@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, ArrowRight, ArrowLeft, Loader } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { forgotPassword } from '../../redux/slices/authSlice';
 import toast from 'react-hot-toast';
 
 const ForgotPasswordForm = () => {
     const [email, setEmail] = useState('');
-    const [loading, setLoading] = useState(false);
-    const { forgotPassword } = useAuth();
+    const { isForgotPasswordLoading } = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -19,13 +20,12 @@ const ForgotPasswordForm = () => {
             return;
         }
 
-        setLoading(true);
-        const result = await forgotPassword(email);
-        setLoading(false);
-
-        if (result.success) {
+        try {
+            await dispatch(forgotPassword(email)).unwrap();
             // Navigate to OTP verification page with email
             navigate('/verify-otp', { state: { email } });
+        } catch (error) {
+            toast.error(error?.message || (typeof error === 'string' ? error : 'Failed to send OTP'));
         }
     };
 
@@ -65,10 +65,10 @@ const ForgotPasswordForm = () => {
 
                     <button
                         type="submit"
-                        disabled={loading}
+                        disabled={isForgotPasswordLoading}
                         className="w-full py-4 bg-gradient-to-r from-teal-500 to-blue-600 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                        {loading ? (
+                        {isForgotPasswordLoading ? (
                             <Loader className="animate-spin" size={24} />
                         ) : (
                             <>

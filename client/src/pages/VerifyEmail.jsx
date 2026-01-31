@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CheckCircle, XCircle, ArrowRight, Loader } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { verifyEmail } from '../redux/slices/authSlice';
 import Navbar from '../components/landing/Navbar';
 import LoginBranding from '../components/login/LoginBranding';
 import LoginBackground from '../components/login/LoginBackground';
@@ -10,7 +11,8 @@ import LoginBackground from '../components/login/LoginBackground';
 const VerifyEmail = () => {
     const [searchParams] = useSearchParams();
     const token = searchParams.get('token');
-    const { verifyEmail, user } = useAuth();
+    const dispatch = useDispatch();
+    const { user, isVerifyEmailLoading } = useSelector((state) => state.auth);
 
     const [status, setStatus] = useState('loading'); // loading, success, error
     const [message, setMessage] = useState('Verifying your email...');
@@ -28,18 +30,19 @@ const VerifyEmail = () => {
             if (verificationAttempted.current) return;
             verificationAttempted.current = true;
 
-            const result = await verifyEmail(token);
-            if (result.success) {
+            try {
+                const message = await dispatch(verifyEmail(token)).unwrap();
                 setStatus('success');
-                setMessage(result.message || 'Email verified successfully!');
-            } else {
+                setMessage(message || 'Email verified successfully!');
+            } catch (error) {
                 setStatus('error');
-                setMessage(result.error || 'Verification failed. The link might be expired or invalid.');
+                const errorMessage = error?.message || (typeof error === 'string' ? error : 'Verification failed. The link might be expired or invalid.');
+                setMessage(errorMessage);
             }
         };
 
         verify();
-    }, [token, verifyEmail]);
+    }, [token, dispatch]);
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] flex overflow-hidden pt-20">

@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Lock, CheckCircle, ArrowLeft, Loader, Eye, EyeOff } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { resetPassword } from '../../redux/slices/authSlice';
 import toast from 'react-hot-toast';
 
 const ResetPasswordForm = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const { resetPassword } = useAuth();
+    const { isResetPasswordLoading } = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -37,12 +38,11 @@ const ResetPasswordForm = () => {
             return;
         }
 
-        setLoading(true);
-        const result = await resetPassword(password, token);
-        setLoading(false);
-
-        if (result.success) {
+        try {
+            await dispatch(resetPassword({ password, token })).unwrap();
             navigate('/login');
+        } catch (error) {
+            toast.error(error?.message || (typeof error === 'string' ? error : 'Failed to reset password'));
         }
     };
 
@@ -106,10 +106,10 @@ const ResetPasswordForm = () => {
 
                     <button
                         type="submit"
-                        disabled={loading}
+                        disabled={isResetPasswordLoading}
                         className="w-full py-4 bg-gradient-to-r from-teal-500 to-blue-600 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                        {loading ? (
+                        {isResetPasswordLoading ? (
                             <Loader className="animate-spin" size={24} />
                         ) : (
                             <>

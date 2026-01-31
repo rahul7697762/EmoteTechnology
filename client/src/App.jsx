@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
 import LoginPage from './pages/Login';
 import LandingPage from './pages/LandingPage';
 import SignupPage from './pages/Signup';
@@ -20,10 +19,29 @@ import ResetPassword from './pages/ResetPassword';
 import VerifyEmail from './pages/VerifyEmail';
 import './App.css';
 import { Toaster } from 'react-hot-toast'
+import { useDispatch, useSelector } from 'react-redux';
+import { getMe } from './redux/slices/authSlice';
+import { useEffect } from 'react';
 
 function App() {
+  const dispatch = useDispatch();
+  const { theme } = useSelector((state) => state.theme);
+
+  useEffect(() => {
+    dispatch(getMe());
+  }, [dispatch]);
+
+  // Sync theme to DOM on mount and changes
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
   return (
-    <AuthProvider>
+
+    <>
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -54,7 +72,7 @@ function App() {
             </PublicRoute>
           } />
           <Route path="/verify-email" element={<VerifyEmail />
-        } />
+          } />
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={
@@ -116,7 +134,8 @@ function App() {
         </Routes>
       </Router>
       <Toaster />
-    </AuthProvider>
+    </>
+
   );
 }
 

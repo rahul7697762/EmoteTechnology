@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, ArrowRight, ArrowLeft, Loader } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { verifyOTP } from '../../redux/slices/authSlice';
 import toast from 'react-hot-toast';
 
 const VerifyOTPForm = () => {
     const [otp, setOtp] = useState('');
-    const [loading, setLoading] = useState(false);
-    const { verifyOTP } = useAuth();
+    const { isVerifyOTPLoading } = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -30,13 +31,12 @@ const VerifyOTPForm = () => {
             return;
         }
 
-        setLoading(true);
-        const result = await verifyOTP(email, otp);
-        setLoading(false);
-
-        if (result.success) {
+        try {
+            const token = await dispatch(verifyOTP({ email, otp })).unwrap();
             // Navigate to Reset Password page with token
-            navigate('/reset-password', { state: { token: result.token } });
+            navigate('/reset-password', { state: { token } });
+        } catch (error) {
+            toast.error(error?.message || (typeof error === 'string' ? error : 'Invalid OTP'));
         }
     };
 
@@ -80,10 +80,10 @@ const VerifyOTPForm = () => {
 
                     <button
                         type="submit"
-                        disabled={loading}
+                        disabled={isVerifyOTPLoading}
                         className="w-full py-4 bg-gradient-to-r from-teal-500 to-blue-600 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                        {loading ? (
+                        {isVerifyOTPLoading ? (
                             <Loader className="animate-spin" size={24} />
                         ) : (
                             <>

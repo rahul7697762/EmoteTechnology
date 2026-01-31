@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import StudentSidebar from '../components/student-dashboard/StudentSidebar';
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { Search, Clock, Calendar, CheckCircle, AlertCircle } from 'lucide-react';
 
 const StudentQuizzes = () => {
-    const { user } = useAuth();
+    const { user } = useSelector((state) => state.auth);
     const [quizzes, setQuizzes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('upcoming'); // upcoming, past
@@ -73,8 +73,8 @@ const StudentQuizzes = () => {
 
             <div className="w-full md:w-auto">
                 <button className={`w-full md:w-auto px-6 py-3 rounded-xl font-bold text-sm transition-all ${quiz.active
-                        ? 'bg-teal-500 hover:bg-teal-600 text-white shadow-lg shadow-teal-500/20'
-                        : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                    ? 'bg-teal-500 hover:bg-teal-600 text-white shadow-lg shadow-teal-500/20'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                     }`}>
                     {quiz.active ? 'Start Quiz' : 'Not Started'}
                 </button>

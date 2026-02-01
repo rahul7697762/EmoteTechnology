@@ -8,6 +8,7 @@ export const login = createAsyncThunk('auth/login', async (credentials, { reject
         const response = await authAPI.login(credentials);
         return response; // Return full response to get user + token
     } catch (error) {
+        console.log(error);
         return rejectWithValue(error.response?.data?.message || 'Login failed');
     }
 });
@@ -26,8 +27,6 @@ export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValu
         await authAPI.logout();
     } catch (error) {
         return rejectWithValue(error.response?.data?.message || 'Logout failed');
-    } finally {
-        localStorage.removeItem('token');
     }
 });
 

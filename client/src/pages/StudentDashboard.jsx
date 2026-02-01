@@ -11,6 +11,7 @@ import { Search, Bell, Settings, LogOut } from 'lucide-react'; // Added icons fo
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../redux/slices/authSlice';
 import { Link } from 'react-router-dom';
+import { api } from '../utils/api';
 
 const StudentDashboard = () => {
     const dispatch = useDispatch();
@@ -30,20 +31,11 @@ const StudentDashboard = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                const token = localStorage.getItem('token');
-                if (!token) return;
+                // Using the api instance which has the auth interceptor and base URL configured
+                const response = await api.get('/student/dashboard-stats');
 
-                // Import axios if not already imported at top, or assume it is available
-                // Note: We need to make sure axios is imported.
-                // Assuming I need to add axios import in a separate edit if missing
-                const response = await fetch(`${apiUrl}/student/dashboard-stats`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    setStats(data.data);
+                if (response.data.success) {
+                    setStats(response.data.data);
                 }
             } catch (error) {
                 console.error("Failed to fetch dashboard stats", error);

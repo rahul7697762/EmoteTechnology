@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: emote-technology
+    env: node
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.11.0
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGO_URI
+        sync: false
+      - key: BUNNY_STORAGE_ZONE
+        sync: false
+      - key: BUNNY_ACCESS_KEY
+        sync: false
+      - key: BUNNY_PULL_ZONE_URL
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: 465
+      - key: SMTP_SECURE
+        value: true
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false

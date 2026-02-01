@@ -1,6 +1,11 @@
 import axios from 'axios';
 
 export const uploadFileToBunny = async (directoryPath, fileBuffer, fileName) => {
+    // Sanitize filename: replace spaces with hyphens, remove special chars to ensure clean URLs
+    const sanitizedFileName = fileName
+        .replace(/\s+/g, '-')          // Replace spaces with hyphens
+        .replace(/[^a-zA-Z0-9.\-_]/g, ''); // Remove anything that's not alphanumeric, dot, hyphen, or underscore
+
     const STORAGE_ZONE_NAME = process.env.BUNNY_STORAGE_ZONE;
     const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
 
@@ -8,7 +13,7 @@ export const uploadFileToBunny = async (directoryPath, fileBuffer, fileName) => 
         throw new Error('BunnyCDN configuration missing (STORAGE_ZONE_NAME or ACCESS_KEY)');
     }
 
-    const url = `https://sg.storage.bunnycdn.com/${STORAGE_ZONE_NAME}/${directoryPath}/${fileName}`;
+    const url = `https://sg.storage.bunnycdn.com/${STORAGE_ZONE_NAME}/${directoryPath}/${sanitizedFileName}`;
 
     try {
         const res = await axios.put(url, fileBuffer, {
@@ -24,7 +29,7 @@ export const uploadFileToBunny = async (directoryPath, fileBuffer, fileName) => 
         const pullZoneUrl = process.env.BUNNY_PULL_ZONE_URL;
         if (pullZoneUrl) {
             const baseUrl = pullZoneUrl.startsWith('http') ? pullZoneUrl : `https://${pullZoneUrl}`;
-            return `${baseUrl}/${directoryPath}/${fileName}`;
+            return `${baseUrl}/${directoryPath}/${sanitizedFileName}`;
         }
         return url;
 

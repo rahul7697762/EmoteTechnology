@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const STORAGE_ZONE_NAME = process.env.BUNNY_STORAGE_ZONE;
-const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
-
 export const uploadFileToBunny = async (directoryPath, fileBuffer, fileName) => {
+    const STORAGE_ZONE_NAME = process.env.BUNNY_STORAGE_ZONE;
+    const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
+
     if (!STORAGE_ZONE_NAME || !ACCESS_KEY) {
         throw new Error('BunnyCDN configuration missing (STORAGE_ZONE_NAME or ACCESS_KEY)');
     }
@@ -34,6 +34,9 @@ export const uploadFileToBunny = async (directoryPath, fileBuffer, fileName) => 
 };
 
 export const deleteFileFromBunny = async (fileUrl) => {
+    const STORAGE_ZONE_NAME = process.env.BUNNY_STORAGE_ZONE;
+    const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
+
     if (!STORAGE_ZONE_NAME || !ACCESS_KEY) {
         throw new Error('BunnyCDN configuration missing (STORAGE_ZONE_NAME or ACCESS_KEY)');
     }

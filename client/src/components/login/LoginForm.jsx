@@ -22,7 +22,10 @@ const LoginForm = () => {
             const response = await dispatch(login({ email, password })).unwrap();
 
             if (response && response.user) {
-                const { user } = response;
+                const { user, token } = response;
+                if (token) {
+                    localStorage.setItem('token', token);
+                }
                 toast.success('Login successful!');
                 // Redirect based on role
                 if (user.role === 'FACULTY' || user.role === 'ADMIN') {

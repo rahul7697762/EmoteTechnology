@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 
 const QuizItem = ({ quiz }) => {
     return (
@@ -38,14 +38,7 @@ const UpcomingQuizzes = () => {
     useEffect(() => {
         const fetchQuizzes = async () => {
             try {
-                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                const token = localStorage.getItem('token');
-
-                const response = await axios.get(`${apiUrl}/student/upcoming-quizzes`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
+                const response = await api.get('/student/upcoming-quizzes');
 
                 if (response.data.success) {
                     setQuizzes(response.data.data);

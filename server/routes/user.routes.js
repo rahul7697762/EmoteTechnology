@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteUserAccount, getAllUsers, getUserProfileById, updateUserAccountStatus, updateUserProfile } from "../controllers/user.controller.js";
+import { changePassword, deleteUserAccount, getAllUsers, getUserProfileById, updateUserAccountStatus, updateUserProfile } from "../controllers/user.controller.js";
 import { upload } from "../middleware/upload.middleware.js";
 import { protect, restrictTo } from "../middleware/auth.middleware.js";
 import { deleteMeValidation, updateUserAccountStatusValidation, updateUserProfileValidation } from "../validators/user.validator.js";
@@ -17,6 +17,8 @@ router.get("/", protect, restrictTo('ADMIN'), getAllUsers);
 router.get("/:id", protect, restrictTo('ADMIN'), getUserProfileById);
 // update account status of user by admin
 router.put("/:id/status", updateUserAccountStatusValidation, validate, protect, restrictTo('ADMIN'), updateUserAccountStatus);
+// change password
+router.put("/change-password", protect, changePassword);
 // delete itself 
 router.delete("/deleteMe", deleteMeValidation, validate, protect, deleteUserAccount);
 

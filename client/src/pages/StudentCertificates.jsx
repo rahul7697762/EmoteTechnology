@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import StudentSidebar from '../components/student-dashboard/StudentSidebar';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import api from '../utils/api';
 import { Award, Download, Calendar, Search, Filter } from 'lucide-react';
 
 const StudentCertificates = () => {
@@ -13,12 +13,7 @@ const StudentCertificates = () => {
     useEffect(() => {
         const fetchCertificates = async () => {
             try {
-                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                const token = localStorage.getItem('token');
-
-                const response = await axios.get(`${apiUrl}/student/certificates`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const response = await api.get('/student/certificates');
 
                 if (response.data.success) {
                     setCertificates(response.data.data);

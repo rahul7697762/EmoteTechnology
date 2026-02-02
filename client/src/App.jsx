@@ -18,6 +18,9 @@ import ForgotPassword from './pages/ForgotPassword';
 import VerifyOTP from './pages/VerifyOTP';
 import ResetPassword from './pages/ResetPassword';
 import VerifyEmail from './pages/VerifyEmail';
+import Courses from './pages/Courses';
+import Jobs from './pages/Jobs';
+import AiInterview from './pages/AiInterview';
 import './App.css';
 import { Toaster } from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux';
@@ -46,6 +49,9 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/courses" element={<Courses />} />
+          <Route path="/jobs" element={<Jobs />} />
+          <Route path="/ai-interview" element={<AiInterview />} />
           <Route path="/login" element={
             <PublicRoute>
               <LoginPage />

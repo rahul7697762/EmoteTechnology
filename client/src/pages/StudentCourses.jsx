@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import StudentSidebar from '../components/student-dashboard/StudentSidebar';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
-import { Search, Filter, BookOpen, Clock, Award, ChevronRight } from 'lucide-react';
+import api from '../utils/api';
+import { Search, BookOpen, ChevronRight } from 'lucide-react';
 
 const StudentCourses = () => {
     const { user } = useSelector((state) => state.auth);
@@ -14,13 +14,8 @@ const StudentCourses = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                const token = localStorage.getItem('token');
-
                 // We'll create a new endpoint for all enrolled courses
-                const response = await axios.get(`${apiUrl}/student/enrolled-courses`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const response = await api.get('/student/enrolled-courses');
 
                 if (response.data.success) {
                     setCourses(response.data.data);

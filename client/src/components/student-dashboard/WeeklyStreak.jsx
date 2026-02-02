@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 
 const WeeklyStreak = () => {
     const [streakData, setStreakData] = useState({
@@ -11,12 +11,7 @@ const WeeklyStreak = () => {
     useEffect(() => {
         const fetchStreak = async () => {
             try {
-                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                const token = localStorage.getItem('token');
-
-                const response = await axios.get(`${apiUrl}/student/weekly-streak`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const response = await api.get('/student/weekly-streak');
 
                 if (response.data.success) {
                     setStreakData(response.data.data);
@@ -56,10 +51,10 @@ const WeeklyStreak = () => {
                             <div key={index} className="w-1/7 flex flex-col items-center gap-1 flex-1">
                                 <div
                                     className={`w-full rounded-t-sm transition-all duration-500 ${isHighActivity
-                                            ? 'bg-teal-500 shadow-[0_0_15px_rgba(20,184,166,0.5)]'
-                                            : val > 0
-                                                ? 'bg-teal-500/50'
-                                                : 'bg-gray-700/30'
+                                        ? 'bg-teal-500 shadow-[0_0_15px_rgba(20,184,166,0.5)]'
+                                        : val > 0
+                                            ? 'bg-teal-500/50'
+                                            : 'bg-gray-700/30'
                                         }`}
                                     style={{ height: `${heightPercent}%` }}
                                 ></div>

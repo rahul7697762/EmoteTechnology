@@ -317,24 +317,27 @@ export const deleteCourse = async (req, res) => {
 
 export const getAllCourses = async (req, res) => {
     try {
-        // implement pagination logic here
-        // todo : pagination logic
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
 
-        // fetching 10 latest courses
+        const courses = await Course.find({ status: "PUBLISHED" })
+            .select('title description category price instructor createdAt thumbnail slug rating level')
+            .populate('instructor', 'name avatar')
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
 
-        //todo : get only those course which are published in future
-        const courses = await Course.find({ status: "PUBLISHED" }).select('title description category price instructor createdAt thumbnail slug').sort({ createdAt: -1 }).limit(10);
-
-        if (!courses || courses.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'No courses found'
-            });
-        }
+        const total = await Course.countDocuments({ status: "PUBLISHED" });
 
         res.status(200).json({
             success: true,
-            courses: courses
+            courses,
+            pagination: {
+                total,
+                page,
+                pages: Math.ceil(total / limit)
+            }
         });
     } catch (error) {
         console.log("error in getAllCourses controller", error);
@@ -422,27 +425,41 @@ export const getCourseBySlug = async (req, res) => {
 export const searchCourses = async (req, res) => {
     try {
         const { query, category, level } = req.query;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
         const filter = { status: "PUBLISHED" };
 
         if (query) {
             filter.$or = [
                 { title: { $regex: query, $options: 'i' } },
-                { tags: { $regex: query, $options: 'i' } }
+                { tags: { $regex: query, $options: 'i' } },
+                { description: { $regex: query, $options: 'i' } } // Added description search
             ];
         }
 
-        // getting courses by category and level
-        if (category) filter.category = category;
-        if (level) filter.level = level;
+        if (category && category !== 'All') filter.category = category; // specific check
+        if (level && level !== 'All') filter.level = level;
 
         const courses = await Course.find(filter)
             .select('title description category price instructor thumbnail slug rating level')
-            .sort({ createdAt: -1 });
+            .populate('instructor', 'name avatar') // Added population
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        const total = await Course.countDocuments(filter);
 
         res.status(200).json({
             success: true,
             count: courses.length,
-            courses
+            courses,
+            pagination: {
+                total,
+                page,
+                pages: Math.ceil(total / limit)
+            }
         });
     } catch (error) {
         console.log("error in searchCourses controller", error);

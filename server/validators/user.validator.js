@@ -27,12 +27,12 @@ export const updateUserProfileValidation = [
         .withMessage("Avatar must be a valid URL"),
 
     body("profile.phone")
-        .optional()
+        .optional({ nullable: true, checkFalsy: true })
         .isMobilePhone()
         .withMessage("Please provide a valid phone number"),
 
     body("profile.country")
-        .optional()
+        .optional({ nullable: true, checkFalsy: true })
         .trim()
         .isLength({ min: 2 })
         .withMessage("Country name must be valid"),

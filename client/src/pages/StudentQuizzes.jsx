@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import StudentSidebar from '../components/student-dashboard/StudentSidebar';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
-import { Search, Clock, Calendar, CheckCircle, AlertCircle } from 'lucide-react';
+import api from '../utils/api';
+import { Clock, CheckCircle, AlertCircle } from 'lucide-react';
 
 const StudentQuizzes = () => {
     const { user } = useSelector((state) => state.auth);
@@ -13,14 +13,9 @@ const StudentQuizzes = () => {
     useEffect(() => {
         const fetchQuizzes = async () => {
             try {
-                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                const token = localStorage.getItem('token');
-
                 // Currently reusing the same endpoint, but in a real app might need a different one for "All Quizzes"
                 // For now, we will use the upcoming one and filter or mock past ones
-                const response = await axios.get(`${apiUrl}/student/upcoming-quizzes`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const response = await api.get('/student/upcoming-quizzes');
 
                 if (response.data.success) {
                     setQuizzes(response.data.data);

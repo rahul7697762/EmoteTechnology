@@ -26,6 +26,8 @@ export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValu
         await authAPI.logout();
     } catch (error) {
         return rejectWithValue(error.response?.data?.message || 'Logout failed');
+    } finally {
+        localStorage.removeItem('token');
     }
 });
 

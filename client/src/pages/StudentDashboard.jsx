@@ -7,10 +7,11 @@ import RecommendedCourses from '../components/student-dashboard/RecommendedCours
 import UpcomingQuizzes from '../components/student-dashboard/UpcomingQuizzes';
 import RecentCertificates from '../components/student-dashboard/RecentCertificates';
 import WeeklyStreak from '../components/student-dashboard/WeeklyStreak';
-import { Search, Bell, Settings, LogOut } from 'lucide-react'; // Added icons for reuse
+import { Search, Bell, Settings, LogOut, User } from 'lucide-react'; // Added icons for reuse
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../redux/slices/authSlice';
 import { Link } from 'react-router-dom';
+
 
 import api from '../utils/api'; // Import centralized api
 
@@ -26,12 +27,13 @@ const StudentDashboard = () => {
     const profileRef = useRef(null);
 
     // Default user image if none provided
-    const userImage = user?.profile?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80";
+    const userImage = user?.profile?.avatar;
 
     // Fetch Stats
     useEffect(() => {
         const fetchStats = async () => {
             try {
+                // Using the api instance which has the auth interceptor and base URL configured
                 const response = await api.get('/student/dashboard-stats');
 
                 if (response.data.success) {
@@ -101,12 +103,18 @@ const StudentDashboard = () => {
                                         {user?.profile?.title || 'Student'}
                                     </p>
                                 </div>
-                                <img
-                                    src={userImage}
-                                    alt="Profile"
-                                    className={`w-10 h-10 rounded-full object-cover border-2 shadow-sm transition-colors ${isProfileOpen ? 'border-teal-500' : 'border-white dark:border-gray-800'
-                                        }`}
-                                />
+                                {userImage ? (
+                                    <img
+                                        src={userImage}
+                                        alt="Profile"
+                                        className={`w-10 h-10 rounded-full object-cover border-2 shadow-sm transition-colors ${isProfileOpen ? 'border-teal-500' : 'border-white dark:border-gray-800'
+                                            }`}
+                                    />
+                                ) : (
+                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 border-2 shadow-sm transition-colors ${isProfileOpen ? 'border-teal-500 text-teal-600' : 'border-white dark:border-gray-800 text-gray-400'}`}>
+                                        <User size={20} />
+                                    </div>
+                                )}
                             </button>
 
                             {/* Dropdown Menu */}

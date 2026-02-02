@@ -4,6 +4,7 @@ import LandingPage from './pages/LandingPage';
 import SignupPage from './pages/Signup';
 import FacultyDashboard from './pages/FacultyDashboard';
 import CreateCourse from './pages/CreateCourse';
+import EditCourse from './pages/EditCourse';
 import CoursePreview from './pages/CoursePreview';
 import MyCourses from './pages/MyCourses';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -17,6 +18,9 @@ import ForgotPassword from './pages/ForgotPassword';
 import VerifyOTP from './pages/VerifyOTP';
 import ResetPassword from './pages/ResetPassword';
 import VerifyEmail from './pages/VerifyEmail';
+import Courses from './pages/Courses';
+import Jobs from './pages/Jobs';
+import AiInterview from './pages/AiInterview';
 import './App.css';
 import { Toaster } from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux';
@@ -45,6 +49,9 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/courses" element={<Courses />} />
+          <Route path="/jobs" element={<Jobs />} />
+          <Route path="/ai-interview" element={<AiInterview />} />
           <Route path="/login" element={
             <PublicRoute>
               <LoginPage />
@@ -90,6 +97,18 @@ function App() {
           <Route path="/create-course" element={
             <ProtectedRoute allowedRoles={['FACULTY', 'ADMIN']}>
               <CreateCourse />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/edit-course/:id" element={
+            <ProtectedRoute allowedRoles={['FACULTY', 'ADMIN']}>
+              <EditCourse />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/preview/course/:id" element={
+            <ProtectedRoute allowedRoles={['FACULTY', 'ADMIN']}>
+              <CoursePreview />
             </ProtectedRoute>
           } />
 

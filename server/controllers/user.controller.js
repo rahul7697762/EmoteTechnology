@@ -211,6 +211,68 @@ export const updateUserAccountStatus = async (req, res) => {
 }
 
 /**
+ * @route   PUT /api/users/change-password
+ * @desc    Change user password
+ * @access  Private
+ */
+export const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const userId = req.user._id;
+
+        // Validation
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide both current and new passwords'
+            });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'New password must be at least 6 characters long'
+            });
+        }
+
+        // Find user with password
+        const user = await User.findById(userId).select('+password');
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        // Check current password
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({
+                success: false,
+                message: 'Incorrect current password'
+            });
+        }
+
+        // Update password (hashing is handled by pre-save hook in model usually, but let's check model or double check)
+        // Assuming model has pre-save hook for password hashing
+        user.password = newPassword;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Password updated successfully'
+        });
+
+    } catch (error) {
+        console.error('Error changing password:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server Error'
+        });
+    }
+};
+
+/**
  * @route   DELETE /api/users/deleteMe
  * @desc    user delete itself
  * @access  Private

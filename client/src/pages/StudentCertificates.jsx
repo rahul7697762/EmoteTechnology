@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import StudentSidebar from '../components/student-dashboard/StudentSidebar';
-import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import { useSelector } from 'react-redux';
+import api from '../utils/api';
 import { Award, Download, Calendar, Search, Filter } from 'lucide-react';
 
 const StudentCertificates = () => {

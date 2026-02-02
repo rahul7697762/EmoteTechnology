@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, PlusCircle, Settings, LogOut, Sun, Moon } from 'lucide-react';
+import { LayoutDashboard, BookOpen, PlusCircle, Settings, LogOut, Sun, Moon, ArrowLeft } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/slices/authSlice';
 import { toggleTheme } from '../../redux/slices/themeSlice';
@@ -19,16 +19,18 @@ const Sidebar = () => {
 
     return (
         <aside className="w-64 bg-white dark:bg-[#1a1c23] border-r border-gray-200 dark:border-gray-800 h-screen fixed left-0 top-0 overflow-y-auto z-20 hidden md:block">
-            <div className="p-6">
+            <div className="p-6 flex items-center gap-4">
+                <Link to="/" className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-gray-600 dark:text-gray-300">
+                    <ArrowLeft size={20} />
+                </Link>
                 <Link to="/">
-                    <h1 className="text-2xl font-bold bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">
-                        EmoteTechnology
+                    <h1 className="text-xl font-bold bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">
+                        EmoteTech
                     </h1>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Faculty Portal</p>
                 </Link>
             </div>
 
-            <nav className="mt-6 px-4 space-y-2">
+            <nav className="mt-2 px-4 space-y-2">
                 {navItems.map((item) => (
                     <NavLink
                         key={item.path}

@@ -1,13 +1,15 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Sun, Moon, Search, Menu, X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleTheme } from '../../redux/slices/themeSlice';
 import { useState } from 'react';
 
 const Navbar = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const dispatch = useDispatch();
+
     const { theme } = useSelector((state) => state.theme);
     const { user } = useSelector((state) => state.auth);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -39,15 +41,21 @@ const Navbar = () => {
                         className="hidden md:flex items-center gap-6"
                     >
                         <div className="flex items-center gap-1 bg-gray-100 dark:bg-white/5 backdrop-blur-xl rounded-full px-2 py-2 border border-gray-200 dark:border-white/10">
-                            {['Home', 'Courses', 'Jobs', 'AI interview'].map((item, i) => (
+                            {[
+                                { name: 'Home', path: '/' },
+                                { name: 'Courses', path: '/courses' },
+                                { name: 'Jobs', path: '/jobs' },
+                                { name: 'AI interview', path: '/ai-interview' }
+                            ].map((item) => (
                                 <button
-                                    key={item}
-                                    className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${i === 0
-                                        ? 'bg-white dark:bg-white/10 text-gray-900 dark:text-white shadow-sm'
-                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/5'
+                                    key={item.name}
+                                    onClick={() => navigate(item.path)}
+                                    className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${location.pathname === item.path
+                                        ? 'bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 shadow-sm'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-teal-50/50 dark:hover:bg-teal-500/5'
                                         }`}
                                 >
-                                    {item}
+                                    {item.name}
                                 </button>
                             ))}
                         </div>
@@ -127,12 +135,24 @@ const Navbar = () => {
                             </div>
 
                             <div className="flex flex-col space-y-2">
-                                {['Home', 'Courses', 'Jobs', 'AI interview'].map((item) => (
+                                {[
+                                    { name: 'Home', path: '/' },
+                                    { name: 'Courses', path: '/courses' },
+                                    { name: 'Jobs', path: '/jobs' },
+                                    { name: 'AI interview', path: '/ai-interview' }
+                                ].map((item) => (
                                     <button
-                                        key={item}
-                                        className="text-left py-3 px-4 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-teal-500 dark:hover:text-teal-400 font-medium transition-colors"
+                                        key={item.name}
+                                        onClick={() => {
+                                            navigate(item.path);
+                                            toggleMobileMenu();
+                                        }}
+                                        className={`text-left py-3 px-4 rounded-xl font-medium transition-colors ${location.pathname === item.path
+                                            ? 'bg-teal-50 dark:bg-teal-900/10 text-teal-600 dark:text-teal-400'
+                                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-teal-500 dark:hover:text-teal-400'
+                                            }`}
                                     >
-                                        {item}
+                                        {item.name}
                                     </button>
                                 ))}
                             </div>

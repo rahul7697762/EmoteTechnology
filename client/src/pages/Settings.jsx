@@ -14,7 +14,9 @@ const Settings = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [activeTab, setActiveTab] = useState('profile'); // profile, notifications, security, danger
 
+    // Profile State
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -26,9 +28,23 @@ const Settings = () => {
         expertise: [],
         yearsOfExperience: 0
     });
-
     const [previewUrl, setPreviewUrl] = useState(null);
     const [avatarFile, setAvatarFile] = useState(null);
+
+    // Password State
+    const [passwordData, setPasswordData] = useState({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+    });
+
+    // Notification State
+    const [notifications, setNotifications] = useState({
+        emailAlerts: true,
+        courseUpdates: true,
+        marketing: false,
+        securityAlerts: true
+    });
 
     useEffect(() => {
         if (user) {
@@ -54,6 +70,14 @@ const Settings = () => {
         }));
     };
 
+    const handlePasswordChange = (e) => {
+        const { name, value } = e.target;
+        setPasswordData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
     const handleExpertiseChange = (e) => {
         const value = e.target.value;
         const expertiseArray = value.split(',').map(item => item.trim());
@@ -71,7 +95,13 @@ const Settings = () => {
         }
     };
 
-    const handleSubmit = async (e) => {
+    const handleNotificationChange = (key) => {
+        setNotifications(prev => ({ ...prev, [key]: !prev[key] }));
+        // In a real app, you'd auto-save or have a save button for this
+        toast.success("Preference updated");
+    };
+
+    const handleProfileSubmit = async (e) => {
         e.preventDefault();
         setIsSaving(true);
 
@@ -108,7 +138,6 @@ const Settings = () => {
 
             if (response.data.success) {
                 toast.success('Profile updated successfully!');
-                // Refresh user data in Redux store
                 dispatch(getMe());
             }
         } catch (error) {
@@ -119,383 +148,404 @@ const Settings = () => {
         }
     };
 
+    const handlePasswordSubmit = async (e) => {
+        e.preventDefault();
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            toast.error("New passwords don't match");
+            return;
+        }
+        if (passwordData.newPassword.length < 6) {
+            toast.error("Password must be at least 6 characters");
+            return;
+        }
+
+        setIsSaving(true);
+        try {
+            const response = await api.put('/users/change-password', {
+                currentPassword: passwordData.currentPassword,
+                newPassword: passwordData.newPassword
+            });
+
+            if (response.data.success) {
+                toast.success('Password changed successfully');
+                setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to change password');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleDeleteAccount = async () => {
+        if (!window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) return;
+
+        const password = prompt("Please enter your password to confirm deletion:");
+        if (!password) return;
+
+        try {
+            const response = await api.delete('/users/deleteMe', { data: { password } });
+            if (response.data.success) {
+                toast.success('Account deleted successfully');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to delete account');
+        }
+    };
+
     const SidebarComponent = user?.role === 'STUDENT' ? StudentSidebar : Sidebar;
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] flex">
+        <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] flex font-sans transition-colors duration-300">
             <Toaster position="top-right" />
             <SidebarComponent />
 
-            <main className="flex-1 md:ml-64 p-8">
-                <div className="max-w-4xl mx-auto">
-                    <header className="mb-8">
-                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Account Settings</h1>
-                        <p className="text-gray-500 dark:text-gray-400 mt-2">
-                            Manage your profile and account preferences
-                        </p>
+            <main className="flex-1 md:ml-64 p-4 md:p-8 overflow-y-auto h-screen scrollbar-hide">
+                <div className="max-w-5xl mx-auto pb-20">
+                    <header className="mb-8 relative overflow-hidden rounded-3xl bg-gradient-to-r from-teal-500 to-emerald-600 p-8 text-white shadow-xl shadow-teal-500/20">
+                        <div className="relative z-10">
+                            <h1 className="text-3xl font-bold tracking-tight">Account Settings</h1>
+                            <p className="text-teal-100 mt-2 text-lg font-medium">
+                                Manage your personal information and preferences.
+                            </p>
+                        </div>
+                        {/* Decorative circles */}
+                        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+                        <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-black/10 rounded-full blur-3xl"></div>
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-tr from-transparent via-transparent to-white/5 opacity-30"></div>
                     </header>
 
-                    <div className="bg-white dark:bg-[#1a1c23] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
-                        <form onSubmit={handleSubmit} className="p-8 space-y-8">
-
-                            {/* Avatar Section */}
-                            <div className="flex items-center space-x-6">
-                                <div className="relative group">
-                                    <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700">
-                                        {previewUrl ? (
-                                            <img src={previewUrl} alt="Avatar" className="w-full h-full object-cover" />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                                <User size={32} />
-                                            </div>
-                                        )}
-                                    </div>
-                                    <label htmlFor="avatar-upload" className="absolute inset-0 flex items-center justify-center bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer rounded-full">
-                                        <Camera size={20} />
-                                    </label>
-                                    <input
-                                        type="file"
-                                        id="avatar-upload"
-                                        className="hidden"
-                                        accept="image/*"
-                                        onChange={handleFileChange}
-                                    />
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">Profile Photo</h3>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                                        Recommend 400x400px or larger.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* Basic Info */}
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
-                                    <div className="relative">
-                                        <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={handleInputChange}
-                                            className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors"
-                                            placeholder="Your full name"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Email Address</label>
-                                    <div className="relative">
-                                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                                        <input
-                                            type="email"
-                                            value={formData.email}
-                                            readOnly
-                                            className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-500 cursor-not-allowed"
-                                        />
-                                    </div>
-                                    <p className="text-xs text-gray-500">Email cannot be changed</p>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
-                                    <div className="relative">
-                                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                                        <input
-                                            type="tel"
-                                            name="phone"
-                                            value={formData.phone}
-                                            onChange={handleInputChange}
-                                            className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors"
-                                            placeholder="+1 (555) 000-0000"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Country</label>
-                                    <div className="relative">
-                                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                                        <select
-                                            name="country"
-                                            value={formData.country}
-                                            onChange={handleInputChange}
-                                            className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors appearance-none"
+                    <div className="flex flex-col lg:flex-row gap-8">
+                        {/* Settings Navigation */}
+                        <div className="w-full lg:w-72 flex-shrink-0">
+                            <div className="bg-white dark:bg-[#1a1c23] rounded-2xl border border-gray-100 dark:border-gray-800 p-3 shadow-lg shadow-gray-200/50 dark:shadow-none sticky top-8">
+                                <nav className="space-y-1">
+                                    {[
+                                        { id: 'profile', icon: <User size={18} />, label: 'Profile' },
+                                        { id: 'notifications', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>, label: 'Notifications' },
+                                        { id: 'security', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>, label: 'Security' },
+                                        { id: 'danger', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg>, label: 'Delete Account' }
+                                    ].map((item) => (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => setActiveTab(item.id)}
+                                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-semibold ${activeTab === item.id
+                                                    ? 'bg-gradient-to-r from-teal-500/10 to-emerald-500/10 text-teal-600 dark:text-teal-400 border border-teal-100 dark:border-teal-500/20'
+                                                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                                                }`}
                                         >
-                                            <option value="">Select a country</option>
-                                            <option value="Afghanistan">Afghanistan</option>
-                                            <option value="Albania">Albania</option>
-                                            <option value="Algeria">Algeria</option>
-                                            <option value="Andorra">Andorra</option>
-                                            <option value="Angola">Angola</option>
-                                            <option value="Antigua and Barbuda">Antigua and Barbuda</option>
-                                            <option value="Argentina">Argentina</option>
-                                            <option value="Armenia">Armenia</option>
-                                            <option value="Australia">Australia</option>
-                                            <option value="Austria">Austria</option>
-                                            <option value="Azerbaijan">Azerbaijan</option>
-                                            <option value="Bahamas">Bahamas</option>
-                                            <option value="Bahrain">Bahrain</option>
-                                            <option value="Bangladesh">Bangladesh</option>
-                                            <option value="Barbados">Barbados</option>
-                                            <option value="Belarus">Belarus</option>
-                                            <option value="Belgium">Belgium</option>
-                                            <option value="Belize">Belize</option>
-                                            <option value="Benin">Benin</option>
-                                            <option value="Bhutan">Bhutan</option>
-                                            <option value="Bolivia">Bolivia</option>
-                                            <option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
-                                            <option value="Botswana">Botswana</option>
-                                            <option value="Brazil">Brazil</option>
-                                            <option value="Brunei">Brunei</option>
-                                            <option value="Bulgaria">Bulgaria</option>
-                                            <option value="Burkina Faso">Burkina Faso</option>
-                                            <option value="Burundi">Burundi</option>
-                                            <option value="Cabo Verde">Cabo Verde</option>
-                                            <option value="Cambodia">Cambodia</option>
-                                            <option value="Cameroon">Cameroon</option>
-                                            <option value="Canada">Canada</option>
-                                            <option value="Central African Republic">Central African Republic</option>
-                                            <option value="Chad">Chad</option>
-                                            <option value="Chile">Chile</option>
-                                            <option value="China">China</option>
-                                            <option value="Colombia">Colombia</option>
-                                            <option value="Comoros">Comoros</option>
-                                            <option value="Congo">Congo</option>
-                                            <option value="Costa Rica">Costa Rica</option>
-                                            <option value="Croatia">Croatia</option>
-                                            <option value="Cuba">Cuba</option>
-                                            <option value="Cyprus">Cyprus</option>
-                                            <option value="Czechia">Czechia</option>
-                                            <option value="Denmark">Denmark</option>
-                                            <option value="Djibouti">Djibouti</option>
-                                            <option value="Dominica">Dominica</option>
-                                            <option value="Dominican Republic">Dominican Republic</option>
-                                            <option value="Ecuador">Ecuador</option>
-                                            <option value="Egypt">Egypt</option>
-                                            <option value="El Salvador">El Salvador</option>
-                                            <option value="Equatorial Guinea">Equatorial Guinea</option>
-                                            <option value="Eritrea">Eritrea</option>
-                                            <option value="Estonia">Estonia</option>
-                                            <option value="Eswatini">Eswatini</option>
-                                            <option value="Ethiopia">Ethiopia</option>
-                                            <option value="Fiji">Fiji</option>
-                                            <option value="Finland">Finland</option>
-                                            <option value="France">France</option>
-                                            <option value="Gabon">Gabon</option>
-                                            <option value="Gambia">Gambia</option>
-                                            <option value="Georgia">Georgia</option>
-                                            <option value="Germany">Germany</option>
-                                            <option value="Ghana">Ghana</option>
-                                            <option value="Greece">Greece</option>
-                                            <option value="Grenada">Grenada</option>
-                                            <option value="Guatemala">Guatemala</option>
-                                            <option value="Guinea">Guinea</option>
-                                            <option value="Guinea-Bissau">Guinea-Bissau</option>
-                                            <option value="Guyana">Guyana</option>
-                                            <option value="Haiti">Haiti</option>
-                                            <option value="Honduras">Honduras</option>
-                                            <option value="Hungary">Hungary</option>
-                                            <option value="Iceland">Iceland</option>
-                                            <option value="India">India</option>
-                                            <option value="Indonesia">Indonesia</option>
-                                            <option value="Iran">Iran</option>
-                                            <option value="Iraq">Iraq</option>
-                                            <option value="Ireland">Ireland</option>
-                                            <option value="Israel">Israel</option>
-                                            <option value="Italy">Italy</option>
-                                            <option value="Jamaica">Jamaica</option>
-                                            <option value="Japan">Japan</option>
-                                            <option value="Jordan">Jordan</option>
-                                            <option value="Kazakhstan">Kazakhstan</option>
-                                            <option value="Kenya">Kenya</option>
-                                            <option value="Kiribati">Kiribati</option>
-                                            <option value="Korea, North">Korea, North</option>
-                                            <option value="Korea, South">Korea, South</option>
-                                            <option value="Kosovo">Kosovo</option>
-                                            <option value="Kuwait">Kuwait</option>
-                                            <option value="Kyrgyzstan">Kyrgyzstan</option>
-                                            <option value="Laos">Laos</option>
-                                            <option value="Latvia">Latvia</option>
-                                            <option value="Lebanon">Lebanon</option>
-                                            <option value="Lesotho">Lesotho</option>
-                                            <option value="Liberia">Liberia</option>
-                                            <option value="Libya">Libya</option>
-                                            <option value="Liechtenstein">Liechtenstein</option>
-                                            <option value="Lithuania">Lithuania</option>
-                                            <option value="Luxembourg">Luxembourg</option>
-                                            <option value="Madagascar">Madagascar</option>
-                                            <option value="Malawi">Malawi</option>
-                                            <option value="Malaysia">Malaysia</option>
-                                            <option value="Maldives">Maldives</option>
-                                            <option value="Mali">Mali</option>
-                                            <option value="Malta">Malta</option>
-                                            <option value="Marshall Islands">Marshall Islands</option>
-                                            <option value="Mauritania">Mauritania</option>
-                                            <option value="Mauritius">Mauritius</option>
-                                            <option value="Mexico">Mexico</option>
-                                            <option value="Micronesia">Micronesia</option>
-                                            <option value="Moldova">Moldova</option>
-                                            <option value="Monaco">Monaco</option>
-                                            <option value="Mongolia">Mongolia</option>
-                                            <option value="Montenegro">Montenegro</option>
-                                            <option value="Morocco">Morocco</option>
-                                            <option value="Mozambique">Mozambique</option>
-                                            <option value="Myanmar">Myanmar</option>
-                                            <option value="Namibia">Namibia</option>
-                                            <option value="Nauru">Nauru</option>
-                                            <option value="Nepal">Nepal</option>
-                                            <option value="Netherlands">Netherlands</option>
-                                            <option value="New Zealand">New Zealand</option>
-                                            <option value="Nicaragua">Nicaragua</option>
-                                            <option value="Niger">Niger</option>
-                                            <option value="Nigeria">Nigeria</option>
-                                            <option value="North Macedonia">North Macedonia</option>
-                                            <option value="Norway">Norway</option>
-                                            <option value="Oman">Oman</option>
-                                            <option value="Pakistan">Pakistan</option>
-                                            <option value="Palau">Palau</option>
-                                            <option value="Palestine">Palestine</option>
-                                            <option value="Panama">Panama</option>
-                                            <option value="Papua New Guinea">Papua New Guinea</option>
-                                            <option value="Paraguay">Paraguay</option>
-                                            <option value="Peru">Peru</option>
-                                            <option value="Philippines">Philippines</option>
-                                            <option value="Poland">Poland</option>
-                                            <option value="Portugal">Portugal</option>
-                                            <option value="Qatar">Qatar</option>
-                                            <option value="Romania">Romania</option>
-                                            <option value="Russia">Russia</option>
-                                            <option value="Rwanda">Rwanda</option>
-                                            <option value="Saint Kitts and Nevis">Saint Kitts and Nevis</option>
-                                            <option value="Saint Lucia">Saint Lucia</option>
-                                            <option value="Saint Vincent and the Grenadines">Saint Vincent and the Grenadines</option>
-                                            <option value="Samoa">Samoa</option>
-                                            <option value="San Marino">San Marino</option>
-                                            <option value="Sao Tome and Principe">Sao Tome and Principe</option>
-                                            <option value="Saudi Arabia">Saudi Arabia</option>
-                                            <option value="Senegal">Senegal</option>
-                                            <option value="Serbia">Serbia</option>
-                                            <option value="Seychelles">Seychelles</option>
-                                            <option value="Sierra Leone">Sierra Leone</option>
-                                            <option value="Singapore">Singapore</option>
-                                            <option value="Slovakia">Slovakia</option>
-                                            <option value="Slovenia">Slovenia</option>
-                                            <option value="Solomon Islands">Solomon Islands</option>
-                                            <option value="Somalia">Somalia</option>
-                                            <option value="South Africa">South Africa</option>
-                                            <option value="South Sudan">South Sudan</option>
-                                            <option value="Spain">Spain</option>
-                                            <option value="Sri Lanka">Sri Lanka</option>
-                                            <option value="Sudan">Sudan</option>
-                                            <option value="Suriname">Suriname</option>
-                                            <option value="Sweden">Sweden</option>
-                                            <option value="Switzerland">Switzerland</option>
-                                            <option value="Syria">Syria</option>
-                                            <option value="Taiwan">Taiwan</option>
-                                            <option value="Tajikistan">Tajikistan</option>
-                                            <option value="Tanzania">Tanzania</option>
-                                            <option value="Thailand">Thailand</option>
-                                            <option value="Timor-Leste">Timor-Leste</option>
-                                            <option value="Togo">Togo</option>
-                                            <option value="Tonga">Tonga</option>
-                                            <option value="Trinidad and Tobago">Trinidad and Tobago</option>
-                                            <option value="Tunisia">Tunisia</option>
-                                            <option value="Turkey">Turkey</option>
-                                            <option value="Turkmenistan">Turkmenistan</option>
-                                            <option value="Tuvalu">Tuvalu</option>
-                                            <option value="Uganda">Uganda</option>
-                                            <option value="Ukraine">Ukraine</option>
-                                            <option value="United Arab Emirates">United Arab Emirates</option>
-                                            <option value="United Kingdom">United Kingdom</option>
-                                            <option value="United States">United States</option>
-                                            <option value="Uruguay">Uruguay</option>
-                                            <option value="Uzbekistan">Uzbekistan</option>
-                                            <option value="Vanuatu">Vanuatu</option>
-                                            <option value="Vatican City">Vatican City</option>
-                                            <option value="Venezuela">Venezuela</option>
-                                            <option value="Vietnam">Vietnam</option>
-                                            <option value="Yemen">Yemen</option>
-                                            <option value="Zambia">Zambia</option>
-                                            <option value="Zimbabwe">Zimbabwe</option>
-                                        </select>
+                                            <span className={`${activeTab === item.id ? 'text-teal-600 dark:text-teal-400' : 'text-gray-500 dark:text-gray-500'}`}>
+                                                {item.icon}
+                                            </span>
+                                            <span>{item.label}</span>
+                                            {activeTab === item.id && (
+                                                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-teal-500"></div>
+                                            )}
+                                        </button>
+                                    ))}
+                                </nav>
+                            </div>
+                        </div>
+
+                        {/* Content Area */}
+                        <div className="flex-1">
+                            {/* Profile Tab */}
+                            {activeTab === 'profile' && (
+                                <div className="bg-white dark:bg-[#1a1c23] rounded-3xl border border-gray-100 dark:border-gray-800 shadow-xl shadow-gray-200/50 dark:shadow-none overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-500">
+                                    <div className="p-8 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 flex justify-between items-center">
+                                        <div>
+                                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Profile Details</h2>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Update your personal information.</p>
+                                        </div>
+                                    </div>
+                                    <form onSubmit={handleProfileSubmit} className="p-8 space-y-8">
+                                        {/* Avatar Section */}
+                                        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 bg-gray-50 dark:bg-gray-800/30 p-6 rounded-2xl border border-gray-100 dark:border-gray-700/50">
+                                            <div className="relative group shrink-0">
+                                                <div className="w-28 h-28 rounded-full overflow-hidden bg-white dark:bg-gray-800 border-4 border-white dark:border-gray-700 shadow-lg ring-2 ring-teal-100 dark:ring-teal-500/20">
+                                                    {previewUrl ? (
+                                                        <img src={previewUrl} alt="Avatar" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-100 dark:bg-gray-800">
+                                                            <User size={40} />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <label htmlFor="avatar-upload" className="absolute inset-0 flex items-center justify-center bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-all cursor-pointer rounded-full backdrop-blur-[2px]">
+                                                    <Camera size={24} />
+                                                </label>
+                                                <input type="file" id="avatar-upload" className="hidden" accept="image/*" onChange={handleFileChange} />
+                                            </div>
+                                            <div className="text-center sm:text-left flex-1">
+                                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Profile Photo</h3>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-4">
+                                                    We recommend an image of at least 400x400px.
+                                                </p>
+                                                <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
+                                                    <label htmlFor="avatar-upload" className="px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-semibold cursor-pointer transition-all shadow-sm">
+                                                        Upload New
+                                                    </label>
+                                                    {previewUrl && (
+                                                        <button type="button" onClick={() => { setPreviewUrl(null); setAvatarFile(null); }} className="px-5 py-2.5 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl text-sm font-semibold transition-all">
+                                                            Remove
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Full Name</label>
+                                                <div className="relative">
+                                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                                        <User size={18} />
+                                                    </div>
+                                                    <input
+                                                        type="text"
+                                                        name="name"
+                                                        value={formData.name}
+                                                        onChange={handleInputChange}
+                                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-medium"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email Address</label>
+                                                <div className="relative">
+                                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                                        <Mail size={18} />
+                                                    </div>
+                                                    <input
+                                                        type="email"
+                                                        value={formData.email}
+                                                        readOnly
+                                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/80 text-gray-500 cursor-not-allowed font-medium"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Phone</label>
+                                                <div className="relative">
+                                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                                        <Phone size={18} />
+                                                    </div>
+                                                    <input
+                                                        type="tel"
+                                                        name="phone"
+                                                        value={formData.phone}
+                                                        onChange={handleInputChange}
+                                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-medium"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Country</label>
+                                                <div className="relative">
+                                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                                        <MapPin size={18} />
+                                                    </div>
+                                                    <select
+                                                        name="country"
+                                                        value={formData.country}
+                                                        onChange={handleInputChange}
+                                                        className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all appearance-none font-medium"
+                                                    >
+                                                        <option value="">Select Country</option>
+                                                        {['India', 'United States', 'United Kingdom', 'Canada', 'Australia'].map(c => (
+                                                            <option key={c} value={c}>{c}</option>
+                                                        ))}
+                                                    </select>
+                                                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {user?.role === 'FACULTY' && (
+                                                <>
+                                                    <div className="md:col-span-2 space-y-2">
+                                                        <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Expertise</label>
+                                                        <div className="relative">
+                                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                                                <Briefcase size={18} />
+                                                            </div>
+                                                            <input
+                                                                type="text"
+                                                                value={Array.isArray(formData.expertise) ? formData.expertise.join(', ') : formData.expertise || ''}
+                                                                onChange={handleExpertiseChange}
+                                                                placeholder="e.g. Computer Science, Machine Learning (comma separated)"
+                                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-medium"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Years of Experience</label>
+                                                        <div className="relative">
+                                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                                                <Award size={18} />
+                                                            </div>
+                                                            <input
+                                                                type="number"
+                                                                name="yearsOfExperience"
+                                                                value={formData.yearsOfExperience}
+                                                                onChange={handleInputChange}
+                                                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-medium"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )}
+
+                                            <div className="md:col-span-2 space-y-2">
+                                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Bio</label>
+                                                <textarea
+                                                    name="bio"
+                                                    value={formData.bio}
+                                                    onChange={handleInputChange}
+                                                    rows="4"
+                                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all resize-none font-medium"
+                                                    placeholder="Tell us a bit about yourself..."
+                                                ></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex justify-end pt-8 border-t border-gray-100 dark:border-gray-800">
+                                            <button
+                                                type="submit"
+                                                disabled={isSaving}
+                                                className="flex items-center space-x-2 px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl transition-all font-bold shadow-lg shadow-teal-600/20 hover:shadow-teal-600/40 hover:-translate-y-0.5 disabled:opacity-70 disabled:transform-none"
+                                            >
+                                                {isSaving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
+                                                <span>{isSaving ? 'Saving Changes...' : 'Save Changes'}</span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            )}
+
+                            {/* Notifications Tab */}
+                            {activeTab === 'notifications' && (
+                                <div className="bg-white dark:bg-[#1a1c23] rounded-3xl border border-gray-100 dark:border-gray-800 shadow-xl shadow-gray-200/50 dark:shadow-none overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-500">
+                                    <div className="p-8 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20">
+                                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">Notification Preferences</h2>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage what emails you receive.</p>
+                                    </div>
+                                    <div className="p-8 space-y-6">
+                                        {[
+                                            { id: 'emailAlerts', title: 'Email Alerts', desc: 'Receive important updates about your account.' },
+                                            { id: 'courseUpdates', title: 'Course Updates', desc: 'Get notified when new content is added to your enrolled courses.' },
+                                            { id: 'marketing', title: 'Marketing', desc: 'Receive offers and promotions.' },
+                                            { id: 'securityAlerts', title: 'Security Alerts', desc: 'Get notified of any suspicious activity.' }
+                                        ].map(item => (
+                                            <div key={item.id} className="flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                                                <div>
+                                                    <h3 className="font-semibold text-gray-900 dark:text-white">{item.title}</h3>
+                                                    <p className="text-sm text-gray-500 dark:text-gray-400">{item.desc}</p>
+                                                </div>
+                                                <button
+                                                    onClick={() => handleNotificationChange(item.id)}
+                                                    className={`w-12 h-6 rounded-full transition-colors relative ${notifications[item.id] ? 'bg-teal-500' : 'bg-gray-200 dark:bg-gray-700'}`}
+                                                >
+                                                    <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform transform ${notifications[item.id] ? 'translate-x-6' : 'translate-x-0'}`}></span>
+                                                </button>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
+                            )}
 
-                                <div className="md:col-span-2 space-y-2">
-                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Bio</label>
-                                    <textarea
-                                        name="bio"
-                                        value={formData.bio}
-                                        onChange={handleInputChange}
-                                        rows="4"
-                                        className="w-full p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors resize-none"
-                                        placeholder="Tell us a bit about yourself..."
-                                    ></textarea>
+                            {/* Security Tab */}
+                            {activeTab === 'security' && (
+                                <div className="bg-white dark:bg-[#1a1c23] rounded-3xl border border-gray-100 dark:border-gray-800 shadow-xl shadow-gray-200/50 dark:shadow-none overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-500">
+                                    <div className="p-8 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20">
+                                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">Security & Password</h2>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage your password and security preferences.</p>
+                                    </div>
+                                    <form onSubmit={handlePasswordSubmit} className="p-8 space-y-8">
+                                        <div className="space-y-6 max-w-lg">
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Current Password</label>
+                                                <input
+                                                    type="password"
+                                                    name="currentPassword"
+                                                    value={passwordData.currentPassword}
+                                                    onChange={handlePasswordChange}
+                                                    placeholder="••••••••"
+                                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-medium"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">New Password</label>
+                                                <input
+                                                    type="password"
+                                                    name="newPassword"
+                                                    value={passwordData.newPassword}
+                                                    onChange={handlePasswordChange}
+                                                    placeholder="••••••••"
+                                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-medium"
+                                                />
+                                                <p className="text-xs text-gray-400 pl-1">Must be at least 6 characters long.</p>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Confirm New Password</label>
+                                                <input
+                                                    type="password"
+                                                    name="confirmPassword"
+                                                    value={passwordData.confirmPassword}
+                                                    onChange={handlePasswordChange}
+                                                    placeholder="••••••••"
+                                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-medium"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex justify-start pt-6 border-t border-gray-100 dark:border-gray-800">
+                                            <button
+                                                type="submit"
+                                                disabled={isSaving}
+                                                className="flex items-center space-x-2 px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl transition-all font-bold shadow-lg shadow-teal-600/20 hover:shadow-teal-600/40 hover:-translate-y-0.5 disabled:opacity-70 disabled:transform-none"
+                                            >
+                                                {isSaving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
+                                                <span>{isSaving ? 'Updating Password...' : 'Update Password'}</span>
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
+                            )}
 
-                                {/* Faculty Specific Fields */}
-                                {user?.role === 'FACULTY' && (
-                                    <>
-                                        <div className="md:col-span-2 border-t border-gray-200 dark:border-gray-800 pt-6 mt-2">
-                                            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Professional Profile</h3>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Years of Experience</label>
-                                            <div className="relative">
-                                                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                                                <input
-                                                    type="number"
-                                                    name="yearsOfExperience"
-                                                    value={formData.yearsOfExperience}
-                                                    onChange={handleInputChange}
-                                                    min="0"
-                                                    className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors"
-                                                />
+                            {/* Danger Zone Tab */}
+                            {activeTab === 'danger' && (
+                                <div className="bg-white dark:bg-[#1a1c23] rounded-3xl border border-red-200 dark:border-red-900/30 shadow-xl shadow-red-100/50 dark:shadow-none overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-500">
+                                    <div className="p-8 border-b border-red-100 dark:border-red-900/20 bg-red-50/50 dark:bg-red-900/5">
+                                        <h2 className="text-xl font-bold text-red-600 dark:text-red-400">Delete Account</h2>
+                                        <p className="text-sm text-red-600/70 dark:text-red-400/70 mt-1">Irreversible actions for your account.</p>
+                                    </div>
+                                    <div className="p-8">
+                                        <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-6 rounded-2xl border border-red-100 dark:border-red-900/20 bg-red-50/30 dark:bg-red-900/10">
+                                            <div>
+                                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Delete Account</h3>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mt-1 leading-relaxed">
+                                                    Permanently remove your account and all of its content from the EmoteTechnology platform.
+                                                    <span className="font-bold text-red-500 block mt-1">This action cannot be undone.</span>
+                                                </p>
                                             </div>
+                                            <button
+                                                onClick={handleDeleteAccount}
+                                                className="shrink-0 px-6 py-3 bg-white dark:bg-transparent border-2 border-red-500 text-red-600 dark:text-red-500 hover:bg-red-500 hover:text-white rounded-xl font-bold text-sm transition-all hover:scale-105 shadow-sm"
+                                            >
+                                                Delete Account
+                                            </button>
                                         </div>
+                                    </div>
+                                </div>
+                            )}
 
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Expertise (comma separated)</label>
-                                            <div className="relative">
-                                                <Award className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                                                <input
-                                                    type="text"
-                                                    value={formData.expertise.join(', ')}
-                                                    onChange={handleExpertiseChange}
-                                                    className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors"
-                                                    placeholder="React, Node.js, Design..."
-                                                />
-                                            </div>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-
-                            <div className="flex justify-end pt-6 border-t border-gray-200 dark:border-gray-800">
-                                <button
-                                    type="submit"
-                                    disabled={isSaving}
-                                    className="flex items-center space-x-2 px-6 py-2 bg-teal-500 hover:bg-teal-600 text-white rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {isSaving ? (
-                                        <>
-                                            <Loader2 size={20} className="animate-spin" />
-                                            <span>Saving...</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Save size={20} />
-                                            <span>Save Changes</span>
-                                        </>
-                                    )}
-                                </button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </main>

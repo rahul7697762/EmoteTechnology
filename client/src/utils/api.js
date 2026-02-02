@@ -59,6 +59,28 @@ export const authAPI = {
     }
 };
 
+// User API calls
+export const userAPI = {
+    updateProfile: async (formData) => {
+        const config = {};
+        if (formData instanceof FormData) {
+            config.headers = { 'Content-Type': 'multipart/form-data' };
+        }
+        const response = await api.put('/users/profile', formData, config);
+        return response.data;
+    },
+
+    changePassword: async (data) => {
+        const response = await api.put('/users/change-password', data);
+        return response.data;
+    },
+
+    deleteAccount: async (password) => {
+        const response = await api.delete('/users/deleteMe', { data: { password } });
+        return response.data;
+    }
+};
+
 // Course API calls
 export const courseAPI = {
     // Create new course (metadata only)
@@ -75,6 +97,12 @@ export const courseAPI = {
     // Get all courses created by the faculty
     getMyCourses: async () => {
         const response = await api.get('/courses/faculty/my-courses');
+        return response.data;
+    },
+
+    // Get all public courses or search
+    getAllCourses: async (endpoint = '/courses') => {
+        const response = await api.get(endpoint);
         return response.data;
     },
 

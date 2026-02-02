@@ -11,6 +11,19 @@ export const getFacultyCourses = createAsyncThunk('course/getFacultyCourses', as
     }
 });
 
+export const fetchCourses = createAsyncThunk('course/fetchCourses', async ({ searchQuery = '', page = 1 } = {}, { rejectWithValue }) => {
+    try {
+        let endpoint = `/courses?page=${page}`;
+        if (searchQuery.trim()) {
+            endpoint = `/courses/search?query=${encodeURIComponent(searchQuery)}&page=${page}`;
+        }
+        const response = await courseAPI.getAllCourses(endpoint);
+        return response; // { success: true, courses: [...], pagination: {...} }
+    } catch (error) {
+        return rejectWithValue(error.response?.data?.message || 'Failed to fetch courses');
+    }
+});
+
 export const getDashboardStats = createAsyncThunk('course/getDashboardStats', async (_, { rejectWithValue }) => {
     // Mock Data for Demo
     return {
@@ -77,11 +90,14 @@ export const deleteCourse = createAsyncThunk('course/deleteCourse', async (cours
 
 const initialState = {
     courses: [], // For all courses (future public view)
+    searchQuery: '', // Store persistence
+    pagination: null, // { total, page, pages }
     myCourses: [], // For faculty specific courses
     currentCourse: null,
     stats: null,
 
     // granular loading states
+    isFetchingPublicCourses: false,
     isFetchingCourses: false,
     isCreatingCourse: false,
     isUpdatingCourse: false,
@@ -109,6 +125,22 @@ const courseSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            // Fetch Public Courses
+            .addCase(fetchCourses.pending, (state) => {
+                state.isFetchingPublicCourses = true;
+                state.error = null;
+            })
+            .addCase(fetchCourses.fulfilled, (state, action) => {
+                state.isFetchingPublicCourses = false;
+                state.courses = action.payload.courses || [];
+                state.pagination = action.payload.pagination || null;
+                // Store the query used
+                state.searchQuery = action.meta.arg.searchQuery || '';
+            })
+            .addCase(fetchCourses.rejected, (state, action) => {
+                state.isFetchingPublicCourses = false;
+                state.error = action.payload;
+            })
             // Get Faculty Courses
             .addCase(getFacultyCourses.pending, (state) => {
                 state.isFetchingCourses = true;

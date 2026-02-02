@@ -4,43 +4,40 @@ import Footer from '../components/landing/Footer';
 import { Search, BookOpen, Clock, Star, User } from 'lucide-react';
 import api from '../utils/api';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCourses } from '../redux/slices/courseSlice';
+
 const Courses = () => {
-    const [loading, setLoading] = useState(true);
-    const [courses, setCourses] = useState([]);
-    const [error, setError] = useState(null);
-    const [searchQuery, setSearchQuery] = useState('');
+    const dispatch = useDispatch();
+    const { courses, pagination, searchQuery: storedSearchQuery, isFetchingPublicCourses: loading, error } = useSelector((state) => state.course);
+    const [searchQuery, setSearchQuery] = useState(storedSearchQuery || '');
+    const [currentPage, setCurrentPage] = useState(pagination?.page || 1);
 
     useEffect(() => {
-        const fetchCourses = async () => {
-            setLoading(true);
-            try {
-                let endpoint = '/courses';
-                if (searchQuery.trim()) {
-                    endpoint = `/courses/search?query=${encodeURIComponent(searchQuery)}`;
-                }
+        // If data exists and params match what is stored, skip fetch
+        if (courses.length > 0 && searchQuery === storedSearchQuery && currentPage === (pagination?.page || 1)) {
+            return;
+        }
 
-                const response = await api.get(endpoint);
-                // Assuming response structure: { success: true, data: [...] } or just [...]
-                // Let's handle generic success wrapper if it exists (common pattern)
-                const data = response.data?.courses || response.data?.data || response.data || [];
-
-                // Ensure we proceed with an array
-                setCourses(Array.isArray(data) ? data : []);
-            } catch (err) {
-                console.error('Failed to fetch courses:', err);
-                setError('Failed to load courses. Please try again later.');
-            } finally {
-                setLoading(false);
-            }
+        const fetchData = () => {
+            dispatch(fetchCourses({ searchQuery, page: currentPage }));
         };
 
         // Debounce search
         const timeoutId = setTimeout(() => {
-            fetchCourses();
+            fetchData();
         }, 500);
 
         return () => clearTimeout(timeoutId);
-    }, [searchQuery]);
+    }, [searchQuery, currentPage, dispatch, courses.length, storedSearchQuery, pagination?.page]);
+
+
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= (pagination?.pages || 1)) {
+            setCurrentPage(newPage);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] text-gray-900 dark:text-white transition-colors duration-300">
@@ -106,18 +103,16 @@ const Courses = () => {
                                         <div className="flex items-center justify-between mb-2">
                                             <div className="flex items-center text-yellow-400 text-sm font-bold">
                                                 <Star size={16} className="fill-current mr-1" />
-                                                {course.rating || 4.5}
+                                                {typeof course.rating === 'object' ? (course.rating?.average || 0) : (course.rating || 4.5)}
                                             </div>
                                             <div className="text-gray-500 dark:text-gray-400 text-sm flex items-center">
-                                                <User size={14} className="mr-1" /> {course.students?.length || course.students || 0}
+                                                <User size={14} className="mr-1" />
+                                                {course.instructor?.name || 'Instructor'}
                                             </div>
                                         </div>
                                         <h3 className="text-xl font-bold mb-2 line-clamp-2 group-hover:text-teal-500 transition-colors">
                                             {course.title}
                                         </h3>
-                                        <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
-                                            by {course.instructor?.name || course.instructor || 'Instructor'}
-                                        </p>
                                         <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
                                             <span className="text-2xl font-bold text-gray-900 dark:text-white">
                                                 {course.price ? `$${course.price}` : 'Free'}
@@ -130,6 +125,29 @@ const Courses = () => {
                                 </div>
                             ))
                         )}
+                    </div>
+                )}
+
+                {/* Pagination Controls */}
+                {!loading && !error && pagination && pagination.pages > 1 && (
+                    <div className="flex justify-center items-center mt-12 gap-4">
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="px-6 py-3 rounded-xl bg-white dark:bg-[#1a1c23] border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Previous
+                        </button>
+                        <span className="text-gray-600 dark:text-gray-400 font-medium">
+                            Page {currentPage} of {pagination.pages}
+                        </span>
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === pagination.pages}
+                            className="px-6 py-3 rounded-xl bg-white dark:bg-[#1a1c23] border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Next
+                        </button>
                     </div>
                 )}
             </main>

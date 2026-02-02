@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { authAPI } from '../../utils/api';
+import { authAPI, userAPI } from '../../utils/api';
 
 // Async Thunks
 // Async Thunks
@@ -75,6 +75,33 @@ export const verifyEmail = createAsyncThunk('auth/verifyEmail', async (token, { 
     }
 });
 
+export const updateProfile = createAsyncThunk('auth/updateProfile', async (formData, { rejectWithValue }) => {
+    try {
+        const response = await userAPI.updateProfile(formData);
+        return response.user; // Assuming backend returns { success: true, user: ... }
+    } catch (error) {
+        return rejectWithValue(error.response?.data?.message || 'Failed to update profile');
+    }
+});
+
+export const changePassword = createAsyncThunk('auth/changePassword', async (passwords, { rejectWithValue }) => {
+    try {
+        const response = await userAPI.changePassword(passwords);
+        return response.message;
+    } catch (error) {
+        return rejectWithValue(error.response?.data?.message || 'Failed to change password');
+    }
+});
+
+export const deleteAccount = createAsyncThunk('auth/deleteAccount', async (password, { rejectWithValue }) => {
+    try {
+        await userAPI.deleteAccount(password);
+        return;
+    } catch (error) {
+        return rejectWithValue(error.response?.data?.message || 'Failed to delete account');
+    }
+});
+
 const initialState = {
     user: null, // User is not persisted in localStorage anymore, solely depends on getMe
     isLoggingIn: false,
@@ -85,6 +112,11 @@ const initialState = {
     isVerifyOTPLoading: false,
     isResetPasswordLoading: false,
     isVerifyEmailLoading: false,
+
+    // Granular loading states for Settings
+    isUpdatingProfile: false,
+    isChangingPassword: false,
+    isDeletingAccount: false,
 
     isAuthenticated: false,
 };
@@ -192,6 +224,39 @@ const authSlice = createSlice({
             })
             .addCase(verifyEmail.rejected, (state, action) => {
                 state.isVerifyEmailLoading = false;
+            })
+            // Update Profile
+            .addCase(updateProfile.pending, (state) => {
+                state.isUpdatingProfile = true;
+            })
+            .addCase(updateProfile.fulfilled, (state, action) => {
+                state.isUpdatingProfile = false;
+                state.user = action.payload; // Update local user state with fresh data
+            })
+            .addCase(updateProfile.rejected, (state) => {
+                state.isUpdatingProfile = false;
+            })
+            // Change Password
+            .addCase(changePassword.pending, (state) => {
+                state.isChangingPassword = true;
+            })
+            .addCase(changePassword.fulfilled, (state) => {
+                state.isChangingPassword = false;
+            })
+            .addCase(changePassword.rejected, (state) => {
+                state.isChangingPassword = false;
+            })
+            // Delete Account
+            .addCase(deleteAccount.pending, (state) => {
+                state.isDeletingAccount = true;
+            })
+            .addCase(deleteAccount.fulfilled, (state) => {
+                state.isDeletingAccount = false;
+                state.user = null;
+                state.isAuthenticated = false;
+            })
+            .addCase(deleteAccount.rejected, (state) => {
+                state.isDeletingAccount = false;
             });
     }
 });

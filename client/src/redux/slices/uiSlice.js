@@ -9,19 +9,25 @@ const getInitialTheme = () => {
 };
 
 const initialState = {
-    theme: getInitialTheme(),
+    isSidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true',
+    theme: getInitialTheme()
 };
 
-const themeSlice = createSlice({
-    name: 'theme',
+const uiSlice = createSlice({
+    name: 'ui',
     initialState,
     reducers: {
+        toggleSidebar: (state) => {
+            state.isSidebarCollapsed = !state.isSidebarCollapsed;
+            localStorage.setItem('sidebarCollapsed', state.isSidebarCollapsed);
+        },
+        setSidebarCollapsed: (state, action) => {
+            state.isSidebarCollapsed = action.payload;
+            localStorage.setItem('sidebarCollapsed', action.payload);
+        },
         toggleTheme: (state) => {
             state.theme = state.theme === 'dark' ? 'light' : 'dark';
             localStorage.setItem('theme', state.theme);
-
-            // Directly manipulating DOM here for immediate effect, 
-            // though ideally this should be a side effect subscriber
             const root = window.document.documentElement;
             root.classList.remove('light', 'dark');
             root.classList.add(state.theme);
@@ -36,5 +42,5 @@ const themeSlice = createSlice({
     }
 });
 
-export const { toggleTheme, setTheme } = themeSlice.actions;
-export default themeSlice.reducer;
+export const { toggleSidebar, setSidebarCollapsed, toggleTheme, setTheme } = uiSlice.actions;
+export default uiSlice.reducer;

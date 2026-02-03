@@ -17,13 +17,15 @@ const Settings = () => {
 
 
 
+    const { isSidebarCollapsed } = useSelector((state) => state.ui);
+
     const SidebarComponent = user?.role === 'STUDENT' ? StudentSidebar : Sidebar;
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] flex font-sans transition-colors duration-300">
             <SidebarComponent />
 
-            <main className="flex-1 md:ml-64 md:py-8 md:pr-8 pl-6 overflow-y-auto h-screen scrollbar-hide">
+            <main className={`flex-1 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'} md:py-8 md:pr-8 pl-6 overflow-y-auto h-screen scrollbar-hide transition-all duration-300`}>
                 <div className="pb-20">
                     <div className="flex flex-col lg:flex-row gap-8 mt-8">
                         {/* Settings Navigation */}

@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Sun, Moon, Search, Menu, X } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleTheme } from '../../redux/slices/themeSlice';
+import { toggleTheme } from '../../redux/slices/uiSlice';
 import { useState } from 'react';
 
 const Navbar = () => {
@@ -10,7 +10,7 @@ const Navbar = () => {
     const location = useLocation();
     const dispatch = useDispatch();
 
-    const { theme } = useSelector((state) => state.theme);
+    const { theme } = useSelector((state) => state.ui);
     const { user } = useSelector((state) => state.auth);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 

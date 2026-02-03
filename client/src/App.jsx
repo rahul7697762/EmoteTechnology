@@ -29,7 +29,7 @@ import { useEffect } from 'react';
 
 function App() {
   const dispatch = useDispatch();
-  const { theme } = useSelector((state) => state.theme);
+  const { theme } = useSelector((state) => state.ui);
 
   useEffect(() => {
     dispatch(getMe());

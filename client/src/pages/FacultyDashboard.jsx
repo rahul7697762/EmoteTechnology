@@ -41,6 +41,8 @@ const FacultyDashboard = () => {
         dispatch(logout());
     };
 
+    const { isSidebarCollapsed } = useSelector((state) => state.ui);
+
     if (isFetchingCourses && isFetchingStats) {
         return (
             <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] flex items-center justify-center">
@@ -53,7 +55,7 @@ const FacultyDashboard = () => {
         <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] transition-colors duration-300">
             <Sidebar />
 
-            <main className="md:ml-64 p-8">
+            <main className={`p-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
                 {/* Top Header Row: Search & Profile */}
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
                     {/* Search Bar */}

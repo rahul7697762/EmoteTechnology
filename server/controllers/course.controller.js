@@ -361,7 +361,12 @@ export const getCourseById = async (req, res) => {
             .populate({
                 path: 'modules',
                 select: 'title subModulesCount order',
-                options: { sort: { order: 1 } }
+                options: { sort: { order: 1 } },
+                populate: {
+                    path: 'subModules',
+                    select: 'title type isPreview',
+                    options: { sort: { order: 1 } }
+                }
             });
 
         // if course not found then return 404

@@ -27,13 +27,18 @@ export const enrollInCourse = async (req, res) => {
             });
         }
 
-        // 3. Create Enrollment
-        // For now, assuming free access or handling payment externally.
-        // If course is paid, we would implement payment gateway verify here.
+        if (course.price && course.price > 0) {
+            return res.status(400).json({
+                success: false,
+                message: "This is a paid course. Please complete payment to enroll."
+            });
+        }
+
+        // 3. Create Enrollment (Free only)
         const enrollment = await Enrollment.create({
             userId,
             courseId,
-            accessType: course.price && course.price > 0 ? "PAID" : "FREE",
+            accessType: "FREE",
             status: "ACTIVE",
             progressPercentage: 0
         });

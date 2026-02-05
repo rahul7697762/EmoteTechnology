@@ -11,7 +11,7 @@ import {
     createCourseValidation, rejectCourseValidation,
     updateCourseValidation, statusCourseValidation
 } from "../validators/course.validation.js";
-import { protect, restrictTo } from "../middleware/auth.middleware.js";
+import { protect, restrictTo, optionalProtect } from "../middleware/auth.middleware.js";
 import { validate } from "../middleware/validate.middleware.js";
 
 const router = Router();
@@ -26,13 +26,13 @@ router.get('/search', searchCourses);
 router.get('/', getAllCourses);
 
 // Get course by slug
-router.get('/slug/:slug', getCourseBySlug);
+router.get('/slug/:slug', optionalProtect, getCourseBySlug);
 
 // Get course reviews
 router.get('/:id/reviews', getCourseReviews);
 
 // Get course by ID
-router.get('/:id', getCourseById);
+router.get('/:id', optionalProtect, getCourseById);
 
 
 /*===============

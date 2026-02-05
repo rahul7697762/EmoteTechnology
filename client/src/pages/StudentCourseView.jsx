@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import DOMPurify from 'dompurify';
+import parse from 'html-react-parser';
 
 const StudentCourseView = () => {
     const { id } = useParams();
@@ -101,7 +103,7 @@ const StudentCourseView = () => {
                                     <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
                                         Section {index + 1}
                                     </h3>
-                                    <p className={`text-sm font-medium transition-colors ${activeModuleId === module._id ? 'text-violet-600 dark:text-violet-400' : 'text-slate-900 dark:text-white'
+                                    <p className={`text-sm font-medium transition-colors ${activeModuleId === module._id ? 'text-teal-600 dark:text-teal-400' : 'text-slate-900 dark:text-white'
                                         }`}>
                                         {module.title}
                                     </p>
@@ -117,7 +119,7 @@ const StudentCourseView = () => {
                                             key={lesson._id}
                                             onClick={() => setActiveLesson(lesson)}
                                             className={`w-full px-4 py-3 flex items-start gap-3 pl-10 border-l-4 transition-all relative ${activeLesson?._id === lesson._id
-                                                ? 'border-violet-600 bg-white dark:bg-slate-800/50 shadow-sm'
+                                                ? 'border-teal-500 bg-white dark:bg-slate-800/50 shadow-sm'
                                                 : 'border-transparent hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-600 dark:text-slate-400'
                                                 }`}
                                         >
@@ -128,7 +130,7 @@ const StudentCourseView = () => {
                                             </div>
                                             <div className="text-left flex-1 min-w-0">
                                                 <p className={`text-sm truncate ${activeLesson?._id === lesson._id
-                                                    ? 'font-medium text-violet-700 dark:text-violet-400'
+                                                    ? 'font-medium text-teal-600 dark:text-teal-400'
                                                     : ''
                                                     }`}>
                                                     {lessonIndex + 1}. {lesson.title}
@@ -217,17 +219,9 @@ const StudentCourseView = () => {
                                             </h1>
                                         </div>
 
-                                        <div
-                                            className="prose prose-lg dark:prose-invert max-w-none text-slate-700 dark:text-slate-300
-                                                prose-headings:font-bold prose-headings:text-slate-900 dark:prose-headings:text-white
-                                                prose-a:text-violet-600 dark:prose-a:text-violet-400
-                                                prose-img:rounded-xl prose-img:shadow-lg
-                                            "
-                                        >
-                                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                {activeLesson.content || "> *No content available.*"}
-                                            </ReactMarkdown>
-                                        </div>
+                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                            {activeLesson.content || "> *No content available.*"}
+                                        </ReactMarkdown>
                                     </div>
                                 </div>
                             )}

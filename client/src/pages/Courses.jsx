@@ -9,6 +9,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCourses, enrollInCourse } from '../redux/slices/courseSlice';
 import toast from 'react-hot-toast';
 
+const getCurrencySymbol = (currencyCode) => {
+    if (!currencyCode) return '';
+    const code = currencyCode.toUpperCase();
+    switch (code) {
+        case 'USD': return '$';
+        case 'EUR': return '€';
+        case 'INR': return '₹';
+        default: return (currencyCode || '') + ' ';
+    }
+};
+
 const Courses = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -117,11 +128,33 @@ const Courses = () => {
                                             {course.title}
                                         </h3>
                                         <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
-                                            <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                                                {course.price ? `$${course.price}` : 'Free'}
-                                            </span>
+                                            <div className="flex flex-col">
+                                                {course.discount > 0 ? (
+                                                    <>
+                                                        <span className="text-xs text-gray-400 line-through">
+                                                            {getCurrencySymbol(course.currency)}
+                                                            {course.price}
+                                                        </span>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-xl font-bold text-teal-600 dark:text-teal-400">
+                                                                {getCurrencySymbol(course.currency)}
+                                                                {(course.price * (1 - course.discount / 100)).toFixed(2)}
+                                                            </span>
+                                                            <span className="text-xs font-bold text-red-500 bg-red-50 dark:bg-red-900/20 px-1.5 py-0.5 rounded-full">
+                                                                {course.discount}% OFF
+                                                            </span>
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <span className="text-xl font-bold text-teal-600 dark:text-teal-400">
+                                                        {course.price
+                                                            ? `${getCurrencySymbol(course.currency)}${course.price}`
+                                                            : 'Free'}
+                                                    </span>
+                                                )}
+                                            </div>
                                             <button
-                                                onClick={() => navigate(`/course/${course._id || course.id}`)}
+                                                onClick={() => navigate(`/course/${course.slug || course._id || course.id}`)}
                                                 className="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-teal-500 hover:text-white dark:hover:bg-teal-500 text-gray-900 dark:text-white rounded-xl font-semibold transition-all text-sm">
                                                 View Details
                                             </button>

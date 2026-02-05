@@ -21,7 +21,7 @@ export const createCourseValidation = [
         }),
 
     body("discount")
-        .optional()
+        .optional({ checkFalsy: true })
         .isNumeric().withMessage("Discount must be a number")
         .isFloat({ min: 0, max: 100 }).withMessage("Discount must be between 0 and 100"),
 

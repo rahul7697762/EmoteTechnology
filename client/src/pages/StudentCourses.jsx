@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import StudentSidebar from '../components/student-dashboard/StudentSidebar';
 import { useSelector } from 'react-redux';
 import api from '../utils/api';
-import { Search, BookOpen, ChevronRight, Clock } from 'lucide-react';
+import { Search, BookOpen, ChevronRight, Clock, PlayCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const StudentCourses = () => {
@@ -157,7 +157,7 @@ const StudentCourses = () => {
 
                                         <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2.5 mb-6 overflow-hidden">
                                             <div
-                                                className="bg-gradient-to-r from-teal-500 to-teal-400 h-full rounded-full transition-all duration-1000 ease-out relative"
+                                                className="bg-linear-to-r from-teal-500 to-teal-400 h-full rounded-full transition-all duration-1000 ease-out relative"
                                                 style={{ width: `${course.progress}%` }}
                                             >
                                                 <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
@@ -165,10 +165,11 @@ const StudentCourses = () => {
                                         </div>
 
                                         <button
-                                            onClick={() => navigate(`/course/${course._id}/learn`)}
-                                            className="w-full py-3 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-teal-600 dark:hover:bg-teal-400 hover:text-white dark:hover:text-white font-bold text-sm transition-all shadow-lg hover:shadow-teal-500/25 flex items-center justify-center gap-2 group/btn">
-                                            <span>Continue Learning</span>
-                                            <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                                            onClick={() => navigate(`/course/${course.slug || course.courseId?._id || course._id}/learn`)}
+                                            className="w-full mt-4 px-4 py-2 bg-linear-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all shadow-lg shadow-violet-500/20 flex items-center justify-center gap-2"
+                                        >
+                                            <PlayCircle size={18} />
+                                            Continue Learning
                                         </button>
                                     </div>
                                 </div>

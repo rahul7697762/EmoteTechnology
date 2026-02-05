@@ -3,6 +3,7 @@ import authReducer from './slices/authSlice';
 import courseReducer from './slices/courseSlice';
 import moduleReducer from './slices/moduleSlice';
 import uiReducer from './slices/uiSlice';
+import paymentReducer from './slices/paymentSlice';
 
 const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
         course: courseReducer,
         module: moduleReducer,
         ui: uiReducer,
+        payment: paymentReducer,
     },
 });
 

@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCourseDetails, enrollInCourse } from '../redux/slices/courseSlice';
+import { createOrder, verifyPayment, getKey } from '../redux/slices/paymentSlice';
 import Navbar from '../components/landing/Navbar';
 import Footer from '../components/landing/Footer';
 import {
-    Star, User, Clock, BookOpen, CheckCircle, Lock, PlayCircle, FileText, Share2, Award
+    Star, User, Clock, BookOpen, CheckCircle, Lock, PlayCircle, FileText, Share2, Award, X, Play
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const CourseDetails = () => {
     const { id } = useParams();
@@ -22,20 +25,112 @@ const CourseDetails = () => {
         }
     }, [dispatch, id]);
 
-    const handleEnroll = () => {
+
+
+
+    const getCurrencySymbol = (currencyCode) => {
+        if (!currencyCode) return '';
+        const code = currencyCode.toUpperCase();
+        switch (code) {
+            case 'USD': return '$';
+            case 'EUR': return '€';
+            case 'INR': return '₹';
+            default: return (currencyCode || '') + ' ';
+        }
+    };
+
+    const handleEnroll = async () => {
         if (!user) {
             toast.error("Please login to enroll");
             navigate('/login');
             return;
         }
 
-        dispatch(enrollInCourse(course._id || course.id))
-            .unwrap()
-            .then(() => {
-                toast.success("Enrolled successfully!");
-                navigate('/student-courses');
-            })
-            .catch((err) => toast.error(err || "Failed to enroll"));
+        // Free Course Enrollment or Fully Discounted
+        const price = course.finalPrice || (course.price - (course.price * (course.discount || 0)) / 100);
+
+        if (!price || price <= 0) {
+            dispatch(enrollInCourse(course._id || course.id))
+                .unwrap()
+                .then(() => {
+                    toast.success("Enrolled successfully!");
+                    navigate('/student-courses');
+                })
+                .catch((err) => toast.error(err || "Failed to enroll"));
+            return;
+        }
+
+        // Paid Course Enrollment
+        try {
+            const { key } = await dispatch(getKey()).unwrap();
+            const { order } = await dispatch(createOrder({ courseId: course._id || course.id })).unwrap();
+
+            const options = {
+                key: key,
+                amount: order.amount,
+                currency: order.currency,
+                name: "Emote Technology",
+                description: course.title,
+                order_id: order.id,
+                handler: async function (response) {
+                    try {
+                        await dispatch(verifyPayment({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature
+                        })).unwrap();
+                        toast.success("Payment successful! Enrolled.");
+                        navigate('/student-courses');
+                    } catch (error) {
+                        toast.error("Payment verification failed");
+                    }
+                },
+                prefill: {
+                    name: user.name,
+                    email: user.email,
+                    contact: user.phone || ""
+                },
+                theme: {
+                    color: "#14b8a6"
+                }
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.on('payment.failed', function (response) {
+                toast.error(response.error.description || "Payment Failed");
+            });
+            rzp.open();
+
+        } catch (error) {
+            console.error("Payment Initialization Error:", error);
+            toast.error(typeof error === 'string' ? error : "Failed to initialize payment");
+        }
+    };
+
+    const [previewVideoUrl, setPreviewVideoUrl] = useState(null);
+    const [previewArticle, setPreviewArticle] = useState(null);
+
+    const handlePreviewOpen = () => {
+        if (course?.previewVideo) {
+            setPreviewVideoUrl(course.previewVideo);
+        }
+    };
+
+    const handleLessonPreview = (lesson) => {
+        if (lesson.type === 'VIDEO') {
+            if (lesson.video?.url) {
+                setPreviewVideoUrl(lesson.video.url);
+            } else if (lesson.url) {
+                setPreviewVideoUrl(lesson.url);
+            }
+        } else if (lesson.type === 'ARTICLE') {
+            setPreviewArticle(lesson);
+        }
+    };
+
+    const closePreview = () => {
+        setPreviewVideoUrl(null);
+        setPreviewArticle(null);
     };
 
     if (loading) {
@@ -64,6 +159,56 @@ const CourseDetails = () => {
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] text-gray-900 dark:text-white font-sans transition-colors duration-300">
             <Navbar />
+
+            {/* Video Preview Modal */}
+            {previewVideoUrl && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                    <div className="relative w-full max-w-4xl bg-black rounded-2xl overflow-hidden shadow-2xl aspect-video">
+                        <button
+                            onClick={closePreview}
+                            className="absolute top-4 right-4 z-10 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                        >
+                            <X size={24} />
+                        </button>
+                        <video
+                            src={previewVideoUrl}
+                            controls
+                            autoPlay
+                            className="w-full h-full object-contain"
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* Article Preview Modal */}
+            {previewArticle && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                    <div className="relative w-full max-w-3xl bg-white dark:bg-[#1a1c23] rounded-2xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+                        <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-white truncate pr-8">
+                                {previewArticle.title}
+                            </h3>
+                            <button
+                                onClick={closePreview}
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar">
+                            <div className="prose prose-lg dark:prose-invert max-w-none text-slate-700 dark:text-slate-300
+                                prose-headings:font-bold prose-headings:text-slate-900 dark:prose-headings:text-white
+                                prose-a:text-teal-600 dark:prose-a:text-teal-400
+                                prose-img:rounded-xl prose-img:shadow-lg">
+                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                    {previewArticle.content || "> *No content available.*"}
+                                </ReactMarkdown>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
 
             {/* Hero Section */}
             <div className="bg-gray-900 text-white pt-32 pb-20 relative overflow-hidden">
@@ -150,19 +295,32 @@ const CourseDetails = () => {
                                             <span className="text-xs text-gray-500 font-medium">{module.subModulesCount || 0} Lessons</span>
                                         </div>
                                         <div className="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-[#1a1c23]">
-                                            {module.subModules?.map((lesson, lIdx) => (
-                                                <div key={lesson._id} className="px-6 py-3 flex items-center justify-between text-sm group hover:bg-gray-50 dark:hover:bg-gray-800/20 transition-colors">
-                                                    <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400 overflow-hidden">
-                                                        {lesson.type === 'VIDEO' ? <PlayCircle size={16} className="shrink-0 group-hover:text-teal-500" /> : <FileText size={16} className="shrink-0 group-hover:text-teal-500" />}
-                                                        <span className="truncate group-hover:text-gray-900 dark:group-hover:text-white transition-colors">{lesson.title}</span>
+                                            {module.subModules?.map((lesson) => (
+                                                <div
+                                                    key={lesson._id}
+                                                    onClick={() => {
+                                                        if (lesson.isPreview) {
+                                                            handleLessonPreview(lesson);
+                                                        }
+                                                    }}
+                                                    className={`flex items-center justify-between p-3 rounded-lg transition-colors ${lesson.isPreview ? 'cursor-pointer hover:bg-teal-50 dark:hover:bg-teal-900/10' : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="text-gray-400">
+                                                            {lesson.type === 'VIDEO' ? <PlayCircle size={16} /> : <FileText size={16} />}
+                                                        </span>
+                                                        <span className={`font-medium text-sm ${lesson.isPreview ? 'text-teal-600 dark:text-teal-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                                                            {lesson.title}
+                                                        </span>
                                                     </div>
-                                                    <div className="shrink-0">
-                                                        {lesson.isPreview ? (
-                                                            <span className="text-teal-500 text-xs font-bold uppercase tracking-wide">Preview</span>
-                                                        ) : (
-                                                            <Lock size={14} className="text-gray-300 dark:text-gray-600" />
-                                                        )}
-                                                    </div>
+                                                    {lesson.isPreview ? (
+                                                        <span className="text-teal-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+                                                            {lesson.type === 'VIDEO' && <Play size={10} />}
+                                                            Free Preview
+                                                        </span>
+                                                    ) : (
+                                                        <Lock size={14} className="text-gray-400" />
+                                                    )}
                                                 </div>
                                             ))}
                                         </div>
@@ -175,7 +333,7 @@ const CourseDetails = () => {
                     {/* Right Column: Floating Card */}
                     <div className="lg:col-span-1">
                         <div className="sticky top-28 bg-white dark:bg-[#1a1c23] rounded-3xl border border-gray-100 dark:border-gray-800 p-6 shadow-xl shadow-teal-900/5">
-                            <div className="rounded-2xl overflow-hidden mb-6 relative aspect-video group">
+                            <div className="rounded-2xl overflow-hidden mb-6 relative aspect-video group cursor-pointer" onClick={handlePreviewOpen}>
                                 <img
                                     src={course.thumbnail || 'https://via.placeholder.com/400x250'}
                                     alt={course.title}
@@ -186,13 +344,28 @@ const CourseDetails = () => {
                                 </div>
                             </div>
 
-                            <div className="flex items-end gap-2 mb-6">
-                                <span className="text-4xl font-extrabold text-gray-900 dark:text-white">
-                                    {course.price ? `$${course.price}` : 'Free'}
-                                </span>
-                                {course.price && (
-                                    <span className="text-lg text-gray-400 line-through mb-1.5">${course.price * 2}</span>
-                                )}
+                            <div className="flex flex-col mb-6">
+                                <div className="flex items-end gap-3 flex-wrap">
+                                    {course.price && course.discount > 0 ? (
+                                        <>
+                                            <span className="text-4xl font-extrabold text-gray-900 dark:text-white">
+                                                {getCurrencySymbol(course.currency)}
+                                                {(course.price * (1 - course.discount / 100)).toFixed(2)}
+                                            </span>
+                                            <span className="text-lg text-gray-400 line-through mb-1.5">
+                                                {getCurrencySymbol(course.currency)}
+                                                {course.price}
+                                            </span>
+                                            <span className="text-sm font-bold text-red-500 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-full mb-2">
+                                                {course.discount}% OFF
+                                            </span>
+                                        </>
+                                    ) : (
+                                        <span className="text-4xl font-extrabold text-gray-900 dark:text-white">
+                                            {course.price ? `${getCurrencySymbol(course.currency)}${course.price}` : 'Free'}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
 
                             <button

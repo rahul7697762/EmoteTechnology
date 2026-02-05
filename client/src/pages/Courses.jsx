@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/landing/Navbar';
 import Footer from '../components/landing/Footer';
 import { Search, BookOpen, Clock, Star, User } from 'lucide-react';
 import api from '../utils/api';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCourses } from '../redux/slices/courseSlice';
+import { fetchCourses, enrollInCourse } from '../redux/slices/courseSlice';
+import toast from 'react-hot-toast';
 
 const Courses = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { courses, pagination, searchQuery: storedSearchQuery, isFetchingPublicCourses: loading, error } = useSelector((state) => state.course);
     const [searchQuery, setSearchQuery] = useState(storedSearchQuery || '');
     const [currentPage, setCurrentPage] = useState(pagination?.page || 1);
@@ -117,7 +120,9 @@ const Courses = () => {
                                             <span className="text-2xl font-bold text-gray-900 dark:text-white">
                                                 {course.price ? `$${course.price}` : 'Free'}
                                             </span>
-                                            <button className="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-teal-500 hover:text-white dark:hover:bg-teal-500 text-gray-900 dark:text-white rounded-xl font-semibold transition-all text-sm">
+                                            <button
+                                                onClick={() => navigate(`/course/${course._id || course.id}`)}
+                                                className="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-teal-500 hover:text-white dark:hover:bg-teal-500 text-gray-900 dark:text-white rounded-xl font-semibold transition-all text-sm">
                                                 View Details
                                             </button>
                                         </div>

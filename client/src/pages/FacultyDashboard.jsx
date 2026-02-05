@@ -87,7 +87,7 @@ const FacultyDashboard = () => {
                                         {user?.name || 'Faculty Member'}
                                     </h4>
                                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                                        {user?.profile?.title || 'Instructor'}
+                                        Instructor
                                     </p>
                                 </div>
                                 {userImage ? (

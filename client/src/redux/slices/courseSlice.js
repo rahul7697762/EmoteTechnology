@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { courseAPI } from '../../utils/api';
+import api, { courseAPI } from '../../utils/api';
 
 // Async Thunks
 export const getFacultyCourses = createAsyncThunk('course/getFacultyCourses', async (_, { rejectWithValue }) => {
@@ -43,9 +43,18 @@ export const createCourse = createAsyncThunk('course/createCourse', async (cours
     }
 });
 
-export const getCourseDetails = createAsyncThunk('course/getCourseDetails', async (courseId, { rejectWithValue }) => {
+export const getCourseDetails = createAsyncThunk('course/getCourseDetails', async (courseIdOrSlug, { rejectWithValue }) => {
     try {
-        const response = await courseAPI.getCourseById(courseId);
+        // Check if input is a valid MongoDB ObjectId
+        const isObjectId = /^[0-9a-fA-F]{24}$/.test(courseIdOrSlug);
+
+        let response;
+        if (isObjectId) {
+            response = await courseAPI.getCourseById(courseIdOrSlug);
+        } else {
+            response = await courseAPI.getCourseBySlug(courseIdOrSlug);
+        }
+
         return response.course;
     } catch (error) {
         return rejectWithValue(error.response?.data?.message || 'Failed to fetch course details');
@@ -85,6 +94,15 @@ export const deleteCourse = createAsyncThunk('course/deleteCourse', async (cours
         return courseId;
     } catch (error) {
         return rejectWithValue(error.response?.data?.message || 'Failed to delete course');
+    }
+});
+
+export const enrollInCourse = createAsyncThunk('course/enrollInCourse', async (courseId, { rejectWithValue }) => {
+    try {
+        const response = await api.post('/enrollment', { courseId });
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error.response?.data?.message || 'Failed to enroll in course');
     }
 });
 

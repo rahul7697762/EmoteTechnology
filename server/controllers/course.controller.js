@@ -1,4 +1,6 @@
+import mongoose from "mongoose";
 import Course from "../models/course.model.js";
+import { Enrollment } from "../models/enrollment.model.js";
 import { uploadFileToBunny, deleteFileFromBunny } from "../services/bunny.service.js";
 import { Review } from "../models/review.model.js";
 
@@ -322,7 +324,7 @@ export const getAllCourses = async (req, res) => {
         const skip = (page - 1) * limit;
 
         const courses = await Course.find({ status: "PUBLISHED" })
-            .select('title description category price instructor createdAt thumbnail slug rating level')
+            .select('title description category price instructor createdAt thumbnail slug rating level currency discount')
             .populate('instructor', 'name avatar')
             .sort({ createdAt: -1 })
             .skip(skip)
@@ -352,29 +354,69 @@ export const getAllCourses = async (req, res) => {
  */
 export const getCourseById = async (req, res) => {
     try {
-        // getting course id from req params
-        const courseId = req.params.id;
+        // getting course id or slug from req params
+        const { id } = req.params;
 
-        // getting course by id
-        const course = await Course.findOne({ _id: courseId, status: "PUBLISHED" })
+        let query = {};
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            query = { _id: id, status: "PUBLISHED" };
+        } else {
+            query = { slug: id, status: "PUBLISHED" };
+        }
+
+        // getting course by id or slug
+        let course = await Course.findOne(query)
             .populate('instructor', 'name profile.avatar facultyProfile.expertize')
             .populate({
                 path: 'modules',
+                match: { deletedAt: null, status: 'PUBLISHED' }, // Filter out deleted and draft modules
                 select: 'title subModulesCount order',
-                options: { sort: { order: 1 } }
-            });
+                options: { sort: { order: 1 } },
+                populate: {
+                    path: 'subModules',
+                    match: { deletedAt: null, status: 'PUBLISHED' }, // Filter out deleted and draft subModules
+                    select: 'title type isPreview video content', // Fetch potential content
+                    options: { sort: { order: 1 } }
+                }
+            }).lean(); // Use lean to get plain JS object for modification
 
-        // if course not found then return 404
-        if (!course) {
-            return res.status(404).json({
-                success: false,
-                message: 'Course not found'
+        // Security & Access Control
+        let isEnrolled = false;
+
+        // Check enrollment if user is logged in
+        if (req.user) {
+            // Check if user is the instructor or admin (full access)
+            if (req.user.role === 'ADMIN' || (course.instructor && course.instructor._id.toString() === req.user._id.toString())) {
+                isEnrolled = true;
+            } else {
+                // Check if student is enrolled
+                const enrollment = await Enrollment.findOne({
+                    courseId: course._id,
+                    userId: req.user._id,
+                    status: 'ACTIVE'
+                });
+                if (enrollment) isEnrolled = true;
+            }
+        }
+
+        // Scrub video/content from locked lessons ONLY if not enrolled
+        if (!isEnrolled && course.modules) {
+            course.modules.forEach(module => {
+                if (module.subModules) {
+                    module.subModules.forEach(subModule => {
+                        if (!subModule.isPreview) {
+                            delete subModule.video;
+                            delete subModule.content;
+                        }
+                    });
+                }
             });
         }
 
         res.status(200).json({
             success: true,
-            course: course
+            course: course,
+            isEnrolled // Optional: let frontend know enrollment status from this call
         });
     } catch (error) {
         console.log("error in getCourseById controller", error);
@@ -391,13 +433,20 @@ export const getCourseBySlug = async (req, res) => {
     try {
         const { slug } = req.params;
         // getting course by slug with instructor and modules
-        const course = await Course.findOne({ slug, status: "PUBLISHED" })
+        let course = await Course.findOne({ slug, status: "PUBLISHED" })
             .populate('instructor', 'name profile.avatar facultyProfile.expertize')
             .populate({
                 path: 'modules',
+                match: { deletedAt: null, status: 'PUBLISHED' }, // Filter out deleted and draft modules
                 select: 'title subModulesCount order',
-                options: { sort: { order: 1 } }
-            });
+                options: { sort: { order: 1 } },
+                populate: {
+                    path: 'subModules',
+                    match: { deletedAt: null, status: 'PUBLISHED' }, // Filter out deleted and draft subModules
+                    select: 'title type isPreview video content', // Fetch potential content
+                    options: { sort: { order: 1 } }
+                }
+            }).lean(); // Use lean()
 
         if (!course) {
             return res.status(404).json({
@@ -406,9 +455,43 @@ export const getCourseBySlug = async (req, res) => {
             });
         }
 
+        // Security & Access Control
+        let isEnrolled = false;
+
+        // Check enrollment if user is logged in
+        if (req.user) {
+            // Check if user is the instructor or admin (full access)
+            if (req.user.role === 'ADMIN' || (course.instructor && course.instructor._id.toString() === req.user._id.toString())) {
+                isEnrolled = true;
+            } else {
+                // Check if student is enrolled
+                const enrollment = await Enrollment.findOne({
+                    courseId: course._id,
+                    userId: req.user._id,
+                    status: 'ACTIVE'
+                });
+                if (enrollment) isEnrolled = true;
+            }
+        }
+
+        // Scrub video/content from locked lessons ONLY if not enrolled
+        if (!isEnrolled && course.modules) {
+            course.modules.forEach(module => {
+                if (module.subModules) {
+                    module.subModules.forEach(subModule => {
+                        if (!subModule.isPreview) {
+                            delete subModule.video;
+                            delete subModule.content;
+                        }
+                    });
+                }
+            });
+        }
+
         res.status(200).json({
             success: true,
-            course
+            course,
+            isEnrolled
         });
     } catch (error) {
         console.log("error in getCourseBySlug controller", error);
@@ -443,7 +526,7 @@ export const searchCourses = async (req, res) => {
         if (level && level !== 'All') filter.level = level;
 
         const courses = await Course.find(filter)
-            .select('title description category price instructor thumbnail slug rating level')
+            .select('title description category price instructor thumbnail slug rating level currency discount')
             .populate('instructor', 'name avatar') // Added population
             .sort({ createdAt: -1 })
             .skip(skip)

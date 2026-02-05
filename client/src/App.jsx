@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import StudentDashboard from './pages/StudentDashboard';
 import StudentCourses from './pages/StudentCourses';
+import StudentCourseView from './pages/StudentCourseView';
 import StudentCertificates from './pages/StudentCertificates';
 import StudentQuizzes from './pages/StudentQuizzes';
 import SettingsPage from './pages/Settings';
@@ -19,6 +20,7 @@ import VerifyOTP from './pages/VerifyOTP';
 import ResetPassword from './pages/ResetPassword';
 import VerifyEmail from './pages/VerifyEmail';
 import Courses from './pages/Courses';
+import CourseDetails from './pages/CourseDetails';
 import Jobs from './pages/Jobs';
 import AiInterview from './pages/AiInterview';
 import './App.css';
@@ -50,6 +52,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/courses" element={<Courses />} />
+          <Route path="/course/:id" element={<CourseDetails />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/ai-interview" element={<AiInterview />} />
           <Route path="/login" element={
@@ -127,6 +130,12 @@ function App() {
           <Route path="/student-courses" element={
             <ProtectedRoute allowedRoles={['STUDENT', 'FACULTY', 'ADMIN']}>
               <StudentCourses />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/course/:id/learn" element={
+            <ProtectedRoute allowedRoles={['STUDENT', 'FACULTY', 'ADMIN']}>
+              <StudentCourseView />
             </ProtectedRoute>
           } />
 

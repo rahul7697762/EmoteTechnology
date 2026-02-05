@@ -118,6 +118,12 @@ export const courseAPI = {
         return response.data;
     },
 
+    // Get course by Slug
+    getCourseBySlug: async (slug) => {
+        const response = await api.get(`/courses/slug/${slug}`);
+        return response.data;
+    },
+
     // Update course (details, thumbnail, video)
     updateCourse: async (id, courseData) => {
         const config = {};

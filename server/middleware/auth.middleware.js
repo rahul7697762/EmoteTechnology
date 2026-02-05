@@ -29,6 +29,9 @@ export const protect = async (req, res, next) => {
         req.user = user;
         next();
     } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: "Session expired, please login again" });
+        }
         console.log("Error in protectRoute", error);
         return res.status(401).json({ message: "Not authorized, token failed" });
     }
@@ -47,4 +50,37 @@ export const restrictTo = (...roles) => {
         }
         next();
     };
+};
+
+/**
+ * Optional Protect middleware - Populates req.user if valid token exists, otherwise continues without error
+ */
+export const optionalProtect = async (req, res, next) => {
+    try {
+        let token;
+
+        if (req.cookies && req.cookies.jwt) {
+            token = req.cookies.jwt;
+        } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+            token = req.headers.authorization.split(' ')[1];
+        }
+
+        if (!token) {
+            return next();
+        }
+
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const user = await User.findById(decoded.userId);
+            if (user) {
+                req.user = user;
+            }
+        } catch (err) {
+            // Token invalid or expired, just proceed as guest
+        }
+        next();
+    } catch (error) {
+        console.log("Error in optionalProtect", error);
+        next();
+    }
 };

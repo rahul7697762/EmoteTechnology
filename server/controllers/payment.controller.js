@@ -8,9 +8,16 @@ import crypto from 'crypto';
 // @route   GET /api/payment/key
 // @access  Private
 export const getKey = async (req, res) => {
-    res.status(200).json({
-        key: process.env.RAZORPAY_API_KEY
-    })
+    try{
+        console.log("Razorpay Key:", process.env.RAZORPAY_API_KEY);
+        res.status(200).json({
+            key: process.env.RAZORPAY_API_KEY
+        })
+    }catch(error){
+        console.error("Error in getKey:", error);
+        res.status(500).json({ success: false, message: "Unable to get key", error: error.message });
+    }
+
 }
 
 // @desc    Create Razorpay Order

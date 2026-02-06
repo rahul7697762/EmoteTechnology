@@ -259,5 +259,26 @@ export const subModuleAPI = {
     }
 };
 
+// Payment API calls
+export const paymentAPI = {
+    // Get Razorpay Key: /api/payment/key
+    getKey: async () => {
+        const response = await api.get('/payment/key');
+        return response.data;
+    },
+
+    // Create Order: /api/payment/create-order
+    createOrder: async (courseId) => {
+        const response = await api.post('/payment/create-order', { courseId });
+        return response.data;
+    },
+
+    // Verify Payment: /api/payment/verify
+    verifyPayment: async (paymentData) => {
+        const response = await api.post('/payment/verify', paymentData);
+        return response.data;
+    }
+};
+
 // Default export for backward compatibility with my recent changes
 export default api;

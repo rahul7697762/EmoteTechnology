@@ -9,7 +9,6 @@ import crypto from 'crypto';
 // @access  Private
 export const getKey = async (req, res) => {
     try{
-        console.log("Razorpay Key:", process.env.RAZORPAY_API_KEY);
         res.status(200).json({
             key: process.env.RAZORPAY_API_KEY
         })

@@ -1,17 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import { paymentAPI } from '../../utils/api';
 
 // Async Thunks
 export const getKey = createAsyncThunk(
     'payment/getKey',
     async (_, { rejectWithValue }) => {
         try {
-            const response = await axios.get(`${API_URL}/payment/key`, {
-                withCredentials: true,
-            });
-            return response.data;
+            const response = await paymentAPI.getKey();
+            return response;
         } catch (error) {
             return rejectWithValue(error.response?.data?.message || 'Failed to fetch key');
         }
@@ -22,10 +18,8 @@ export const createOrder = createAsyncThunk(
     'payment/createOrder',
     async ({ courseId }, { rejectWithValue }) => {
         try {
-            const response = await axios.post(`${API_URL}/payment/create-order`, { courseId }, {
-                withCredentials: true,
-            });
-            return response.data;
+            const response = await paymentAPI.createOrder(courseId);
+            return response;
         } catch (error) {
             return rejectWithValue(error.response?.data?.message || 'Failed to create order');
         }
@@ -36,10 +30,8 @@ export const verifyPayment = createAsyncThunk(
     'payment/verifyPayment',
     async (paymentData, { rejectWithValue }) => {
         try {
-            const response = await axios.post(`${API_URL}/payment/verify`, paymentData, {
-                withCredentials: true,
-            });
-            return response.data;
+            const response = await paymentAPI.verifyPayment(paymentData);
+            return response;
         } catch (error) {
             return rejectWithValue(error.response?.data?.message || 'Payment verification failed');
         }

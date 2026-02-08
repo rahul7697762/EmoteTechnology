@@ -84,7 +84,7 @@ export const createCourse = async (req, res) => {
 export const getFacultyCourseById = async (req, res) => {
     try {
         const courseId = req.params.id;
-        const course = await Course.findById(courseId)
+        const course = await Course.findOne({ _id: courseId, deletedAt: null })
             .populate('instructor', 'name profile.avatar facultyProfile.expertize')
             .populate({
                 path: 'modules',
@@ -123,7 +123,7 @@ export const getFacultyCourseById = async (req, res) => {
 export const getFacultyCourses = async (req, res) => {
     try {
         const userId = req.user._id;
-        const courses = await Course.find({ createdBy: userId }).sort({ createdAt: -1 });
+        const courses = await Course.find({ createdBy: userId, deletedAt: null }).sort({ createdAt: -1 });
 
         res.status(200).json({
             success: true,
@@ -150,7 +150,7 @@ export const updateCourse = async (req, res) => {
             certificateEnabled, price, category
         } = req.body;
 
-        let course = await Course.findById(courseId);
+        let course = await Course.findOne({ _id: courseId, deletedAt: null });
 
         if (!course) {
             return res.status(404).json({ success: false, message: "Course not found" });
@@ -243,7 +243,7 @@ export const updateCourseStatus = async (req, res) => {
         const { status } = req.body;
         const userId = req.user._id;
 
-        let course = await Course.findById(id);
+        let course = await Course.findOne({ _id: id, deletedAt: null });
 
         if (!course) {
             return res.status(404).json({ success: false, message: "Course not found" });
@@ -281,7 +281,7 @@ export const deleteCourse = async (req, res) => {
         const { id } = req.params;
         const userId = req.user._id;
 
-        const course = await Course.findOne({ _id: id });
+        const course = await Course.findOne({ _id: id, deletedAt: null });
 
         if (!course) {
             return res.status(404).json({ success: false, message: "Course not found" });
@@ -296,9 +296,8 @@ export const deleteCourse = async (req, res) => {
             return res.status(400).json({ success: false, message: "Cannot delete course with enrolled students. Contact Admin." });
         }
 
-        // todo : clear all module and submodule and all files from bunny.net
-
-        await Course.findByIdAndDelete(id);
+        // Soft delete
+        await Course.findByIdAndUpdate(id, { deletedAt: new Date() });
 
         res.status(200).json({
             success: true,
@@ -323,14 +322,14 @@ export const getAllCourses = async (req, res) => {
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-        const courses = await Course.find({ status: "PUBLISHED" })
+        const courses = await Course.find({ status: "PUBLISHED", deletedAt: null })
             .select('title description category price instructor createdAt thumbnail slug rating level currency discount')
             .populate('instructor', 'name avatar')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
 
-        const total = await Course.countDocuments({ status: "PUBLISHED" });
+        const total = await Course.countDocuments({ status: "PUBLISHED", deletedAt: null });
 
         res.status(200).json({
             success: true,
@@ -359,9 +358,9 @@ export const getCourseById = async (req, res) => {
 
         let query = {};
         if (mongoose.Types.ObjectId.isValid(id)) {
-            query = { _id: id, status: "PUBLISHED" };
+            query = { _id: id, status: "PUBLISHED", deletedAt: null };
         } else {
-            query = { slug: id, status: "PUBLISHED" };
+            query = { slug: id, status: "PUBLISHED", deletedAt: null };
         }
 
         // getting course by id or slug
@@ -433,7 +432,7 @@ export const getCourseBySlug = async (req, res) => {
     try {
         const { slug } = req.params;
         // getting course by slug with instructor and modules
-        let course = await Course.findOne({ slug, status: "PUBLISHED" })
+        let course = await Course.findOne({ slug, status: "PUBLISHED", deletedAt: null })
             .populate('instructor', 'name profile.avatar facultyProfile.expertize')
             .populate({
                 path: 'modules',
@@ -512,7 +511,7 @@ export const searchCourses = async (req, res) => {
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-        const filter = { status: "PUBLISHED" };
+        const filter = { status: "PUBLISHED", deletedAt: null };
 
         if (query) {
             filter.$or = [
@@ -580,7 +579,7 @@ export const getCourseReviews = async (req, res) => {
  */
 export const getAllCoursesAdmin = async (req, res) => {
     try {
-        const courses = await Course.find()
+        const courses = await Course.find({ deletedAt: null })
             .populate('instructor', 'name email')
             .sort({ createdAt: -1 });
 
@@ -603,8 +602,8 @@ export const getAllCoursesAdmin = async (req, res) => {
 export const approveCourse = async (req, res) => {
     try {
         const { id } = req.params;
-        const course = await Course.findByIdAndUpdate(
-            id,
+        const course = await Course.findOneAndUpdate(
+            { _id: id, deletedAt: null },
             { status: "PUBLISHED", rejectionReason: null, publishedAt: Date.now() },
             { new: true }
         );
@@ -634,8 +633,8 @@ export const rejectCourse = async (req, res) => {
         const { id } = req.params;
         const { rejectionReason } = req.body;
 
-        const course = await Course.findByIdAndUpdate(
-            id,
+        const course = await Course.findOneAndUpdate(
+            { _id: id, deletedAt: null },
             { status: "REJECTED", rejectionReason },
             { new: true }
         );
@@ -663,7 +662,7 @@ export const rejectCourse = async (req, res) => {
 export const deleteCourseAdmin = async (req, res) => {
     try {
         const { id } = req.params;
-        const course = await Course.findByIdAndDelete(id);
+        const course = await Course.findByIdAndUpdate(id, { deletedAt: new Date() });
 
         if (!course) {
             return res.status(404).json({ success: false, message: "Course not found" });

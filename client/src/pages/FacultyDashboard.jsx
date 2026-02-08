@@ -10,7 +10,7 @@ import { logout } from '../redux/slices/authSlice'; // Added logout
 
 const FacultyDashboard = () => {
     const { user } = useSelector((state) => state.auth);
-    const { myCourses: courses, stats, isFetchingCourses, isFetchingStats } = useSelector((state) => state.course);
+    const { facultyCourses: courses, stats, isFetchingCourses, isFetchingStats } = useSelector((state) => state.course);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -21,9 +21,13 @@ const FacultyDashboard = () => {
     const userImage = user?.profile?.avatar;
 
     useEffect(() => {
-        dispatch(getFacultyCourses());
-        dispatch(getDashboardStats());
-    }, [dispatch]);
+        if (courses.length === 0) {
+            dispatch(getFacultyCourses());
+        }
+        if (!stats) {
+            dispatch(getDashboardStats());
+        }
+    }, [dispatch, courses.length, stats]);
 
     // Close on click outside
     useEffect(() => {

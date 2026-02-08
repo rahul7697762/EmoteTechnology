@@ -50,7 +50,7 @@ const CourseDetails = () => {
         const price = course.finalPrice || (course.price - (course.price * (course.discount || 0)) / 100);
 
         if (!price || price <= 0) {
-            dispatch(enrollInCourse(course._id || course.id))
+            dispatch(enrollInCourse({ courseId: course._id || course.id, courseDetails: course }))
                 .unwrap()
                 .then(() => {
                     toast.success("Enrolled successfully!");
@@ -96,6 +96,7 @@ const CourseDetails = () => {
             };
 
             const rzp = new window.Razorpay(options);
+            console.log("Razorpay Options:", { ...options, key: options.key ? "PRESENT" : "MISSING" }); // Debugging
             rzp.on('payment.failed', function (response) {
                 toast.error(response.error.description || "Payment Failed");
             });

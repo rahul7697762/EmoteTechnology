@@ -126,7 +126,9 @@ const courseSchema = new mongoose.Schema({
         default: "DRAFT"
     },
 
-    rejectionReason: String
+    rejectionReason: String,
+
+    deletedAt: Date
 
 
 }, {
@@ -145,6 +147,7 @@ INDEXES
 // Browsing & filtering
 courseSchema.index({ category: 1 });
 courseSchema.index({ tags: 1 });
+courseSchema.index({ deletedAt: 1 }); // Soft delete index
 
 // Sorting
 courseSchema.index({ "rating.average": -1 });

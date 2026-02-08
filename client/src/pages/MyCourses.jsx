@@ -12,12 +12,14 @@ import CourseCard from '../components/dashboard/CourseCard';
 const MyCourses = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { myCourses: courses, isFetchingCourses } = useSelector((state) => state.course);
+    const { facultyCourses: courses, isFetchingCourses } = useSelector((state) => state.course);
     const { isSidebarCollapsed } = useSelector((state) => state.ui);
 
     useEffect(() => {
-        dispatch(getFacultyCourses());
-    }, [dispatch]);
+        if (courses.length === 0) {
+            dispatch(getFacultyCourses());
+        }
+    }, [dispatch, courses.length]);
 
     const handleDelete = async (id, e) => {
         e.stopPropagation();

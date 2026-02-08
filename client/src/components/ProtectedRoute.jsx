@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
-    const { user, isLoadingUser } = useSelector((state) => state.auth);
+    const { user, isAuthenticated, isLoadingUser } = useSelector((state) => state.auth);
 
     if (isLoadingUser) {
         return (
@@ -17,7 +17,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     }
 
     // Not authenticated - redirect to login
-    if (!user) {
+    if (!isAuthenticated || !user) {
         return <Navigate to="/login" replace />;
     }
 

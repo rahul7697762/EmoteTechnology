@@ -10,7 +10,7 @@ export const enrollInCourse = async (req, res) => {
         const userId = req.user._id;
 
         // 1. Check if course exists
-        const course = await Course.findById(courseId);
+        const course = await Course.findOne({ _id: courseId, deletedAt: null });
         if (!course) {
             return res.status(404).json({
                 success: false,
@@ -43,8 +43,8 @@ export const enrollInCourse = async (req, res) => {
             progressPercentage: 0
         });
 
-        // 4. Update Course student count (optional but good for stats)
-        // await Course.findByIdAndUpdate(courseId, { $inc: { studentsEnrolled: 1 } });
+        // 4. Update Course student count
+        await Course.findByIdAndUpdate(courseId, { $inc: { enrolledCount: 1 } });
 
         res.status(201).json({
             success: true,

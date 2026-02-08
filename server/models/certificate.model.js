@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 const certificateSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -57,8 +59,8 @@ certificateSchema.index(
 );
 
 // Public verification
-certificateSchema.index({ certificateNumber: 1 });
-certificateSchema.index({ verificationHash: 1 });
+// certificateSchema.index({ certificateNumber: 1 }); // Already indexed by schema definition
+// certificateSchema.index({ verificationHash: 1 }); // Already indexed by schema definition
 
 // Revocation lookup
 certificateSchema.index({ status: 1 });

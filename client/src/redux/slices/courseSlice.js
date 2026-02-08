@@ -1,7 +1,29 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api, { courseAPI } from '../../utils/api';
+import api, { courseAPI, studentAPI } from '../../utils/api';
+import { updateHeartbeat, completeLesson } from './progressSlice';
 
 // Async Thunks
+
+// --- STUDENT ACTIONS ---
+export const getStudentCourses = createAsyncThunk('course/getStudentCourses', async (_, { rejectWithValue }) => {
+    try {
+        const response = await studentAPI.getEnrolledCourses();
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error.response?.data?.message || 'Failed to fetch enrolled courses');
+    }
+});
+
+export const getInProgressCourses = createAsyncThunk('course/getInProgressCourses', async (_, { rejectWithValue }) => {
+    try {
+        const response = await studentAPI.getInProgressCourses();
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error.response?.data?.message || 'Failed to fetch in-progress courses');
+    }
+});
+
+// --- FACULTY ACTIONS ---
 export const getFacultyCourses = createAsyncThunk('course/getFacultyCourses', async (_, { rejectWithValue }) => {
     try {
         const response = await courseAPI.getMyCourses();
@@ -97,10 +119,10 @@ export const deleteCourse = createAsyncThunk('course/deleteCourse', async (cours
     }
 });
 
-export const enrollInCourse = createAsyncThunk('course/enrollInCourse', async (courseId, { rejectWithValue }) => {
+export const enrollInCourse = createAsyncThunk('course/enrollInCourse', async ({ courseId, courseDetails }, { rejectWithValue }) => {
     try {
         const response = await api.post('/enrollment', { courseId });
-        return response.data;
+        return { ...response.data, courseDetails };
     } catch (error) {
         return rejectWithValue(error.response?.data?.message || 'Failed to enroll in course');
     }
@@ -110,13 +132,18 @@ const initialState = {
     courses: [], // For all courses (future public view)
     searchQuery: '', // Store persistence
     pagination: null, // { total, page, pages }
-    myCourses: [], // For faculty specific courses
+
+    facultyCourses: [], // RENAMED: For faculty specific courses created by them
+    studentCourses: [], // NEW: For courses likely enrolled by student
+    inProgressCourses: [], // NEW: For dashboard in-progress courses
+
     currentCourse: null,
     stats: null,
 
     // granular loading states
     isFetchingPublicCourses: false,
-    isFetchingCourses: false,
+    isFetchingCourses: false, // General fetching state (often used for faculty courses)
+    isFetchingStudentCourses: false, // NEW
     isCreatingCourse: false,
     isUpdatingCourse: false,
     isDeletingCourse: false,
@@ -133,7 +160,8 @@ const courseSlice = createSlice({
         resetCourseState: (state) => {
             state.currentCourse = null;
             state.courses = [];
-            state.myCourses = [];
+            state.facultyCourses = [];
+            state.studentCourses = [];
             state.stats = null;
             state.error = null;
         },
@@ -143,7 +171,35 @@ const courseSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // Fetch Public Courses
+            // --- STUDENT COURSES ---
+            .addCase(getStudentCourses.pending, (state) => {
+                state.isFetchingStudentCourses = true;
+                state.error = null;
+            })
+            .addCase(getStudentCourses.fulfilled, (state, action) => {
+                state.isFetchingStudentCourses = false;
+                state.studentCourses = action.payload || [];
+            })
+            .addCase(getStudentCourses.rejected, (state, action) => {
+                state.isFetchingStudentCourses = false;
+                state.error = action.payload;
+            })
+
+            // --- IN PROGRESS COURSES ---
+            .addCase(getInProgressCourses.pending, (state) => {
+                state.isFetchingStudentCourses = true; // Reusing loading state or add new one
+                state.error = null;
+            })
+            .addCase(getInProgressCourses.fulfilled, (state, action) => {
+                state.isFetchingStudentCourses = false;
+                state.inProgressCourses = action.payload || [];
+            })
+            .addCase(getInProgressCourses.rejected, (state, action) => {
+                state.isFetchingStudentCourses = false;
+                state.error = action.payload;
+            })
+
+            // --- PUBLIC COURSES ---
             .addCase(fetchCourses.pending, (state) => {
                 state.isFetchingPublicCourses = true;
                 state.error = null;
@@ -159,19 +215,21 @@ const courseSlice = createSlice({
                 state.isFetchingPublicCourses = false;
                 state.error = action.payload;
             })
-            // Get Faculty Courses
+
+            // --- FACULTY COURSES ---
             .addCase(getFacultyCourses.pending, (state) => {
                 state.isFetchingCourses = true;
                 state.error = null;
             })
             .addCase(getFacultyCourses.fulfilled, (state, action) => {
                 state.isFetchingCourses = false;
-                state.myCourses = action.payload;
+                state.facultyCourses = action.payload; // Updated target
             })
             .addCase(getFacultyCourses.rejected, (state, action) => {
                 state.isFetchingCourses = false;
                 state.error = action.payload;
             })
+
             // Get Dashboard Stats (Mock)
             .addCase(getDashboardStats.pending, (state) => {
                 state.isFetchingStats = true;
@@ -185,6 +243,7 @@ const courseSlice = createSlice({
                 state.isFetchingStats = false;
                 state.error = action.payload;
             })
+
             // Create Course
             .addCase(createCourse.pending, (state) => {
                 state.isCreatingCourse = true;
@@ -192,13 +251,14 @@ const courseSlice = createSlice({
             })
             .addCase(createCourse.fulfilled, (state, action) => {
                 state.isCreatingCourse = false;
-                state.myCourses.push(action.payload);
+                state.facultyCourses.push(action.payload); // Updated target
                 state.currentCourse = action.payload;
             })
             .addCase(createCourse.rejected, (state, action) => {
                 state.isCreatingCourse = false;
                 state.error = action.payload;
             })
+
             // Get Course Details
             .addCase(getCourseDetails.pending, (state) => {
                 state.isFetchingDetails = true;
@@ -212,6 +272,7 @@ const courseSlice = createSlice({
                 state.isFetchingDetails = false;
                 state.error = action.payload;
             })
+
             // Get Faculty Course Details
             .addCase(getFacultyCourseDetails.pending, (state) => {
                 state.isFetchingDetails = true;
@@ -225,6 +286,7 @@ const courseSlice = createSlice({
                 state.isFetchingDetails = false;
                 state.error = action.payload;
             })
+
             // Update Course
             .addCase(updateCourse.pending, (state) => {
                 state.isUpdatingCourse = true;
@@ -233,16 +295,17 @@ const courseSlice = createSlice({
             .addCase(updateCourse.fulfilled, (state, action) => {
                 state.isUpdatingCourse = false;
                 state.currentCourse = action.payload;
-                // Update in list if exists
-                const index = state.myCourses.findIndex(c => c._id === action.payload._id);
+                // Update in faculty list if exists
+                const index = state.facultyCourses.findIndex(c => c._id === action.payload._id);
                 if (index !== -1) {
-                    state.myCourses[index] = action.payload;
+                    state.facultyCourses[index] = action.payload; // Updated target
                 }
             })
             .addCase(updateCourse.rejected, (state, action) => {
                 state.isUpdatingCourse = false;
                 state.error = action.payload;
             })
+
             // Update Course Status
             .addCase(updateCourseStatus.pending, (state) => {
                 state.isUpdatingCourse = true;
@@ -251,16 +314,17 @@ const courseSlice = createSlice({
             .addCase(updateCourseStatus.fulfilled, (state, action) => {
                 state.isUpdatingCourse = false;
                 state.currentCourse = action.payload;
-                // Update in list if exists
-                const index = state.myCourses.findIndex(c => c._id === action.payload._id);
+                // Update in faculty list if exists
+                const index = state.facultyCourses.findIndex(c => c._id === action.payload._id);
                 if (index !== -1) {
-                    state.myCourses[index] = action.payload;
+                    state.facultyCourses[index] = action.payload; // Updated target
                 }
             })
             .addCase(updateCourseStatus.rejected, (state, action) => {
                 state.isUpdatingCourse = false;
                 state.error = action.payload;
             })
+
             // Delete Course
             .addCase(deleteCourse.pending, (state) => {
                 state.isDeletingCourse = true;
@@ -268,11 +332,69 @@ const courseSlice = createSlice({
             })
             .addCase(deleteCourse.fulfilled, (state, action) => {
                 state.isDeletingCourse = false;
-                state.myCourses = state.myCourses.filter(course => course._id !== action.payload);
+                state.facultyCourses = state.facultyCourses.filter(course => course._id !== action.payload);
             })
             .addCase(deleteCourse.rejected, (state, action) => {
                 state.isDeletingCourse = false;
                 state.error = action.payload;
+            })
+
+            // Enroll In Course
+            .addCase(enrollInCourse.fulfilled, (state, action) => {
+                const { courseDetails, data: enrollment } = action.payload;
+                if (courseDetails && enrollment) {
+                    const newCourse = {
+                        _id: courseDetails._id,
+                        title: courseDetails.title,
+                        thumbnail: courseDetails.thumbnail,
+                        progress: 0,
+                        status: 'ACTIVE', // Default for new enrollment
+                        totalLessons: courseDetails.modules?.reduce((acc, m) => acc + (m.subModules?.length || 0), 0) || 0,
+                        totalDuration: 0, // Should be calculated if data available
+                        slug: courseDetails.slug,
+                        lastAccessed: new Date().toISOString()
+                    };
+                    // Add to beginning of list
+                    state.studentCourses.unshift(newCourse);
+                }
+            })
+
+            // Sync Progress from Progress Slice
+            .addCase(updateHeartbeat.fulfilled, (state, action) => {
+                const { courseId, progressPercentage, isCourseCompleted } = action.payload;
+                if (progressPercentage !== undefined && courseId) {
+                    // Update Student Courses List
+                    const course = state.studentCourses.find(c => c._id === courseId);
+                    if (course) {
+                        course.progress = progressPercentage;
+                        if (isCourseCompleted) course.status = 'COMPLETED';
+                    }
+
+                    // Update In-Progress Courses List (Dashboard)
+                    const inProgressCourse = state.inProgressCourses.find(c => c._id === courseId);
+                    if (inProgressCourse) {
+                        inProgressCourse.progress = progressPercentage;
+                        if (isCourseCompleted) inProgressCourse.status = 'COMPLETED';
+                    }
+                }
+            })
+            .addCase(completeLesson.fulfilled, (state, action) => {
+                const { courseId, progressPercentage, isCourseCompleted } = action.payload;
+                if (progressPercentage !== undefined && courseId) {
+                    // Update Student Courses List
+                    const course = state.studentCourses.find(c => c._id === courseId);
+                    if (course) {
+                        course.progress = progressPercentage;
+                        if (isCourseCompleted) course.status = 'COMPLETED';
+                    }
+
+                    // Update In-Progress Courses List (Dashboard)
+                    const inProgressCourse = state.inProgressCourses.find(c => c._id === courseId);
+                    if (inProgressCourse) {
+                        inProgressCourse.progress = progressPercentage;
+                        if (isCourseCompleted) inProgressCourse.status = 'COMPLETED';
+                    }
+                }
             });
     }
 });

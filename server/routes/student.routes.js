@@ -158,7 +158,7 @@ router.get("/enrolled-courses", protect, restrictTo("STUDENT"), async (req, res)
                 title: course.title,
                 thumbnail: course.thumbnail,
                 progress: enrollment.progressPercentage,
-                status: enrollment.completed ? 'COMPLETED' : 'ACTIVE',
+                status: enrollment.status,
                 totalLessons: course.lessons ? course.lessons.length : 0,
                 lastAccessed: enrollment.updatedAt
             };

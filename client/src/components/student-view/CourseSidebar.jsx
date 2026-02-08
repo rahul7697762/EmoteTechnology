@@ -3,7 +3,17 @@ import React from 'react';
 import { ChevronDown, PlayCircle, FileText, CheckCircle, Lock, X } from 'lucide-react';
 import { useSelector } from 'react-redux';
 
-const CourseSidebar = ({ course, activeModuleId, toggleModule, activeLesson, setActiveLesson, isSidebarOpen, setIsSidebarOpen, isMobile }) => {
+const CourseSidebar = ({
+    course,
+    activeModuleId,
+    toggleModule,
+    activeLesson,
+    setActiveLesson,
+    isSidebarOpen,
+    setIsSidebarOpen,
+    isMobile,
+    width
+}) => {
 
     // Get progress map from Redux
     const { lessonProgress } = useSelector((state) => state.progress);
@@ -11,12 +21,13 @@ const CourseSidebar = ({ course, activeModuleId, toggleModule, activeLesson, set
     return (
         <aside
             className={`
-                fixed inset-y-0 left-0 z-30 w-80 bg-white dark:bg-[#1E293B] border-r border-slate-200 dark:border-slate-800
+                fixed inset-y-0 left-0 z-30 bg-slate-50 dark:bg-[#111827] border-r border-slate-200 dark:border-slate-800
                 transform transition-transform duration-300 ease-in-out flex flex-col
                 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-                lg:relative lg:translate-x-0
+                lg:relative lg:shadow-none lg:z-0 lg:transition-none
                 ${!isSidebarOpen && 'lg:hidden'} 
             `}
+            style={{ width: isMobile ? '80%' : width }}
         >
             <div className="h-16 px-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0">
                 <h2 className="font-bold text-slate-800 dark:text-white truncate flex-1">

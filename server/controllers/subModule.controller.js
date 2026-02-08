@@ -12,7 +12,7 @@ export const createSubModule = async (req, res) => {
         const { courseId, moduleId, title, description, type, isPreview, content } = req.body;
 
         // --- Access Control ---
-        const course = await Course.findById(courseId);
+        const course = await Course.findOne({ _id: courseId, deletedAt: null });
         if (!course) return res.status(404).json({ message: "Course not found" });
 
         if (req.user.role !== 'ADMIN' && course.instructor.toString() !== req.user._id.toString()) {
@@ -112,7 +112,7 @@ export const getSubModuleById = async (req, res) => {
             });
             if (!isEnrolled) return res.status(403).json({ message: "Enrollment required" });
         } else if (req.user.role === 'FACULTY') {
-            const course = await Course.findById(subModule.courseId);
+            const course = await Course.findOne({ _id: subModule.courseId, deletedAt: null });
             if (course.instructor.toString() !== req.user._id.toString()) return res.status(403).json({ message: "Not authorized" });
         }
 
@@ -126,14 +126,14 @@ export const getSubModuleById = async (req, res) => {
 // 4. Update SubModule
 export const updateSubModule = async (req, res) => {
     try {
-        const { title, description, content, isPreview} = req.body;
+        const { title, description, content, isPreview } = req.body;
         const subModule = await SubModule.findOne({ _id: req.params.id, deletedAt: null });
 
         if (!subModule) return res.status(404).json({ message: "Lesson not found" });
 
         // Check Owner (could be middleware, but explicit here for safety)
         if (req.user.role !== 'ADMIN') {
-            const course = await Course.findById(subModule.courseId);
+            const course = await Course.findOne({ _id: subModule.courseId, deletedAt: null });
             if (course.instructor.toString() !== req.user._id.toString()) return res.status(403).json({ message: "Not authorized" });
         }
 

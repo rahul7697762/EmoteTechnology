@@ -1,35 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import StudentSidebar from '../components/student-dashboard/StudentSidebar';
-import { useSelector } from 'react-redux';
-import api from '../utils/api';
+import { useDispatch, useSelector } from 'react-redux';
+import { getStudentCourses } from '../redux/slices/courseSlice';
 import { Search, BookOpen, ChevronRight, Clock, PlayCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const StudentCourses = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
     const { isSidebarCollapsed } = useSelector((state) => state.ui);
-    const [courses, setCourses] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { studentCourses: courses, isFetchingStudentCourses: loading } = useSelector((state) => state.course);
+
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('ALL'); // ALL, ACTIVE, COMPLETED
 
     useEffect(() => {
-        const fetchCourses = async () => {
-            try {
-                const response = await api.get('/student/enrolled-courses');
-                if (response.data.success) {
-                    setCourses(response.data.data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch enrolled courses", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCourses();
-    }, []);
+        if (courses.length === 0) {
+            dispatch(getStudentCourses());
+        }
+    }, [dispatch, courses.length]);
 
     const filteredCourses = courses.filter(course => {
         const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase());

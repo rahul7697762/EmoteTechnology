@@ -7,9 +7,9 @@ import Course from "../models/course.model.js";
 export const createModule = async (req, res) => {
     try {
         const { courseId } = req.params;
-        const { title} = req.body;
+        const { title } = req.body;
 
-        const course = await Course.findById(courseId);
+        const course = await Course.findOne({ _id: courseId, deletedAt: null });
         if (!course) {
             return res.status(404).json({ message: "Course not found" });
         }
@@ -104,7 +104,7 @@ export const getModuleById = async (req, res) => {
         }
 
         if (req.user.role === 'FACULTY') {
-            const course = await Course.findById(module.courseId);
+            const course = await Course.findOne({ _id: module.courseId, deletedAt: null });
             if (course.instructor.toString() !== req.user._id.toString()) {
                 return res.status(403).json({ message: "Not authorized" });
             }

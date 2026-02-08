@@ -8,11 +8,11 @@ import crypto from 'crypto';
 // @route   GET /api/payment/key
 // @access  Private
 export const getKey = async (req, res) => {
-    try{
+    try {
         res.status(200).json({
             key: process.env.RAZORPAY_API_KEY
         })
-    }catch(error){
+    } catch (error) {
         console.error("Error in getKey:", error);
         res.status(500).json({ success: false, message: "Unable to get key", error: error.message });
     }
@@ -27,7 +27,7 @@ export const createOrder = async (req, res) => {
         const { courseId } = req.body;
         const userId = req.user._id;
 
-        const course = await Course.findById(courseId);
+        const course = await Course.findOne({ _id: courseId, deletedAt: null });
         if (!course) {
             return res.status(404).json({ success: false, message: "Course not found" });
         }
@@ -117,8 +117,8 @@ export const verifyPayment = async (req, res) => {
                 paymentId: payment._id
             });
 
-            // Update course student count (optional)
-            // await Course.findByIdAndUpdate(payment.courseId, { $inc: { studentsEnrolled: 1 } });
+            // Update course student count
+            await Course.findByIdAndUpdate(payment.courseId, { $inc: { enrolledCount: 1 } });
 
             // Since this is likely called via API from frontend, we return JSON. 
             // If it was a form post, we would redirect.

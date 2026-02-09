@@ -1,0 +1,27 @@
+{
+    "name": "emotetechnology-app",
+    "version": "1.0.0",
+    "description": "Monorepo for EmoteTechnology",
+    "main": "server/server.js",
+    "scripts": {
+        "install-client": "cd client && npm install",
+        "install-server": "cd server && npm install",
+        "build-client": "cd client && npm run build",
+        "build": "npm run install-client && npm run install-server && npm run build-client",
+        "start": "cd server && node server.js",
+        "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\""
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "dependencies": {
+        "axios": "^1.13.4",
+        "framer-motion": "^12.33.0",
+        "lucide-react": "^0.563.0",
+        "react-hot-toast": "^2.6.0",
+        "react-router-dom": "^7.13.0"
+    }
+}

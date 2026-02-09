@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Student Dashboard - Learning Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1289a1",
+                        "secondary": "#FAD768",
+                        "background-light": "#f9fafb",
+                        "background-dark": "#181d25",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .circular-progress {
+            background: conic-gradient(var(--progress-color) calc(var(--percentage) * 1%), #e5e7eb 0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .circular-progress::before {
+            content: "";
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            background-color: white;
+            border-radius: 50%;
+        }
+        .dark .circular-progress::before {
+            background-color: #1f2937;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .dark .glass-card {
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#111718] dark:text-gray-100 antialiased min-h-screen">
+<div class="flex h-full min-h-screen">
+<!-- Sidebar -->
+<aside class="w-72 fixed left-0 top-0 h-full bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex flex-col z-50">
+<div class="p-8 flex items-center gap-3">
+<div class="bg-primary p-2 rounded-lg text-white">
+<span class="material-symbols-outlined">school</span>
+</div>
+<div>
+<h1 class="text-xl font-extrabold tracking-tight">LMS Portal</h1>
+<p class="text-xs text-[#638288] uppercase tracking-widest font-bold">Academic Suite</p>
+</div>
+</div>
+<nav class="flex-1 px-4 flex flex-col gap-2">
+<div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary transition-all">
+<span class="material-symbols-outlined fill-1">grid_view</span>
+<span class="font-bold">Dashboard</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition-all cursor-pointer">
+<span class="material-symbols-outlined">book_4</span>
+<span class="font-medium">My Courses</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition-all cursor-pointer">
+<span class="material-symbols-outlined">verified</span>
+<span class="font-medium">Certificates</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition-all cursor-pointer">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-medium">Upcoming Quizzes</span>
+</div>
+<div class="mt-8 mb-4 px-4">
+<p class="text-xs font-bold text-gray-400 uppercase">Personal</p>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition-all cursor-pointer">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-medium">Settings</span>
+</div>
+</nav>
+<div class="p-4 m-4 bg-primary/5 rounded-2xl">
+<p class="text-sm font-bold text-primary mb-1">Upgrade Pro</p>
+<p class="text-xs text-gray-500 mb-3">Get unlimited access to advanced certificates.</p>
+<button class="w-full py-2 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20">Upgrade Now</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-72 flex flex-col">
+<!-- Top Nav -->
+<header class="h-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-40 px-10 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+<div class="flex-1 max-w-xl">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+<input class="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-xl pl-12 pr-4 py-2.5 focus:ring-2 focus:ring-primary/20 text-sm" placeholder="Search for courses, lessons, or tutors..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-gray-900"></span>
+</button>
+<div class="flex items-center gap-3 pl-6 border-l border-gray-100 dark:border-gray-800">
+<div class="text-right">
+<p class="text-sm font-bold">Alex Rivera</p>
+<p class="text-xs text-gray-500">Sophomore Student</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden border-2 border-primary/20">
+<img alt="Alex Rivera Profile" data-alt="Student profile photo with friendly smile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBklrruxl6yO6UJ9SiN2IRQlSWs7vdVt46VQqMy84QO21XcE2-XvfgLWE8GhzbS0a1qk9Re7uTwFr3Cz84lcKBu7yEVkT6J2bK_Nbi3WWpcKKki-sOrAO7Om9znmz0Ad620j3y5aVxnlbzxj0r1JlM43-PvTpRvMGbUhOqyrYBd7wkmbKzCbVk5kQ2_SZNt_WeyPa3GwINiskgkQ6jHIK3YsQfFmtq2krnAF6JuJCUMQqZ0Rk2jk4lIORKcDFPlpMW1sXo4UGPKJt0"/>
+</div>
+</div>
+</div>
+</header>
+<div class="p-10 max-w-7xl mx-auto w-full">
+<!-- Welcome Section -->
+<section class="mb-10 flex flex-wrap items-center justify-between gap-6 bg-gradient-to-r from-primary/10 to-transparent p-8 rounded-[2rem] border border-primary/5">
+<div class="flex-1 min-w-[300px]">
+<h2 class="text-4xl font-black tracking-tight mb-2">Welcome back, Alex! 👋</h2>
+<p class="text-gray-600 dark:text-gray-400 text-lg">You've completed <span class="font-bold text-primary">75%</span> of your weekly goals. Keep up the momentum!</p>
+</div>
+<div class="flex gap-4">
+<div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center min-w-[100px]">
+<span class="text-2xl font-extrabold text-primary">12</span>
+<span class="text-xs font-bold text-gray-400 uppercase">Hours Spent</span>
+</div>
+<div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center min-w-[100px]">
+<span class="text-2xl font-extrabold text-secondary">04</span>
+<span class="text-xs font-bold text-gray-400 uppercase">Assigments</span>
+</div>
+</div>
+</section>
+<!-- Grid Layout for Main Content and Right Sidebar -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Middle Column -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-10">
+<!-- In Progress Bento Grid -->
+<section>
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-extrabold">In-Progress Courses</h3>
+<button class="text-sm font-bold text-primary hover:underline">View All</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Course Card 1 -->
+<div class="glass-card p-5 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="relative w-16 h-16 circular-progress" style="--percentage: 85; --progress-color: #1289a1;">
+<span class="relative z-10 text-xs font-black text-primary">85%</span>
+</div>
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase">High Priority</span>
+</div>
+<h4 class="font-extrabold text-lg group-hover:text-primary transition-colors">Advanced Data Analytics</h4>
+<p class="text-sm text-gray-500 mb-6 italic">Last accessed: 2 hours ago</p>
+<button class="w-full py-3 bg-primary text-white rounded-xl font-bold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">play_arrow</span>
+                                        Resume Learning
+                                    </button>
+</div>
+<!-- Course Card 2 -->
+<div class="glass-card p-5 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="relative w-16 h-16 circular-progress" style="--percentage: 40; --progress-color: #1289a1;">
+<span class="relative z-10 text-xs font-black text-primary">40%</span>
+</div>
+<span class="bg-gray-100 dark:bg-gray-700 text-gray-500 text-[10px] font-bold px-2 py-1 rounded-full uppercase">On Track</span>
+</div>
+<h4 class="font-extrabold text-lg group-hover:text-primary transition-colors">UX Research Methods</h4>
+<p class="text-sm text-gray-500 mb-6 italic">Last accessed: Yesterday</p>
+<button class="w-full py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-sm">play_arrow</span>
+                                        Continue Module 4
+                                    </button>
+</div>
+</div>
+</section>
+<!-- Recommended Section -->
+<section>
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-extrabold">Recommended For You</h3>
+<div class="flex gap-2">
+<button class="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:bg-gray-50"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:bg-gray-50"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<!-- Recommended Card 1 -->
+<div class="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm group">
+<div class="h-40 bg-gray-200 relative">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<img alt="Python course cover" class="w-full h-full object-cover" data-alt="Abstract code blocks with python logo style colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgJuuJeheqY2ZAh3kACOEVx2nJNC6637J6grdnrwRo2izlWPhQkaXaqDI-vLdBMGpj7MzPsqjMkJG-PmS9-hwmJF_Lz2Syu2c13dsViAEjIE6kOyjCWFfO_1OJq3RyRRS6_qMXGyXiPXmytT-0Mj2uENpnQcU34z79OBe2k7qp_BwsvlstYoeGDPYMjueEfuVyzKd6yBn6CrRXbX8UUbJGU7W4x5ohL_pSuYpkAheZ-8zFmJROHkxE5qtK-2uUTewW1TjXBGS52ok"/>
+<div class="absolute bottom-3 left-4 flex items-center gap-1 text-white">
+<span class="material-symbols-outlined text-secondary fill-1 text-sm">star</span>
+<span class="text-sm font-bold">4.8</span>
+<span class="text-[10px] opacity-70 font-medium">(1.2k reviews)</span>
+</div>
+</div>
+<div class="p-5">
+<div class="flex items-center gap-2 mb-2">
+<span class="text-[10px] font-black uppercase text-primary bg-primary/10 px-2 py-0.5 rounded">Development</span>
+<span class="text-[10px] font-bold text-gray-400">12h 45m</span>
+</div>
+<h5 class="font-extrabold text-base mb-4 group-hover:text-primary transition-colors">Introduction to Python for Data Science</h5>
+<button class="w-full py-2 border-2 border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all">Enroll Now</button>
+</div>
+</div>
+<!-- Recommended Card 2 -->
+<div class="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm group">
+<div class="h-40 bg-gray-200 relative">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<img alt="Leadership course cover" class="w-full h-full object-cover" data-alt="Collaborative meeting space with team working together" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANzdqaD6-I_TxYWOhhMauoxIfW-y_C32V3G6ilfd3Y8imRvg-EC9Ib1IHzAkCh5z9seMZdWBucLpQ-56IHzmHBdk5Pk8MJVgL0v83l2Rv_IOBJX7jl2s6nxQho8_6SGERaXFXN08JVpMR603F7z9ksicu6vnawW9jkdFtmrUMg50sQ2ikVSyBeoSOgTEeavAk2-NSVA78OUdIuKuxBEmZMxMmk3ehbTkhMkF-Z1xfXbf6hsuysgKPNYzaVHsOaQn69Y1YY9IHyL2c"/>
+<div class="absolute bottom-3 left-4 flex items-center gap-1 text-white">
+<span class="material-symbols-outlined text-secondary fill-1 text-sm">star</span>
+<span class="text-sm font-bold">4.9</span>
+<span class="text-[10px] opacity-70 font-medium">(850 reviews)</span>
+</div>
+</div>
+<div class="p-5">
+<div class="flex items-center gap-2 mb-2">
+<span class="text-[10px] font-black uppercase text-primary bg-primary/10 px-2 py-0.5 rounded">Business</span>
+<span class="text-[10px] font-bold text-gray-400">6h 20m</span>
+</div>
+<h5 class="font-extrabold text-base mb-4 group-hover:text-primary transition-colors">Leadership Essentials in Modern Teams</h5>
+<button class="w-full py-2 border-2 border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all">Enroll Now</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column (Widgets) -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-8">
+<!-- Upcoming Quizzes Widget -->
+<section class="bg-white dark:bg-gray-900 p-6 rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm">
+<h3 class="text-lg font-extrabold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary fill-1">alarm</span>
+                                Upcoming Quizzes
+                            </h3>
+<div class="flex flex-col gap-4">
+<!-- Quiz Item 1 -->
+<div class="flex gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-l-4 border-secondary">
+<div class="bg-white dark:bg-gray-900 px-3 py-2 rounded-xl flex flex-col items-center justify-center min-w-[50px] shadow-sm">
+<span class="text-xs font-bold text-gray-400 uppercase leading-none">Oct</span>
+<span class="text-xl font-black">24</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold leading-tight">Biology Midterm Exam</p>
+<p class="text-xs text-gray-500 mt-1">Tomorrow, 10:00 AM</p>
+<button class="mt-3 px-4 py-1.5 bg-secondary text-gray-900 font-bold rounded-lg text-xs hover:bg-opacity-80 transition-all">View Details</button>
+</div>
+</div>
+<!-- Quiz Item 2 -->
+<div class="flex gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800 border-l-4 border-gray-300 dark:border-gray-600">
+<div class="bg-white dark:bg-gray-900 px-3 py-2 rounded-xl flex flex-col items-center justify-center min-w-[50px] shadow-sm">
+<span class="text-xs font-bold text-gray-400 uppercase leading-none">Oct</span>
+<span class="text-xl font-black">27</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold leading-tight">Safety Compliance Quiz</p>
+<p class="text-xs text-gray-500 mt-1">Friday, 02:30 PM</p>
+<button class="mt-3 px-4 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold rounded-lg text-xs">Reminder Set</button>
+</div>
+</div>
+</div>
+</section>
+<!-- My Certificates Widget -->
+<section class="bg-primary/5 p-6 rounded-[2rem] border border-primary/10">
+<h3 class="text-lg font-extrabold mb-4 flex items-center justify-between">
+<span>Recent Certificates</span>
+<span class="material-symbols-outlined text-primary">workspace_premium</span>
+</h3>
+<div class="space-y-3">
+<div class="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-xl shadow-sm cursor-pointer hover:bg-gray-50 transition-all group">
+<div class="w-10 h-10 rounded bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-red-500">picture_as_pdf</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-xs font-bold truncate">Web Accessibility 2023</p>
+<p class="text-[10px] text-gray-400">Issued Oct 12, 2023</p>
+</div>
+<span class="material-symbols-outlined text-gray-300 group-hover:text-primary">download</span>
+</div>
+<div class="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-xl shadow-sm cursor-pointer hover:bg-gray-50 transition-all group">
+<div class="w-10 h-10 rounded bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-red-500">picture_as_pdf</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-xs font-bold truncate">Intro to AI Ethics</p>
+<p class="text-[10px] text-gray-400">Issued Sep 28, 2023</p>
+</div>
+<span class="material-symbols-outlined text-gray-300 group-hover:text-primary">download</span>
+</div>
+</div>
+<button class="w-full mt-4 py-2 text-primary font-bold text-sm bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all">View Wallet</button>
+</section>
+<!-- Study Progress Graph (Small Illustration) -->
+<section class="bg-gray-900 text-white p-6 rounded-[2rem] overflow-hidden relative">
+<div class="relative z-10">
+<p class="text-xs font-bold text-primary uppercase mb-1">Weekly Streak</p>
+<h4 class="text-2xl font-black mb-4">4 Days Strong! 🔥</h4>
+<div class="flex items-end gap-2 h-16">
+<div class="w-2 h-[40%] bg-primary/40 rounded-full"></div>
+<div class="w-2 h-[60%] bg-primary/40 rounded-full"></div>
+<div class="w-2 h-[80%] bg-primary rounded-full"></div>
+<div class="w-2 h-[95%] bg-primary rounded-full shadow-[0_0_10px_#1289a1]"></div>
+<div class="w-2 h-[20%] bg-gray-700 rounded-full"></div>
+<div class="w-2 h-[20%] bg-gray-700 rounded-full"></div>
+<div class="w-2 h-[20%] bg-gray-700 rounded-full"></div>
+</div>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined !text-[120px]">insights</span>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

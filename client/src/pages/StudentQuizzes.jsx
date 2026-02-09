@@ -6,6 +6,7 @@ import { Clock, CheckCircle, AlertCircle } from 'lucide-react';
 
 const StudentQuizzes = () => {
     const { user } = useSelector((state) => state.auth);
+    const { isSidebarCollapsed } = useSelector((state) => state.ui);
     const [quizzes, setQuizzes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('upcoming'); // upcoming, past
@@ -78,10 +79,10 @@ const StudentQuizzes = () => {
     );
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] text-gray-900 dark:text-white font-sans flex">
+        <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] text-gray-900 dark:text-white font-sans flex transition-colors duration-300">
             <StudentSidebar />
 
-            <main className="flex-1 md:ml-64 p-8">
+            <main className={`flex-1 p-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
                 <header className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Quizzes & Assessments</h1>
                     <p className="text-gray-500 dark:text-gray-400">Track your upcoming tests and review past results</p>

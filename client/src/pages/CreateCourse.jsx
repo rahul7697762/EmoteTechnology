@@ -13,6 +13,7 @@ const CreateCourse = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { isCreatingCourse } = useSelector((state) => state.course);
+    const { isSidebarCollapsed } = useSelector((state) => state.ui);
 
     const [formData, setFormData] = useState({
         title: '',
@@ -96,10 +97,10 @@ const CreateCourse = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] flex">
+        <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] flex transition-colors duration-300">
             <Sidebar />
 
-            <div className="flex-1 md:ml-64 p-8 overflow-y-auto h-screen">
+            <div className={`flex-1 p-8 overflow-y-auto h-screen transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
                 <div className="max-w-5xl mx-auto">
                     <div className="mb-8">
                         <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Create New Course</h1>

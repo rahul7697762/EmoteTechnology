@@ -12,11 +12,14 @@ import CourseCard from '../components/dashboard/CourseCard';
 const MyCourses = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { myCourses: courses, isFetchingCourses } = useSelector((state) => state.course);
+    const { facultyCourses: courses, isFetchingCourses } = useSelector((state) => state.course);
+    const { isSidebarCollapsed } = useSelector((state) => state.ui);
 
     useEffect(() => {
-        dispatch(getFacultyCourses());
-    }, [dispatch]);
+        if (courses.length === 0) {
+            dispatch(getFacultyCourses());
+        }
+    }, [dispatch, courses.length]);
 
     const handleDelete = async (id, e) => {
         e.stopPropagation();
@@ -31,10 +34,10 @@ const MyCourses = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] flex">
+        <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] flex transition-colors duration-300">
             <Sidebar />
 
-            <div className="flex-1 md:ml-64 p-8 overflow-y-auto h-screen">
+            <div className={`flex-1 p-8 overflow-y-auto h-screen transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
                 <div className="max-w-7xl mx-auto">
                     <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
                         <div>

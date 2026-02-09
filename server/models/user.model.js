@@ -23,7 +23,11 @@ const userSchema = new mongoose.Schema({
 
     role: {
         type: String,
+<<<<<<< HEAD
         enum: ["STUDENT", "FACULTY", "ADMIN"],
+=======
+        enum: ["STUDENT", "FACULTY", "ADMIN", "COMPANY"],
+>>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
         default: "STUDENT"
     },
 
@@ -77,6 +81,106 @@ const userSchema = new mongoose.Schema({
             default: null
         }
     },
+<<<<<<< HEAD
+=======
+    companyProfile: {
+        companyName: {
+            type: String,
+            required: function () {
+                return this.role === "COMPANY";
+            },
+            trim: true,
+            maxlength: 150
+        },
+
+        website: {
+            type: String,
+            trim: true,
+            default: null
+        },
+
+        logo: {
+            type: String,
+            default: null
+        },
+
+        industry: {
+            type: String,
+            trim: true,
+            default: null
+        },
+
+        companySize: {
+            type: String,
+            enum: ["1-10", "11-50", "51-200", "201-500", "500+"],
+            default: null
+        },
+
+        foundedYear: {
+            type: Number,
+            min: 1800,
+            max: new Date().getFullYear(),
+            default: null
+        },
+
+        description: {
+            type: String,
+            trim: true,
+            maxlength: 2000,
+            default: ""
+        },
+
+        /* ======================
+           CONTACT DETAILS
+        ====================== */
+        contactEmail: {
+            type: String,
+            trim: true,
+            lowercase: true,
+            default: null
+        },
+
+        contactPhone: {
+            type: String,
+            trim: true,
+            default: null
+        },
+
+        /* ======================
+           SOCIAL LINKS
+        ====================== */
+        socialLinks: {
+            linkedin: {
+                type: String,
+                trim: true
+            },
+            twitter: {
+                type: String,
+                trim: true
+            },
+            github: {
+                type: String,
+                trim: true
+            }
+        },
+
+        /* ======================
+           VERIFICATION
+        ====================== */
+        isVerified: {
+            type: Boolean,
+            default: false
+        },
+
+        verifiedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            default: null
+        }
+    },
+
+
+>>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 
     isVerified: {
         type: Boolean,

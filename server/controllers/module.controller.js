@@ -7,9 +7,15 @@ import Course from "../models/course.model.js";
 export const createModule = async (req, res) => {
     try {
         const { courseId } = req.params;
+<<<<<<< HEAD
         const { title} = req.body;
 
         const course = await Course.findById(courseId);
+=======
+        const { title } = req.body;
+
+        const course = await Course.findOne({ _id: courseId, deletedAt: null });
+>>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
         if (!course) {
             return res.status(404).json({ message: "Course not found" });
         }
@@ -104,7 +110,11 @@ export const getModuleById = async (req, res) => {
         }
 
         if (req.user.role === 'FACULTY') {
+<<<<<<< HEAD
             const course = await Course.findById(module.courseId);
+=======
+            const course = await Course.findOne({ _id: module.courseId, deletedAt: null });
+>>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
             if (course.instructor.toString() !== req.user._id.toString()) {
                 return res.status(403).json({ message: "Not authorized" });
             }

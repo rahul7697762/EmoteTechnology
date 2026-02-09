@@ -118,6 +118,12 @@ export const courseAPI = {
         return response.data;
     },
 
+    // Get course by Slug
+    getCourseBySlug: async (slug) => {
+        const response = await api.get(`/courses/slug/${slug}`);
+        return response.data;
+    },
+
     // Update course (details, thumbnail, video)
     updateCourse: async (id, courseData) => {
         const config = {};
@@ -253,5 +259,102 @@ export const subModuleAPI = {
     }
 };
 
+// Payment API calls
+export const paymentAPI = {
+    getKey: async () => {
+        const response = await api.get('/payment/key');
+        return response.data;
+    },
+
+    // Create Order: /api/payment/create-order
+    createOrder: async (courseId) => {
+        const response = await api.post('/payment/create-order', { courseId });
+        return response.data;
+    },
+
+    // Verify Payment: /api/payment/verify
+    verifyPayment: async (paymentData) => {
+        const response = await api.post('/payment/verify', paymentData);
+        return response.data;
+    }
+};
+
+
 // Default export for backward compatibility with my recent changes
+// Progress API calls
+export const progressAPI = {
+    // Initialize Progress: /api/progress/init
+    initializeProgress: async (data) => {
+        const response = await api.post('/progress/init', data);
+        return response.data;
+    },
+
+    // Update Progress (Heartbeat): /api/progress/update
+    updateProgress: async (data) => {
+        const response = await api.post('/progress/update', data);
+        return response.data;
+    },
+
+    // Mark as Completed: /api/progress/complete
+    completeLesson: async (subModuleId) => {
+        const response = await api.post('/progress/complete', { subModuleId });
+        return response.data;
+    },
+
+    // Get Video Progress: /api/progress/video/:subModuleId
+    getVideoProgress: async (subModuleId) => {
+        const response = await api.get(`/progress/video/${subModuleId}`);
+        return response.data;
+    },
+
+    // Get Course Progress: /api/progress/course/:courseId
+    getCourseProgress: async (courseId) => {
+        const response = await api.get(`/progress/course/${courseId}`);
+        return response.data;
+    },
+
+    // Reset Progress (Admin/Debug): /api/progress/reset
+    resetProgress: async (courseId) => {
+        const response = await api.post('/progress/reset', { courseId });
+        return response.data;
+    }
+};
+
+export const studentAPI = {
+    // Get In-Progress Courses
+    getInProgressCourses: async () => {
+        const response = await api.get('/student/in-progress-courses');
+        return response.data;
+    },
+    // ... existing studentAPI methods
+    getUpcomingQuizzes: async () => {
+        const response = await api.get('/student/upcoming-quizzes');
+        return response.data;
+    },
+
+    // Get All Enrolled Courses
+    getEnrolledCourses: async () => {
+        const response = await api.get('/student/enrolled-courses');
+        return response.data;
+    },
+
+    // Get Certificates
+    getCertificates: async () => {
+        const response = await api.get('/certificate/me');
+        return response.data;
+    },
+
+    // Get Weekly Streak
+    getWeeklyStreak: async () => {
+        const response = await api.get('/student/weekly-streak');
+        return response.data;
+    },
+
+    // Get Dashboard Stats
+    getDashboardStats: async () => {
+        const response = await api.get('/student/dashboard-stats');
+        return response.data;
+    }
+};
+
 export default api;

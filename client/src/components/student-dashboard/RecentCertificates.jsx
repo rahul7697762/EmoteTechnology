@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Download } from 'lucide-react';
-import api from '../../utils/api';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchMyCertificates } from '../../redux/slices/certificateSlice';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+
+import { Download } from 'lucide-react';
 
 const CertificateItem = ({ cert }) => (
     <div className="flex items-center gap-3 p-3 bg-white dark:bg-[#1a1c23] rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm mb-3 group hover:border-teal-200 dark:hover:border-teal-900 transition-colors cursor-pointer">
@@ -10,11 +12,15 @@ const CertificateItem = ({ cert }) => (
         </div>
         <div className="flex-1 min-w-0">
             <h4 className="font-bold text-gray-900 dark:text-white text-xs truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
-                {cert.courseName}
+                {cert.courseId?.title || 'Unknown Course'}
             </h4>
-            <p className="text-[10px] text-gray-500 dark:text-gray-400">Issued {cert.issueDate}</p>
+            <p className="text-[10px] text-gray-500 dark:text-gray-400">Issued {new Date(cert.issuedAt).toLocaleDateString()}</p>
         </div>
-        <button className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+        <button
+            onClick={() => window.open(cert.certificateUrl, '_blank')}
+            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+            title="Download Certificate"
+        >
             <Download size={16} />
         </button>
     </div>
@@ -22,27 +28,12 @@ const CertificateItem = ({ cert }) => (
 
 const RecentCertificates = () => {
     const navigate = useNavigate();
-    const [certificates, setCertificates] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const dispatch = useDispatch();
+    const { certificates, loading } = useSelector((state) => state.certificate);
 
     useEffect(() => {
-        const fetchCertificates = async () => {
-            try {
-                const response = await api.get('/student/certificates');
-
-                if (response.data.success) {
-                    // Take only the first 2 certificates
-                    setCertificates(response.data.data.slice(0, 2));
-                }
-            } catch (error) {
-                console.error("Failed to fetch certificates", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCertificates();
-    }, []);
+        dispatch(fetchMyCertificates());
+    }, [dispatch]);
 
     if (loading) {
         return (
@@ -66,8 +57,8 @@ const RecentCertificates = () => {
             </div>
 
             {certificates.length > 0 ? (
-                certificates.map(cert => (
-                    <CertificateItem key={cert.id} cert={cert} />
+                certificates.slice(0, 2).map(cert => (
+                    <CertificateItem key={cert._id} cert={cert} />
                 ))
             ) : (
                 <p className="text-xs text-center text-gray-500 py-4">No certificates earned yet.</p>

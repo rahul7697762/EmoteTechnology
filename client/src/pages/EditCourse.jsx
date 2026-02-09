@@ -28,6 +28,7 @@ const EditCourse = () => {
         isUpdatingCourse,
         isUpdatingCourseStatus
     } = useSelector((state) => state.course);
+    const { isSidebarCollapsed } = useSelector((state) => state.ui);
 
     const {
         modules,
@@ -324,10 +325,10 @@ const EditCourse = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] flex">
+        <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] flex transition-colors duration-300">
             <Sidebar />
 
-            <div className="flex-1 md:ml-64 flex flex-col h-screen overflow-hidden">
+            <div className={`flex-1 flex flex-col h-screen overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
                 {/* Header */}
                 <header className="h-16 bg-white dark:bg-[#1E293B] border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6 shrink-0 z-10">
                     <div className="flex items-center gap-4">

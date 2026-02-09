@@ -32,6 +32,11 @@
     "multer": "^2.0.2",
     "nodemailer": "^7.0.12",
     "nodemon": "^3.1.11",
+<<<<<<< HEAD
+=======
+    "pdfkit": "^0.17.2",
+    "razorpay": "^2.9.6",
+>>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
     "slugify": "^1.6.6"
   }
 }

@@ -18,6 +18,7 @@ import api from '../utils/api'; // Import centralized api
 const StudentDashboard = () => {
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
+    const { isSidebarCollapsed } = useSelector((state) => state.ui);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [stats, setStats] = useState({
         hoursSpent: 0,
@@ -68,7 +69,7 @@ const StudentDashboard = () => {
         <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] text-gray-900 dark:text-white font-sans">
             <StudentSidebar />
 
-            <main className="md:ml-64 p-8 transition-all duration-300">
+            <main className={`p-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
                 {/* Top Header Row: Search & Profile */}
                 <header className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
                     {/* Search Bar */}

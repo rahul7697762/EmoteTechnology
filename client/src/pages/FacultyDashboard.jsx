@@ -10,7 +10,7 @@ import { logout } from '../redux/slices/authSlice'; // Added logout
 
 const FacultyDashboard = () => {
     const { user } = useSelector((state) => state.auth);
-    const { myCourses: courses, stats, isFetchingCourses, isFetchingStats } = useSelector((state) => state.course);
+    const { facultyCourses: courses, stats, isFetchingCourses, isFetchingStats } = useSelector((state) => state.course);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -21,9 +21,13 @@ const FacultyDashboard = () => {
     const userImage = user?.profile?.avatar;
 
     useEffect(() => {
-        dispatch(getFacultyCourses());
-        dispatch(getDashboardStats());
-    }, [dispatch]);
+        if (courses.length === 0) {
+            dispatch(getFacultyCourses());
+        }
+        if (!stats) {
+            dispatch(getDashboardStats());
+        }
+    }, [dispatch, courses.length, stats]);
 
     // Close on click outside
     useEffect(() => {
@@ -41,6 +45,8 @@ const FacultyDashboard = () => {
         dispatch(logout());
     };
 
+    const { isSidebarCollapsed } = useSelector((state) => state.ui);
+
     if (isFetchingCourses && isFetchingStats) {
         return (
             <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] flex items-center justify-center">
@@ -53,7 +59,7 @@ const FacultyDashboard = () => {
         <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] transition-colors duration-300">
             <Sidebar />
 
-            <main className="md:ml-64 p-8">
+            <main className={`p-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
                 {/* Top Header Row: Search & Profile */}
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
                     {/* Search Bar */}
@@ -85,7 +91,7 @@ const FacultyDashboard = () => {
                                         {user?.name || 'Faculty Member'}
                                     </h4>
                                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                                        {user?.profile?.title || 'Instructor'}
+                                        Instructor
                                     </p>
                                 </div>
                                 {userImage ? (

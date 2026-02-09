@@ -13,6 +13,13 @@ import courseRoutes from './routes/course.routes.js';
 import studentRoutes from './routes/student.routes.js';
 import moduleRoutes from './routes/module.routes.js';
 import subModuleRoutes from './routes/subModule.routes.js';
+<<<<<<< HEAD
+=======
+import enrollmentRoutes from './routes/enrollment.routes.js';
+import paymentRoutes from './routes/payment.routes.js';
+import progressRoutes from './routes/progress.routes.js';
+import certificateRoutes from './routes/certificate.routes.js';
+>>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 
 // Load environment variables
 dotenv.config();
@@ -67,6 +74,13 @@ app.use('/api/courses', courseRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/module', moduleRoutes);
 app.use('/api/submodule', subModuleRoutes);
+<<<<<<< HEAD
+=======
+app.use('/api/enrollment', enrollmentRoutes);
+app.use('/api/payment', paymentRoutes);
+app.use('/api/progress', progressRoutes);
+app.use('/api/certificate', certificateRoutes);
+>>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 
 // Health check route
 app.get('/api/health', (req, res) => {

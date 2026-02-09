@@ -1,42 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import StudentSidebar from '../components/student-dashboard/StudentSidebar';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchMyCertificates } from '../redux/slices/certificateSlice';
 import api from '../utils/api';
 import { Award, Download, Calendar, Search, Filter } from 'lucide-react';
 
 const StudentCertificates = () => {
     const { user } = useSelector((state) => state.auth);
-    const [certificates, setCertificates] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { isSidebarCollapsed } = useSelector((state) => state.ui);
+    const dispatch = useDispatch();
+    const { certificates, loading } = useSelector((state) => state.certificate);
+
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        const fetchCertificates = async () => {
-            try {
-                const response = await api.get('/student/certificates');
-
-                if (response.data.success) {
-                    setCertificates(response.data.data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch certificates", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCertificates();
-    }, []);
+        dispatch(fetchMyCertificates());
+    }, [dispatch]);
 
     const filteredCertificates = certificates.filter(cert =>
-        cert.courseName.toLowerCase().includes(searchTerm.toLowerCase())
+        cert.courseId?.title?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] text-gray-900 dark:text-white font-sans flex">
+        <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] text-gray-900 dark:text-white font-sans flex transition-colors duration-300">
             <StudentSidebar />
 
-            <main className="flex-1 md:ml-64 p-8">
+            <main className={`flex-1 p-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
                 <header className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">My Certificates</h1>
                     <p className="text-gray-500 dark:text-gray-400">View and download your earned certificates</p>
@@ -63,21 +52,24 @@ const StudentCertificates = () => {
                 ) : filteredCertificates.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                         {filteredCertificates.map(cert => (
-                            <div key={cert.id} className="bg-white dark:bg-[#1a1c23] rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden hover:shadow-lg transition-all group">
+                            <div key={cert._id} className="bg-white dark:bg-[#1a1c23] rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden hover:shadow-lg transition-all group">
                                 {/* Certificate Preview Area */}
                                 <div className="h-48 bg-gradient-to-br from-teal-500/10 to-blue-500/10 flex items-center justify-center relative p-6 border-b border-gray-100 dark:border-gray-800">
                                     <div className="border-4 border-teal-500/20 rounded-lg w-full h-full flex flex-col items-center justify-center bg-white dark:bg-[#1a1c23] shadow-sm p-4 text-center">
                                         <Award size={32} className="text-teal-500 mb-2" />
-                                        <h4 className="font-serif font-bold text-gray-900 dark:text-white text-sm line-clamp-2">{cert.courseName}</h4>
+                                        <h4 className="font-serif font-bold text-gray-900 dark:text-white text-sm line-clamp-2">{cert.courseId?.title || 'Unknown Course'}</h4>
                                         <div className="w-12 h-px bg-gray-200 dark:bg-gray-700 my-2"></div>
                                         <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-widest">Certificate of Completion</p>
                                     </div>
 
                                     {/* Overlay Action */}
                                     <div className="absolute inset-0 bg-black/50 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                        <button className="bg-white text-gray-900 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                                            <Eye size={16} />
-                                            View Full
+                                        <button
+                                            onClick={() => window.open(cert.certificateUrl, '_blank')}
+                                            className="bg-white text-gray-900 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 transition-transform"
+                                        >
+                                            <Download size={16} />
+                                            View / Download
                                         </button>
                                     </div>
                                 </div>
@@ -88,18 +80,21 @@ const StudentCertificates = () => {
                                             <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Issued On</p>
                                             <div className="flex items-center gap-1.5 text-sm font-medium text-gray-900 dark:text-white">
                                                 <Calendar size={14} className="text-teal-500" />
-                                                {cert.issueDate}
+                                                {new Date(cert.issuedAt).toLocaleDateString()}
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Grade</p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Status</p>
                                             <span className="inline-block px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold rounded-md">
-                                                {cert.grade}%
+                                                {cert.status}
                                             </span>
                                         </div>
                                     </div>
 
-                                    <button className="w-full py-2.5 rounded-xl bg-teal-500 hover:bg-teal-600 text-white font-semibold text-sm transition-colors flex items-center justify-center gap-2 shadow-lg shadow-teal-500/20">
+                                    <button
+                                        onClick={() => window.open(cert.certificateUrl, '_blank')}
+                                        className="w-full py-2.5 rounded-xl bg-teal-500 hover:bg-teal-600 text-white font-semibold text-sm transition-colors flex items-center justify-center gap-2 shadow-lg shadow-teal-500/20"
+                                    >
                                         <Download size={16} />
                                         Download PDF
                                     </button>

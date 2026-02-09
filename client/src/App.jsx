@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import StudentDashboard from './pages/StudentDashboard';
 import StudentCourses from './pages/StudentCourses';
+import StudentCourseView from './pages/StudentCourseView';
 import StudentCertificates from './pages/StudentCertificates';
 import StudentQuizzes from './pages/StudentQuizzes';
 import SettingsPage from './pages/Settings';
@@ -19,9 +20,9 @@ import VerifyOTP from './pages/VerifyOTP';
 import ResetPassword from './pages/ResetPassword';
 import VerifyEmail from './pages/VerifyEmail';
 import Courses from './pages/Courses';
+import CourseDetails from './pages/CourseDetails';
 import Jobs from './pages/Jobs';
 import AiInterview from './pages/AiInterview';
-import { AuthProvider } from './components/Job-portal/context/AuthContext';
 import './App.css';
 import { Toaster } from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux';
@@ -30,7 +31,7 @@ import { useEffect } from 'react';
 
 function App() {
   const dispatch = useDispatch();
-  const { theme } = useSelector((state) => state.theme);
+  const { theme } = useSelector((state) => state.ui);
 
   useEffect(() => {
     dispatch(getMe());
@@ -51,18 +52,9 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/courses" element={<Courses />} />
-          <Route path="/jobs*" element={
-            <AuthProvider>
-              <Jobs />
-            </AuthProvider>
-          } />
+          <Route path="/course/:id" element={<CourseDetails />} />
+          <Route path="/jobs" element={<Jobs />} />
           <Route path="/ai-interview" element={<AiInterview />} />
-          
-
-
-
-
-
           <Route path="/login" element={
             <PublicRoute>
               <LoginPage />
@@ -138,6 +130,12 @@ function App() {
           <Route path="/student-courses" element={
             <ProtectedRoute allowedRoles={['STUDENT', 'FACULTY', 'ADMIN']}>
               <StudentCourses />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/course/:id/learn" element={
+            <ProtectedRoute allowedRoles={['STUDENT', 'FACULTY', 'ADMIN']}>
+              <StudentCourseView />
             </ProtectedRoute>
           } />
 

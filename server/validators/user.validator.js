@@ -45,7 +45,11 @@ export const updateUserProfileValidation = [
 
     body("facultyProfile.expertise")
         .optional()
+<<<<<<< HEAD
         .isArray({ min: 1 })
+=======
+        .isArray()
+>>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
         .withMessage("Expertise must be an array"),
 
     body("facultyProfile.expertise.*")

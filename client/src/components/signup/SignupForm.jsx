@@ -14,6 +14,8 @@ const SignupForm = () => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const { isSigningUp } = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();

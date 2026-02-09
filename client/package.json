@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
-    "axios": "^1.13.4",
+    "axios": "^1.13.2",
     "dompurify": "^3.3.1",
-    "framer-motion": "^12.33.0",
+    "framer-motion": "^12.27.0",
     "html-react-parser": "^5.2.15",
     "lucide-react": "^0.562.0",
     "react": "^19.2.0",
@@ -21,7 +21,7 @@
     "react-hot-toast": "^2.6.0",
     "react-markdown": "^10.1.0",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^7.13.0",
+    "react-router-dom": "^7.12.0",
     "rehype": "^13.0.2",
     "rehype-react": "^8.0.0",
     "remark-gfm": "^4.0.1"

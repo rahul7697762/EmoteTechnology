@@ -126,11 +126,22 @@ const courseSchema = new mongoose.Schema({
         default: "DRAFT"
     },
 
+<<<<<<< HEAD
     rejectionReason: String
+=======
+    rejectionReason: String,
+
+    deletedAt: Date
+>>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 
 
 }, {
     timestamps: true,
+<<<<<<< HEAD
+=======
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+>>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 });
 
 
@@ -143,6 +154,10 @@ INDEXES
 // Browsing & filtering
 courseSchema.index({ category: 1 });
 courseSchema.index({ tags: 1 });
+<<<<<<< HEAD
+=======
+courseSchema.index({ deletedAt: 1 }); // Soft delete index
+>>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 
 // Sorting
 courseSchema.index({ "rating.average": -1 });

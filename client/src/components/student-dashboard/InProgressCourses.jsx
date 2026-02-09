@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { getInProgressCourses } from '../../redux/slices/courseSlice';
 
 const CircularProgress = ({ value, color }) => {
     const radius = 28;
@@ -75,33 +76,15 @@ const CourseCard = ({ course }) => {
 };
 
 const InProgressCourses = () => {
-    const [courses, setCourses] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const dispatch = useDispatch();
+    const { inProgressCourses: courses, isFetchingStudentCourses: loading } = useSelector((state) => state.course);
 
     useEffect(() => {
-        const fetchCourses = async () => {
-            try {
-                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                const token = localStorage.getItem('token');
-
-                const response = await axios.get(`${apiUrl}/student/in-progress-courses`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-
-                if (response.data.success) {
-                    setCourses(response.data.data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch in-progress courses", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCourses();
-    }, []);
+        // Only fetch if empty to avoid redundant calls, or can fetch every time to be fresh
+        if (courses.length === 0) {
+            dispatch(getInProgressCourses());
+        }
+    }, [dispatch, courses.length]);
 
     if (loading) {
         return (

@@ -283,9 +283,9 @@ export const paymentAPI = {
 // Default export for backward compatibility with my recent changes
 // Progress API calls
 export const progressAPI = {
-    // Initialize Progress: /api/progress/init
-    initializeProgress: async (data) => {
-        const response = await api.post('/progress/init', data);
+    // Initialize Progress for Course: /api/progress/init
+    initializeProgress: async (courseId) => {
+        const response = await api.post('/progress/init', { courseId });
         return response.data;
     },
 
@@ -353,6 +353,113 @@ export const studentAPI = {
     // Get Dashboard Stats
     getDashboardStats: async () => {
         const response = await api.get('/student/dashboard-stats');
+        return response.data;
+    }
+};
+
+export const assessmentAPI = {
+    // Create Assessment
+    createAssessment: async (data) => {
+        const config = {};
+        if (data instanceof FormData) {
+            config.headers = { 'Content-Type': 'multipart/form-data' };
+        }
+        const response = await api.post("/assessment", data, config);
+        return response.data;
+    },
+
+    // Get Assessment for Faculty
+    getAssessmentForFaculty: async (moduleId) => {
+        const response = await api.get(`/assessment/module/${moduleId}`);
+        return response.data;
+    },
+
+    // Update Assessment
+    updateAssessment: async (id, data) => {
+        const config = {};
+        if (data instanceof FormData) {
+            config.headers = { 'Content-Type': 'multipart/form-data' };
+        }
+        const response = await api.put(`/assessment/${id}`, data, config);
+        return response.data;
+    },
+
+    // Add Question
+    addQuestion: async (assessmentId, data) => {
+        const response = await api.post(`/assessment/${assessmentId}/questions`, data);
+        return response.data;
+    },
+
+    // Delete Question
+    deleteQuestion: async (id) => {
+        const response = await api.delete(`/assessment/questions/${id}`);
+        return response.data;
+    },
+
+    // Delete Assessment
+    deleteAssessment: async (id) => {
+        const response = await api.delete(`/assessment/${id}`);
+        return response.data;
+    },
+
+    // Toggle Publish Assessment
+    togglePublishAssessment: async (id) => {
+        const response = await api.patch(`/assessment/${id}/publish`);
+        return response.data;
+    },
+
+    // Get Assessment for Student
+    getAssessmentForStudent: async (moduleId) => {
+        const response = await api.get(`/assessment/module/${moduleId}/attempt`);
+        return response.data;
+    }
+};
+
+export const submissionAPI = {
+    // Submit Assessment
+    submitAssessment: async (assessmentId, data) => {
+        const config = {};
+        if (data instanceof FormData) {
+            config.headers = { 'Content-Type': 'multipart/form-data' };
+        }
+        const response = await api.post(`/submission/${assessmentId}/submit`, data, config);
+        return response.data;
+    },
+
+    // Get All Submissions (Faculty)
+    getSubmissions: async (assessmentId) => {
+        const response = await api.get(`/submission/assessment/${assessmentId}`);
+        return response.data;
+    },
+
+    // Grade Submission
+    gradeSubmission: async (id, data) => {
+        const response = await api.put(`/submission/${id}/grade`, data);
+        return response.data;
+    },
+
+    // Get Submissions by Course (grouped by assessment)
+    getSubmissionsByCourse: async (courseId) => {
+        const response = await api.get(`/submission/course/${courseId}`);
+        return response.data;
+    },
+
+    // Get Submissions by Assessment (with optional status filter)
+    getSubmissionsByAssessment: async (assessmentId, status) => {
+        const params = status ? { status } : {};
+        const response = await api.get(`/submission/assessment/${assessmentId}`, { params });
+        return response.data;
+    },
+
+    // Review Submission (for PDF grading)
+    reviewSubmission: async (id, data) => {
+        const response = await api.patch(`/submission/${id}/review`, data);
+        return response.data;
+    },
+
+    // Get My Submissions (Student)
+    getMySubmissions: async (assessmentId) => {
+        const response = await api.get(`/submission/${assessmentId}/my-submissions`);
         return response.data;
     }
 };

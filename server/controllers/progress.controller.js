@@ -2,6 +2,8 @@
 import Progress from "../models/progress.model.js";
 import { Enrollment } from "../models/enrollment.model.js";
 import { SubModule } from "../models/subModule.model.js";
+import { Module } from "../models/module.model.js";
+import { ModuleProgress } from "../models/moduleProgress.model.js";
 import Course from "../models/course.model.js";
 import { AppError } from "../utils/appError.js";
 import { catchAsync } from "../utils/catchAsync.js";
@@ -63,32 +65,115 @@ const recalculateEnrollmentProgress = async (userId, courseId) => {
     };
 };
 
-export const initializeProgress = catchAsync(async (req, res, next) => {
-    const { courseId, moduleId, subModuleId } = req.body;
-    const userId = req.user.id;
+// Helper: Check and update Module Completion
+export const checkModuleCompletion = async (userId, moduleId, courseId) => {
+    // 1. Get Module to check assessment requirement
+    const module = await Module.findById(moduleId);
+    if (!module) return;
 
-    // Fetch submodule to get duration
-    const subModule = await SubModule.findById(subModuleId);
-    if (!subModule) {
-        return next(new AppError("Submodule not found", 404));
+    // 2. Check if all content (submodules) are completed
+    const totalSubModules = await SubModule.countDocuments({ moduleId, status: "PUBLISHED", deletedAt: null });
+    const completedSubModules = await Progress.countDocuments({ userId, moduleId, isCompleted: true });
+
+    const allContentCompleted = totalSubModules === completedSubModules;
+
+    if (!allContentCompleted) return; // Not done with content yet
+
+    // 3. Check Assessment Requirement
+    let assessmentPassed = true; // Default true if no assessment
+    if (module.hasAssessment) {
+        // Build query to check if we have a passing record
+        const progress = await ModuleProgress.findOne({ userId, moduleId });
+        if (!progress || !progress.assessmentPassed) {
+            assessmentPassed = false;
+        }
     }
 
-    // Check if progress already exists
-    let progress = await Progress.findOne({ userId, subModuleId });
+    // 4. Update ModuleProgress if all conditions met
+    if (assessmentPassed) {
+        await ModuleProgress.findOneAndUpdate(
+            { userId, moduleId, courseId },
+            {
+                isCompleted: true,
+                completedAt: new Date()
+            },
+            { upsert: true, new: true }
+        );
+        return { isModuleCompleted: true };
+    }
 
-    if (!progress) {
-        progress = await Progress.create({
-            userId,
-            courseId,
-            moduleId,
-            subModuleId,
-            totalDuration: subModule.video?.duration || 0
+    return { isModuleCompleted: false };
+};
+
+export const initializeCourseProgress = catchAsync(async (req, res, next) => {
+    const { courseId } = req.body;
+    const userId = req.user.id;
+
+    // 1. Fetch all published submodules for the course
+    const subModules = await SubModule.find({
+        courseId,
+        status: "PUBLISHED",
+        deletedAt: null
+    }).select('_id moduleId video.duration');
+
+    if (!subModules.length) {
+        return res.status(200).json({
+            success: true,
+            data: []
         });
     }
 
+    // 2. Fetch existing progress for these submodules
+    const existingProgress = await Progress.find({
+        userId,
+        courseId
+    });
+
+    // 3. Identify missing progress records
+    const existingSubModuleIds = new Set(existingProgress.map(p => p.subModuleId.toString()));
+    const newProgressRecords = [];
+
+    for (const subModule of subModules) {
+        if (!existingSubModuleIds.has(subModule._id.toString())) {
+            newProgressRecords.push({
+                userId,
+                courseId,
+                moduleId: subModule.moduleId,
+                subModuleId: subModule._id,
+                totalDuration: subModule.video?.duration || 0,
+                watchedDuration: 0,
+                completionPercentage: 0,
+                isCompleted: false,
+                viewedSegments: []
+            });
+        }
+    }
+
+    // 4. Bulk insert missing records
+    if (newProgressRecords.length > 0) {
+        await Progress.insertMany(newProgressRecords);
+    }
+
+    // 5. Fetch all progress again (or merge) to return complete list
+    // Only need to fetch if we inserted new ones, but for simplicity/consistency, let's fetch all.
+    // Actually, we can just concatenate existing + new (with _id missing on new ones until fetch, but front-end might not need _id of progress doc immediately, just data).
+    // Better to fetch all to be sure we have the latest state and correct IDs.
+    // 5. Fetch all progress again (or merge) to return complete list
+    const allProgress = await Progress.find({
+        userId,
+        courseId
+    });
+
+    // 6. Fetch Module Progress (for locking logic)
+    const moduleProgress = await ModuleProgress.find({
+        userId,
+        courseId
+    });
+
     res.status(200).json({
         success: true,
-        data: progress
+        data: allProgress,
+        moduleProgress // Return module progress
     });
 });
 
@@ -198,8 +283,16 @@ export const updateProgress = catchAsync(async (req, res, next) => {
             progress.isCompleted = true;
             await progress.save(); // Save again to update completion status
 
+            // Check Module Completion
+            const completionResult = await checkModuleCompletion(userId, progress.moduleId, progress.courseId);
+
             // Trigger enrollment sync and capture result
             courseProgressStats = await recalculateEnrollmentProgress(userId, progress.courseId);
+
+            // Add module completion status to stats
+            if (completionResult?.isModuleCompleted) {
+                courseProgressStats = { ...courseProgressStats, isModuleCompleted: true, moduleId: progress.moduleId };
+            }
         }
     }
 
@@ -244,8 +337,15 @@ export const markAsCompleted = catchAsync(async (req, res, next) => {
 
     await progress.save();
 
+    // Check Module Completion
+    const completionResult = await checkModuleCompletion(userId, progress.moduleId, progress.courseId);
+
     // Update Course Level Progress and get stats
-    const courseProgressStats = await recalculateEnrollmentProgress(userId, progress.courseId);
+    let courseProgressStats = await recalculateEnrollmentProgress(userId, progress.courseId);
+
+    if (completionResult?.isModuleCompleted) {
+        courseProgressStats = { ...courseProgressStats, isModuleCompleted: true, moduleId: progress.moduleId };
+    }
 
     res.status(200).json({
         success: true,

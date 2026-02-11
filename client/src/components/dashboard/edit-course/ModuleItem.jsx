@@ -4,6 +4,7 @@ import {
     GripVertical, Eye, EyeOff, Trash2, ChevronDown, ChevronRight, Plus
 } from 'lucide-react';
 import SubModuleItem from './SubModuleItem';
+import AssessmentManager from '../AssessmentManager';
 
 const ModuleItem = ({
     module,
@@ -91,6 +92,17 @@ const ModuleItem = ({
                             >
                                 <Plus size={16} /> Add Lesson
                             </button>
+
+                            {/* Assessment Manager */}
+                            <AssessmentManager
+                                moduleId={module._id}
+                                courseId={module.courseId}
+                                hasAssessment={module.hasAssessment}
+                                onUpdate={() => {
+                                    // Optionally trigger a module refetch or update local state
+                                    // For now, parent might not be listening, but we can access context if needed
+                                }}
+                            />
                         </div>
                     </div>
                 )}

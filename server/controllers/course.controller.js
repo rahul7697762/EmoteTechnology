@@ -3,6 +3,7 @@ import Course from "../models/course.model.js";
 import { Enrollment } from "../models/enrollment.model.js";
 import { uploadFileToBunny, deleteFileFromBunny } from "../services/bunny.service.js";
 import { Review } from "../models/review.model.js";
+import { ModuleProgress } from "../models/moduleProgress.model.js";
 
 
 /**
@@ -369,7 +370,7 @@ export const getCourseById = async (req, res) => {
             .populate({
                 path: 'modules',
                 match: { deletedAt: null, status: 'PUBLISHED' }, // Filter out deleted and draft modules
-                select: 'title subModulesCount order',
+                select: 'title subModulesCount order hasAssessment',
                 options: { sort: { order: 1 } },
                 populate: {
                     path: 'subModules',
@@ -437,7 +438,7 @@ export const getCourseBySlug = async (req, res) => {
             .populate({
                 path: 'modules',
                 match: { deletedAt: null, status: 'PUBLISHED' }, // Filter out deleted and draft modules
-                select: 'title subModulesCount order',
+                select: 'title subModulesCount order hasAssessment',
                 options: { sort: { order: 1 } },
                 populate: {
                     path: 'subModules',

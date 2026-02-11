@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateHeartbeat, fetchVideoProgress, initProgress } from '../../redux/slices/progressSlice';
+import { updateHeartbeat, fetchVideoProgress } from '../../redux/slices/progressSlice';
 import { MonitorPlay, PlayCircle, Award, Download } from 'lucide-react';
 
 const VideoPlayer = ({ lesson, courseId }) => {
@@ -18,11 +18,6 @@ const VideoPlayer = ({ lesson, courseId }) => {
     // 1. Initialize & Fetch Resume Point on Mount/Change
     useEffect(() => {
         if (lesson && courseId) {
-            dispatch(initProgress({
-                courseId,
-                moduleId: lesson.moduleId,
-                subModuleId: lesson._id
-            }));
             dispatch(fetchVideoProgress(lesson._id));
         }
 

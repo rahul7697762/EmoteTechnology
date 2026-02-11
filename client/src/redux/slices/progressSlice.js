@@ -1,14 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { progressAPI } from '../../utils/api';
+import { submitAssessment, reviewSubmission } from './submissionSlice';
 
 // Async Thunks
 
 export const initProgress = createAsyncThunk(
     'progress/initProgress',
-    async (data, { rejectWithValue }) => {
+    async ({ courseId }, { rejectWithValue }) => {
         try {
-            const response = await progressAPI.initializeProgress(data);
-            return response.data;
+            const response = await progressAPI.initializeProgress(courseId);
+            return {
+                progressList: response.data,
+                moduleProgress: response.moduleProgress
+            };
         } catch (error) {
             return rejectWithValue(error.response?.data?.message || 'Failed to initialize progress');
         }
@@ -84,6 +88,9 @@ const initialState = {
     // Map of lessonId -> { watchedDuration, lastWatchedTime, completionPercentage, isCompleted }
     lessonProgress: {},
 
+    // Map of moduleId -> { isCompleted }
+    moduleProgress: {},
+
     isLoading: false,
     error: null
 };
@@ -105,11 +112,27 @@ const progressSlice = createSlice({
         builder
             // Init Progress
             .addCase(initProgress.fulfilled, (state, action) => {
-                const { subModuleId, ...data } = action.payload;
-                state.lessonProgress[subModuleId] = {
-                    ...state.lessonProgress[subModuleId],
-                    ...data
-                };
+                const { progressList, moduleProgress } = action.payload;
+
+                // Process Lesson Progress
+                if (Array.isArray(progressList)) {
+                    progressList.forEach(progress => {
+                        state.lessonProgress[progress.subModuleId] = {
+                            ...state.lessonProgress[progress.subModuleId],
+                            ...progress
+                        };
+                    });
+                }
+
+                // Process Module Progress
+                if (Array.isArray(moduleProgress)) {
+                    moduleProgress.forEach(mp => {
+                        state.moduleProgress[mp.moduleId] = {
+                            isCompleted: mp.isCompleted,
+                            assessmentPassed: mp.assessmentPassed
+                        };
+                    });
+                }
             })
 
             // Update Heartbeat
@@ -139,6 +162,15 @@ const progressSlice = createSlice({
 
                 if (action.payload.data?.certificate) {
                     state.certificate = action.payload.data.certificate;
+                }
+
+                // Check for Module Completion
+                const { isModuleCompleted, moduleId } = action.payload;
+                if (isModuleCompleted && moduleId) {
+                    state.moduleProgress[moduleId] = {
+                        ...state.moduleProgress[moduleId],
+                        isCompleted: true
+                    };
                 }
             })
 
@@ -172,6 +204,15 @@ const progressSlice = createSlice({
                 if (action.payload.data?.certificate) {
                     state.certificate = action.payload.data.certificate;
                 }
+
+                // Check for Module Completion
+                const { isModuleCompleted, moduleId } = action.payload;
+                if (isModuleCompleted && moduleId) {
+                    state.moduleProgress[moduleId] = {
+                        ...state.moduleProgress[moduleId],
+                        isCompleted: true
+                    };
+                }
             })
 
             // Fetch Video Progress (Resume data)
@@ -199,6 +240,30 @@ const progressSlice = createSlice({
             .addCase(fetchCourseProgress.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload;
+            })
+
+            // Listen to Submission Actions for Module Unlock
+            .addCase(submitAssessment.fulfilled, (state, action) => {
+                const { passed, moduleId, isModuleCompleted } = action.payload.data;
+                if (passed && moduleId) {
+                    state.moduleProgress[moduleId] = {
+                        ...state.moduleProgress[moduleId],
+                        assessmentPassed: true,
+                        // Only mark as completed if server says so (all submodules done)
+                        isCompleted: isModuleCompleted || state.moduleProgress[moduleId]?.isCompleted
+                    };
+                }
+            })
+            .addCase(reviewSubmission.fulfilled, (state, action) => {
+                const { status, moduleId, isModuleCompleted } = action.payload.data;
+                if (status === 'PASSED' && moduleId) {
+                    state.moduleProgress[moduleId] = {
+                        ...state.moduleProgress[moduleId],
+                        assessmentPassed: true,
+                        // Only mark as completed if server says so (all submodules done)
+                        isCompleted: isModuleCompleted || state.moduleProgress[moduleId]?.isCompleted
+                    };
+                }
             });
     }
 });

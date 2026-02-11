@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice';
 import courseReducer from './slices/courseSlice';
 import moduleReducer from './slices/moduleSlice';
@@ -6,17 +6,30 @@ import uiReducer from './slices/uiSlice';
 import paymentReducer from './slices/paymentSlice';
 import progressReducer from './slices/progressSlice';
 import certificateReducer from './slices/certificateSlice';
+import assessmentReducer from './slices/assessmentSlice';
+import submissionReducer from './slices/submissionSlice';
+
+const appReducer = combineReducers({
+    auth: authReducer,
+    course: courseReducer,
+    module: moduleReducer,
+    ui: uiReducer,
+    payment: paymentReducer,
+    progress: progressReducer,
+    certificate: certificateReducer,
+    assessment: assessmentReducer,
+    submission: submissionReducer
+});
+
+const rootReducer = (state, action) => {
+    if (action.type === 'auth/logout/fulfilled') {
+        state = undefined;
+    }
+    return appReducer(state, action);
+};
 
 const store = configureStore({
-    reducer: {
-        auth: authReducer,
-        course: courseReducer,
-        module: moduleReducer,
-        ui: uiReducer,
-        payment: paymentReducer,
-        progress: progressReducer,
-        certificate: certificateReducer
-    },
+    reducer: rootReducer,
 });
 
 export default store;

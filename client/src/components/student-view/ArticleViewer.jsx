@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { completeLesson, initProgress } from '../../redux/slices/progressSlice';
+import { completeLesson } from '../../redux/slices/progressSlice';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { BookOpen, CheckCircle } from 'lucide-react';
@@ -12,15 +12,7 @@ const ArticleViewer = ({ lesson, courseId }) => {
     const { lessonProgress, isLoading } = useSelector((state) => state.progress);
     const progress = lessonProgress[lesson._id];
 
-    useEffect(() => {
-        if (lesson && courseId) {
-            dispatch(initProgress({
-                courseId,
-                moduleId: lesson.moduleId,
-                subModuleId: lesson._id
-            }));
-        }
-    }, [lesson._id, courseId, dispatch]);
+
 
     const handleMarkCompleted = async () => {
         try {

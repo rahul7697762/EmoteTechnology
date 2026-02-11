@@ -30,6 +30,17 @@ const moduleSchema = new mongoose.Schema({
         default: "DRAFT"
     },
 
+    hasAssessment: {
+        type: Boolean,
+        default: false
+    },
+
+    unlockRule: {
+        type: String,
+        enum: ["FREE", "AFTER_COMPLETION"],
+        default: "AFTER_COMPLETION"
+    },
+
     deletedAt: Date
 
 }, {

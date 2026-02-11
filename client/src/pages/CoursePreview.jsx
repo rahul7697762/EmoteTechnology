@@ -10,6 +10,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AIChat from '../components/student-view/AIChat';
 import CourseHeader from '../components/student-view/CourseHeader';
+import StudentAssessmentView from '../components/student-view/StudentAssessmentView';
 
 const CoursePreview = () => {
     const { id } = useParams();
@@ -218,6 +219,34 @@ const CoursePreview = () => {
                                                     </div>
                                                 </button>
                                             ))}
+
+                                            {/* Assessment Item */}
+                                            {module.hasAssessment && (
+                                                <button
+                                                    onClick={() => {
+                                                        setActiveLesson({ type: 'ASSESSMENT', module, _id: `assessment-${module._id}`, title: "Module Assessment" });
+                                                        if (isMobile) setIsSidebarOpen(false);
+                                                    }}
+                                                    className={`w-full pl-10 pr-4 py-3 flex items-start gap-3 text-left transition-all border-l-4
+                                                        ${activeLesson?.type === 'ASSESSMENT' && activeLesson?.module?._id === module._id
+                                                            ? 'border-violet-600 bg-white dark:bg-[#1E293B] shadow-sm'
+                                                            : 'border-transparent hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-500'
+                                                        }
+                                                    `}
+                                                >
+                                                    <div className={`mt-0.5 ${activeLesson?.type === 'ASSESSMENT' && activeLesson?.module?._id === module._id ? 'text-violet-600' : 'text-slate-400'}`}>
+                                                        <FileText size={16} />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className={`text-sm font-medium ${activeLesson?.type === 'ASSESSMENT' && activeLesson?.module?._id === module._id ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400'}`}>
+                                                            Module Assessment
+                                                        </p>
+                                                        <span className="text-[10px] font-medium text-slate-400 uppercase">
+                                                            Quiz / Assignment
+                                                        </span>
+                                                    </div>
+                                                </button>
+                                            )}
                                             {(!module.subModules || module.subModules.length === 0) && (
                                                 <div className="px-10 py-3 text-xs text-slate-400 italic">
                                                     No lessons in this module.
@@ -309,6 +338,13 @@ const CoursePreview = () => {
                                             </div>
                                         </div>
                                     </div>
+                                ) : activeLesson.type === 'ASSESSMENT' ? (
+                                    /* ASSESSMENT PREVIEW */
+                                    <StudentAssessmentView
+                                        moduleId={activeLesson.module._id}
+                                        courseId={course._id}
+                                        previewMode={true}
+                                    />
                                 ) : (
                                     /* ARTICLE VIEW */
                                     <div className="flex-1 overflow-y-auto custom-scrollbar bg-white dark:bg-[#0F172A]">

@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const questionSchema = new mongoose.Schema({
     assessmentId: {
         type: mongoose.Schema.Types.ObjectId,

@@ -2,7 +2,7 @@
 import { Router } from "express";
 import { protect, restrictTo } from "../middleware/auth.middleware.js";
 import {
-    initializeProgress,
+    initializeCourseProgress,
     updateProgress,
     markAsCompleted,
     getVideoProgress,
@@ -14,7 +14,7 @@ const router = Router();
 
 router.use(protect); // All routes require login
 
-router.post("/init", initializeProgress);
+router.post("/init", initializeCourseProgress);
 router.post("/update", updateProgress); // Heartbeat
 router.post("/complete", markAsCompleted); // Manual completion (Article/Video)
 

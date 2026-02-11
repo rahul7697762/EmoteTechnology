@@ -1,5 +1,6 @@
 import { Module } from "../models/module.model.js";
 import { Enrollment } from "../models/enrollment.model.js";
+import { ModuleProgress } from "../models/moduleProgress.model.js";
 import mongoose from "mongoose";
 import Course from "../models/course.model.js";
 
@@ -60,7 +61,34 @@ export const getModulesByCourse = async (req, res) => {
             query.status = status;
         }
 
-        const modules = await Module.find(query).sort({ order: 1 });
+        const modules = await Module.find(query).sort({ order: 1 }).lean();
+
+        // If Student, calculate Lock Status
+        if (req.user.role === 'STUDENT') {
+            // Get module progress
+            const progressList = await ModuleProgress.find({
+                userId: req.user._id,
+                courseId
+            });
+            const completedModuleIds = new Set(progressList.filter(p => p.isCompleted).map(p => p.moduleId.toString()));
+
+            // Determine lock status: 
+            // Module is locked if previous module is NOT completed.
+            // First module is always unlocked.
+
+            modules.forEach((mod, index) => {
+                if (index === 0) {
+                    mod.isLocked = false;
+                } else {
+                    const prevModule = modules[index - 1];
+                    // Check if previous module is completed
+                    const isPrevCompleted = completedModuleIds.has(prevModule._id.toString());
+                    mod.isLocked = !isPrevCompleted;
+                }
+
+                mod.isCompleted = completedModuleIds.has(mod._id.toString());
+            });
+        }
 
         res.status(200).json({
             success: true,
@@ -100,6 +128,29 @@ export const getModuleById = async (req, res) => {
 
             if (!isEnrolled) {
                 return res.status(403).json({ message: "You must be enrolled to view this module" });
+            }
+
+            // CHECK LOCK STATUS
+            // If this is NOT the first module, check if previous is completed
+            if (module.order > 1) {
+                // Find previous module
+                const prevModule = await Module.findOne({
+                    courseId: module.courseId,
+                    order: module.order - 1,
+                    deletedAt: null
+                });
+
+                if (prevModule) {
+                    const prevProgress = await ModuleProgress.findOne({
+                        userId: req.user._id,
+                        moduleId: prevModule._id,
+                        isCompleted: true
+                    });
+
+                    if (!prevProgress) {
+                        return res.status(403).json({ message: "Module is locked. Complete previous module first." });
+                    }
+                }
             }
         }
 

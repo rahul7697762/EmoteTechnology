@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    Edit3, Trash2, BookOpen, Users, Clock
+    Edit3, Trash2, BookOpen, Users, Clock, Settings
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -49,11 +49,25 @@ const CourseCard = ({ course, handleDelete }) => {
                 <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between gap-3">
                     <div className="flex gap-2 w-full">
                         <button
-                            onClick={() => navigate(`/edit-course/${course._id}`)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/edit-course/${course._id}`);
+                            }}
                             className="flex-1 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-500/10 hover:text-violet-600 dark:hover:text-violet-400 font-medium text-sm transition-colors flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-700"
                         >
                             <Edit3 size={16} />
                             Edit
+                        </button>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/manage-course/${course._id}`);
+                            }}
+                            className="flex-1 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/20 font-medium text-sm transition-colors flex items-center justify-center gap-2 border border-emerald-200 dark:border-emerald-900/30"
+                            title="Manage Submissions & Applicants"
+                        >
+                            <Settings size={16} />
+                            Manage
                         </button>
                         <button
                             onClick={(e) => handleDelete(course._id, e)}

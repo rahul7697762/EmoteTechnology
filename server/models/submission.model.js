@@ -18,6 +18,7 @@ const submissionSchema = new mongoose.Schema({
         required: true
     },
 
+    // For Quiz
     answers: [
         {
             questionId: mongoose.Schema.Types.ObjectId,
@@ -27,16 +28,33 @@ const submissionSchema = new mongoose.Schema({
         }
     ],
 
+    // For PDF
+    pdfUrl: String,
+
+    submissionType: {
+        type: String,
+        enum: ["QUIZ", "PDF"],
+        required: true
+    },
+
     score: {
         type: Number,
-        required: true
+        default: 0
     },
 
     status: {
         type: String,
-        enum: ["PASSED", "FAILED"],
-        required: true
+        enum: ["PENDING_REVIEW", "PASSED", "FAILED"],
+        required: true,
+        default: "PENDING_REVIEW"
     },
+
+    reviewedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+
+    reviewedAt: Date,
 
     evaluatedAt: Date,
 

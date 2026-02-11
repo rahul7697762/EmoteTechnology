@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { moduleAPI, subModuleAPI } from '../../utils/api';
+import { createAssessment, deleteAssessment } from './assessmentSlice';
 import toast from 'react-hot-toast';
 
 // Async Thunks
@@ -447,6 +448,31 @@ const moduleSlice = createSlice({
             })
             .addCase(unpublishSubModule.rejected, (state) => {
                 state.isPublishingSubModule = false;
+            })
+
+            // Listen for Assessment Creation to update Module status
+            .addCase(createAssessment.fulfilled, (state, action) => {
+                let moduleId;
+                // Check if the argument is FormData (standard for file uploads)
+                if (action.meta.arg instanceof FormData) {
+                    moduleId = action.meta.arg.get('moduleId');
+                } else {
+                    // Fallback if it's a plain object
+                    moduleId = action.meta.arg.moduleId;
+                }
+
+                const module = state.modules.find(m => m._id === moduleId);
+                if (module) {
+                    module.hasAssessment = true;
+                }
+            })
+            // Listen for Assessment Deletion to update Module status
+            .addCase(deleteAssessment.fulfilled, (state, action) => {
+                const { moduleId } = action.payload; // Access the payload returned by thunk
+                const module = state.modules.find(m => m._id === moduleId);
+                if (module) {
+                    module.hasAssessment = false;
+                }
             });
     }
 });

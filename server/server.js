@@ -17,6 +17,8 @@ import enrollmentRoutes from './routes/enrollment.routes.js';
 import paymentRoutes from './routes/payment.routes.js';
 import progressRoutes from './routes/progress.routes.js';
 import certificateRoutes from './routes/certificate.routes.js';
+import assessmentRoutes from './routes/assessment.routes.js';
+import submissionRoutes from './routes/submission.routes.js';
 
 // Load environment variables
 dotenv.config();
@@ -75,6 +77,8 @@ app.use('/api/enrollment', enrollmentRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/certificate', certificateRoutes);
+app.use('/api/assessment', assessmentRoutes);
+app.use('/api/submission', submissionRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCourseDetails } from '../redux/slices/courseSlice';
-import { fetchCourseProgress } from '../redux/slices/progressSlice';
+import { fetchCourseProgress, initProgress } from '../redux/slices/progressSlice';
 import { MessageSquare, X, PlayCircle } from 'lucide-react';
 
 // Modular Components
@@ -11,29 +11,58 @@ import ArticleViewer from '../components/student-view/ArticleViewer';
 import CourseSidebar from '../components/student-view/CourseSidebar';
 import AIChat from '../components/student-view/AIChat';
 import CourseHeader from '../components/student-view/CourseHeader';
+import StudentAssessmentView from '../components/student-view/StudentAssessmentView';
 
 const StudentCourseView = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { currentCourse: course, isFetchingDetails: loading, error } = useSelector((state) => state.course);
-    const { courseProgress } = useSelector((state) => state.progress);
+    const { courseProgress, moduleProgress } = useSelector((state) => state.progress);
 
     const [activeModuleId, setActiveModuleId] = useState(null);
     const [activeLesson, setActiveLesson] = useState(null);
 
-    // Layout State
+    // ... (Layout State)
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
-
-    // Resizing State
-    const [sidebarWidth, setSidebarWidth] = useState(320); // Default 320px
-    const [chatWidth, setChatWidth] = useState(320); // Default 320px
+    const [sidebarWidth, setSidebarWidth] = useState(320);
+    const [chatWidth, setChatWidth] = useState(320);
     const [isResizingSidebar, setIsResizingSidebar] = useState(false);
     const [isResizingChat, setIsResizingChat] = useState(false);
 
-    // Responsive Check
+    // ... (Responsive Check & Resizing Handlers - unchanged)
+
+    // Process Course modules to add Locked Status
+    const processedCourse = React.useMemo(() => {
+        if (!course) return null;
+        if (!course.modules) return course;
+
+        const modulesWithLock = course.modules.map((module, index) => {
+            let isLocked = false;
+            // First module is always unlocked. Subsequent modules depend on previous module completion.
+            if (index > 0) {
+                const prevModule = course.modules[index - 1];
+                // Safely handle potential ObjectId vs String mismatch
+                const prevModuleId = String(prevModule._id);
+                const prevModuleStatus = moduleProgress ? moduleProgress[prevModuleId] : null;
+                const isPrevCompleted = prevModuleStatus?.isCompleted;
+
+                if (!isPrevCompleted) {
+                    isLocked = true;
+                }
+            }
+            // Admin override or Instructor override could be added here
+            return { ...module, isLocked };
+        });
+
+        return { ...course, modules: modulesWithLock };
+    }, [course, moduleProgress]);
+
+    // ... (Resizing effects)
+
+    // Responsive Check setup (keep existing)
     useEffect(() => {
         const checkMobile = () => {
             const mobile = window.innerWidth < 1024;
@@ -43,44 +72,35 @@ const StudentCourseView = () => {
                 setIsChatOpen(false);
             } else {
                 setIsSidebarOpen(true);
-                // Chat usually closed by default or persisted
             }
         };
-
         checkMobile();
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    // Resizing Handlers
+    // Resizing Handlers setup (keep existing)
     useEffect(() => {
         const handleMouseMove = (e) => {
             if (isResizingSidebar) {
                 const newWidth = e.clientX;
-                if (newWidth > 200 && newWidth < 600) {
-                    setSidebarWidth(newWidth);
-                }
+                if (newWidth > 200 && newWidth < 600) setSidebarWidth(newWidth);
             }
             if (isResizingChat) {
                 const newWidth = window.innerWidth - e.clientX;
-                if (newWidth > 250 && newWidth < 600) {
-                    setChatWidth(newWidth);
-                }
+                if (newWidth > 250 && newWidth < 600) setChatWidth(newWidth);
             }
         };
-
         const handleMouseUp = () => {
             if (isResizingSidebar) setIsResizingSidebar(false);
             if (isResizingChat) setIsResizingChat(false);
             document.body.style.cursor = 'default';
         };
-
         if (isResizingSidebar || isResizingChat) {
             window.addEventListener('mousemove', handleMouseMove);
             window.addEventListener('mouseup', handleMouseUp);
             document.body.style.cursor = isResizingSidebar || isResizingChat ? 'col-resize' : 'default';
         }
-
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('mouseup', handleMouseUp);
@@ -93,19 +113,25 @@ const StudentCourseView = () => {
         if (id) {
             dispatch(getCourseDetails(id));
             dispatch(fetchCourseProgress(id));
+            dispatch(initProgress({ courseId: id }));
         }
     }, [dispatch, id]);
 
     // Set initial active lesson and expand first module
     useEffect(() => {
-        if (course?.modules?.length > 0 && !activeLesson) {
-            const firstModuleWithLessons = course.modules.find(m => m.subModules && m.subModules.length > 0);
-            if (firstModuleWithLessons) {
-                setActiveModuleId(firstModuleWithLessons._id);
-                setActiveLesson(firstModuleWithLessons.subModules[0]);
+        if (processedCourse?.modules?.length > 0 && !activeLesson) {
+            // Find first UNLOCKED module that has lessons
+            const firstModule = processedCourse.modules.find(m => !m.isLocked && (m.subModules?.length > 0 || m.hasAssessment));
+            if (firstModule) {
+                setActiveModuleId(firstModule._id);
+                if (firstModule.subModules?.length > 0) {
+                    setActiveLesson(firstModule.subModules[0]);
+                } else if (firstModule.hasAssessment) {
+                    setActiveLesson({ type: 'ASSESSMENT', module: firstModule, _id: `assessment-${firstModule._id}` });
+                }
             }
         }
-    }, [course, activeLesson]);
+    }, [processedCourse, activeLesson]);
 
     const toggleModule = (moduleId) => {
         setActiveModuleId(activeModuleId === moduleId ? null : moduleId);
@@ -128,14 +154,14 @@ const StudentCourseView = () => {
         );
     }
 
-    if (!course) return null;
+    if (!processedCourse) return null;
 
     return (
         <div className="flex flex-col h-screen bg-[#F8FAFC] dark:bg-[#0F172A] overflow-hidden font-sans text-slate-900 dark:text-slate-100 select-none">
 
             {/* 1. FULL WIDTH HEADER */}
             <CourseHeader
-                course={course}
+                course={processedCourse}
                 activeLesson={activeLesson}
                 activeModuleId={activeModuleId}
                 progress={courseProgress}
@@ -152,7 +178,7 @@ const StudentCourseView = () => {
                 {/* LEFT SIDEBAR */}
                 <div className="relative flex shrink-0 h-full">
                     <CourseSidebar
-                        course={course}
+                        course={processedCourse}
                         activeModuleId={activeModuleId}
                         toggleModule={toggleModule}
                         activeLesson={activeLesson}
@@ -187,6 +213,14 @@ const StudentCourseView = () => {
                         {activeLesson ? (
                             activeLesson.type === 'VIDEO' ? (
                                 <VideoPlayer lesson={activeLesson} courseId={course._id || course.id} />
+                            ) : activeLesson.type === 'ASSESSMENT' ? (
+                                <StudentAssessmentView
+                                    moduleId={activeLesson.module._id}
+                                    courseId={course._id || course.id}
+                                    onCompleted={() => {
+                                        dispatch(fetchCourseProgress(course._id || course.id));
+                                    }}
+                                />
                             ) : (
                                 <ArticleViewer lesson={activeLesson} courseId={course._id || course.id} />
                             )
@@ -219,8 +253,8 @@ const StudentCourseView = () => {
                         isMobile={isMobile}
                     />
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 

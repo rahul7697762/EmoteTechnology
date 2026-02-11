@@ -46,21 +46,26 @@ const CourseSidebar = ({
                     <div key={module._id} className="border-b border-slate-100 dark:border-slate-800 last:border-0">
                         {/* Module Header */}
                         <button
-                            onClick={() => toggleModule(module._id)}
+                            onClick={() => !module.isLocked && toggleModule(module._id)}
+                            disabled={module.isLocked}
                             className={`w-full px-4 py-4 flex items-start gap-3 transition-colors text-left group
                                 ${activeModuleId === module._id ? 'bg-slate-50 dark:bg-slate-800/50' : 'hover:bg-slate-50 dark:hover:bg-slate-800/30'}
+                                ${module.isLocked ? 'opacity-60 cursor-not-allowed' : ''}
                             `}
                         >
                             <span className={`mt-0.5 text-slate-400 transition-transform duration-200 ${activeModuleId === module._id ? 'rotate-180' : ''}`}>
-                                <ChevronDown size={18} />
+                                {module.isLocked ? <Lock size={18} /> : <ChevronDown size={18} />}
                             </span>
                             <div>
                                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
                                     Module {index + 1}
                                 </h3>
-                                <p className={`text-sm font-semibold transition-colors ${activeModuleId === module._id ? 'text-violet-600 dark:text-violet-400' : 'text-slate-700 dark:text-slate-200'}`}>
-                                    {module.title}
-                                </p>
+                                <div className="flex items-center gap-2">
+                                    <p className={`text-sm font-semibold transition-colors ${activeModuleId === module._id ? 'text-violet-600 dark:text-violet-400' : 'text-slate-700 dark:text-slate-200'}`}>
+                                        {module.title}
+                                    </p>
+                                    {module.isCompleted && <CheckCircle size={14} className="text-green-500" />}
+                                </div>
                             </div>
                         </button>
 
@@ -106,6 +111,35 @@ const CourseSidebar = ({
                                         </button>
                                     );
                                 })}
+
+                                {/* Assessment Item */}
+                                {module.hasAssessment && (
+                                    <button
+                                        onClick={() => {
+                                            setActiveLesson({ type: 'ASSESSMENT', module, _id: `assessment-${module._id}`, title: "Module Assessment" });
+                                            if (isMobile) setIsSidebarOpen(false);
+                                        }}
+                                        className={`w-full pl-10 pr-4 py-3 flex items-start gap-3 text-left transition-all border-l-4
+                                            ${activeLesson?.type === 'ASSESSMENT' && activeLesson?.module?._id === module._id
+                                                ? 'border-violet-600 bg-white dark:bg-[#1E293B] shadow-sm'
+                                                : 'border-transparent hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-500'
+                                            }
+                                        `}
+                                    >
+                                        <div className="mt-0.5 text-violet-500">
+                                            {/* Icon for Assessment */}
+                                            <FileText size={16} className={module.isCompleted ? "text-green-500" : "text-violet-500"} />
+                                        </div>
+                                        <div>
+                                            <p className={`text-sm font-medium ${activeLesson?.type === 'ASSESSMENT' && activeLesson?.module?._id === module._id ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400'}`}>
+                                                Module Assessment
+                                            </p>
+                                            <span className="text-[10px] font-medium text-slate-400 uppercase">
+                                                Quiz / Assignment
+                                            </span>
+                                        </div>
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -20,11 +20,16 @@ const assessmentSchema = new mongoose.Schema({
 
     type: {
         type: String,
-        enum: ["QUIZ", "ASSIGNMENT", "CODING"],
+        enum: ["QUIZ", "PDF"], // Simplified to user requirements
         required: true
     },
 
     description: String,
+
+    questionPdfUrl: {
+        type: String, // URL from BunnyCDN
+        default: null
+    },
 
     timeLimit: {
         type: Number, // minutes
@@ -38,12 +43,14 @@ const assessmentSchema = new mongoose.Schema({
 
     totalMarks: {
         type: Number,
-        required: true
+        required: true,
+        default: 0
     },
 
     passingMarks: {
         type: Number,
-        required: true
+        required: true,
+        default: 0
     },
 
     isMandatory: {

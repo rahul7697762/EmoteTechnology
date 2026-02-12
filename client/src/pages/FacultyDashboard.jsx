@@ -10,7 +10,8 @@ import { logout } from '../redux/slices/authSlice'; // Added logout
 
 const FacultyDashboard = () => {
     const { user } = useSelector((state) => state.auth);
-    const { facultyCourses: courses, stats, isFetchingCourses, isFetchingStats } = useSelector((state) => state.course);
+    const { facultyCourses, stats, isFetchingCourses, isFetchingStats } = useSelector((state) => state.course);
+    const courses = facultyCourses || [];
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -21,13 +22,9 @@ const FacultyDashboard = () => {
     const userImage = user?.profile?.avatar;
 
     useEffect(() => {
-        if (courses.length === 0) {
-            dispatch(getFacultyCourses());
-        }
-        if (!stats) {
-            dispatch(getDashboardStats());
-        }
-    }, [dispatch, courses.length, stats]);
+        dispatch(getFacultyCourses());
+        dispatch(getDashboardStats());
+    }, [dispatch]);
 
     // Close on click outside
     useEffect(() => {
@@ -154,7 +151,7 @@ const FacultyDashboard = () => {
                     />
                     <StatsCard
                         title="Active Courses"
-                        value={stats?.totalCourses || 0}
+                        value={stats?.activeCourses || 0}
                         icon={BookOpen}
                         color="purple"
                     />

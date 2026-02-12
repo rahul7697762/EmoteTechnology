@@ -10,12 +10,17 @@ export const getDashboardStats = async (req, res) => {
         // Fetch all courses created by this user
         const courses = await Course.find({ createdBy: userId });
 
-        // Calculate stats
+
+        // 1. Total Courses Created
         const totalCourses = courses.length;
+
+        // 2. Active (Published) Courses
+        const activeCourses = courses.filter(c => c.status === 'PUBLISHED').length;
+
+        // 3. Total Students (Sum of enrolledCount)
         const totalStudents = courses.reduce((sum, course) => sum + (course.enrolledCount || 0), 0);
 
-        // Calculate estimated revenue (simplified: price * enrolledCount)
-        // Real revenue should come from a transaction/order model
+        // 4. Total Revenue (Estimated: Final Price * Enrolled Count)
         const totalRevenue = courses.reduce((sum, course) => {
             const price = course.price || 0;
             const discount = course.discount || 0;
@@ -23,15 +28,27 @@ export const getDashboardStats = async (req, res) => {
             return sum + (finalPrice * (course.enrolledCount || 0));
         }, 0);
 
-        // Calculate average rating
-        const totalRatingSum = courses.reduce((sum, course) => sum + (course.rating?.average || 0), 0);
-        const averageRating = totalCourses > 0 ? (totalRatingSum / totalCourses).toFixed(1) : 0;
+        // 5. Average Rating (Weighted by number of ratings)
+        // Global Average = Sum(CourseAvg * CourseRatingCount) / TotalRatingCount
+        const { totalRatingValues, totalRatingCounts } = courses.reduce((acc, course) => {
+            const avg = course.rating?.average || 0;
+            const count = course.rating?.count || 0;
+            return {
+                totalRatingValues: acc.totalRatingValues + (avg * count),
+                totalRatingCounts: acc.totalRatingCounts + count
+            };
+        }, { totalRatingValues: 0, totalRatingCounts: 0 });
+
+        const averageRating = totalRatingCounts > 0
+            ? (totalRatingValues / totalRatingCounts).toFixed(1)
+            : 0;
 
         res.status(200).json({
             success: true,
             data: {
                 totalStudents,
                 totalCourses,
+                activeCourses, // New field
                 totalRevenue,
                 averageRating
             }
@@ -45,9 +62,11 @@ export const getDashboardStats = async (req, res) => {
 export const getFacultyCourses = async (req, res) => {
     try {
         const userId = req.user._id;
+        console.log(`[DEBUG] getFacultyCourses for user: ${userId}`);
         const courses = await Course.find({ createdBy: userId })
             .select('title thumbnail price discount enrolledCount rating status createdAt slug')
             .sort({ createdAt: -1 });
+        console.log(`[DEBUG] Found ${courses.length} courses`);
 
         res.status(200).json({
             success: true,
@@ -147,6 +166,7 @@ export const upsertCourse = async (req, res) => {
             course = await Course.create({
                 ...courseData,
                 createdBy: userId,
+                instructor: userId, // Set instructor as the creator
                 // Defaults for required fields if not provided
                 description: courseData.description || "New Course Description",
                 price: courseData.price || 0,

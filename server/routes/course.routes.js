@@ -3,9 +3,10 @@ import {
     createCourse, getAllCourses, getCourseBySlug, searchCourses,
     getCourseReviews, getCourseById, getAllCoursesAdmin,
     approveCourse, rejectCourse, deleteCourseAdmin,
-    getFacultyCourses, updateCourse, updateCourseStatus, deleteCourse,
+    updateCourse, updateCourseStatus, deleteCourse,
     getFacultyCourseById
 } from "../controllers/course.controller.js";
+import { getFacultyCourses } from "../controllers/faculty.controller.js";
 import { upload } from "../middleware/upload.middleware.js";
 import {
     createCourseValidation, rejectCourseValidation,

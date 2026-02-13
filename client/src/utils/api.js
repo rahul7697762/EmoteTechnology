@@ -144,6 +144,12 @@ export const courseAPI = {
     deleteCourse: async (id) => {
         const response = await api.delete(`/courses/${id}`);
         return response.data;
+    },
+
+    // Get Faculty Dashboard Stats
+    getFacultyDashboardStats: async () => {
+        const response = await api.get('/faculty/dashboard-stats');
+        return response.data;
     }
 };
 

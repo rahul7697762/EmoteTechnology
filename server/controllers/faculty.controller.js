@@ -2,37 +2,66 @@ import Course from '../models/course.model.js';
 import User from '../models/user.model.js';
 import { Module } from '../models/module.model.js';
 import { SubModule } from '../models/subModule.model.js';
+import Payment from '../models/payment.model.js';
 
 export const getDashboardStats = async (req, res) => {
     try {
         const userId = req.user._id;
 
-        // Fetch all courses created by this user
-        const courses = await Course.find({ createdBy: userId });
+        // Fetch all courses created by this user (including deleted for historical revenue)
+        const allCourses = await Course.find({ createdBy: userId });
 
-        // Calculate stats
-        const totalCourses = courses.length;
-        const totalStudents = courses.reduce((sum, course) => sum + (course.enrolledCount || 0), 0);
+        // Filter for active (non-deleted) courses for display stats
+        const currentCourses = allCourses.filter(c => !c.deletedAt);
 
-        // Calculate estimated revenue (simplified: price * enrolledCount)
-        // Real revenue should come from a transaction/order model
-        const totalRevenue = courses.reduce((sum, course) => {
-            const price = course.price || 0;
-            const discount = course.discount || 0;
-            const finalPrice = price - (price * discount / 100);
-            return sum + (finalPrice * (course.enrolledCount || 0));
+        // 1. Total Courses Created (Existing Portfolio)
+        const totalCourses = currentCourses.length;
+
+        // 2. Active (Published) Courses
+        const activeCourses = currentCourses.filter(c => c.status === 'PUBLISHED').length;
+
+        // 3. Total Students (Sum of enrolledCount from current courses)
+        const totalStudents = currentCourses.reduce((sum, course) => sum + (course.enrolledCount || 0), 0);
+
+        // 4. Total Revenue (Calculated from actual completed payments)
+        const courseIds = allCourses.map(c => c._id);
+        const payments = await Payment.find({
+            courseId: { $in: courseIds },
+            status: 'paid'
+        });
+
+        const totalRevenue = payments.reduce((sum, payment) => {
+            let amount = payment.amount || 0;
+            // Normalize currency to USD
+            // Assuming 1 USD = 84 INR approx
+            if (payment.currency === 'INR') {
+                amount = amount / 84;
+            }
+            return sum + amount;
         }, 0);
 
-        // Calculate average rating
-        const totalRatingSum = courses.reduce((sum, course) => sum + (course.rating?.average || 0), 0);
-        const averageRating = totalCourses > 0 ? (totalRatingSum / totalCourses).toFixed(1) : 0;
+
+        // 5. Average Rating (Weighted by number of ratings from current courses)
+        const { totalRatingValues, totalRatingCounts } = currentCourses.reduce((acc, course) => {
+            const avg = course.rating?.average || 0;
+            const count = course.rating?.count || 0;
+            return {
+                totalRatingValues: acc.totalRatingValues + (avg * count),
+                totalRatingCounts: acc.totalRatingCounts + count
+            };
+        }, { totalRatingValues: 0, totalRatingCounts: 0 });
+
+        const averageRating = totalRatingCounts > 0
+            ? (totalRatingValues / totalRatingCounts).toFixed(1)
+            : 0;
 
         res.status(200).json({
             success: true,
             data: {
                 totalStudents,
                 totalCourses,
-                totalRevenue,
+                activeCourses,
+                totalRevenue: parseFloat(totalRevenue.toFixed(2)),
                 averageRating
             }
         });
@@ -45,7 +74,7 @@ export const getDashboardStats = async (req, res) => {
 export const getFacultyCourses = async (req, res) => {
     try {
         const userId = req.user._id;
-        const courses = await Course.find({ createdBy: userId })
+        const courses = await Course.find({ createdBy: userId, deletedAt: null })
             .select('title thumbnail price discount enrolledCount rating status createdAt slug')
             .sort({ createdAt: -1 });
 
@@ -64,7 +93,7 @@ export const getCourseDetails = async (req, res) => {
         const { id } = req.params;
         const userId = req.user._id;
 
-        const course = await Course.findOne({ _id: id, createdBy: userId });
+        const course = await Course.findOne({ _id: id, createdBy: userId, deletedAt: null });
         if (!course) {
             return res.status(404).json({ success: false, message: 'Course not found' });
         }
@@ -125,7 +154,7 @@ export const upsertCourse = async (req, res) => {
 
         // 1. Create or Update Course
         if (courseData._id && courseData._id !== 'new') {
-            course = await Course.findOne({ _id: courseData._id, createdBy: userId });
+            course = await Course.findOne({ _id: courseData._id, createdBy: userId, deletedAt: null });
             if (!course) {
                 return res.status(404).json({ success: false, message: 'Course not found' });
             }
@@ -147,6 +176,7 @@ export const upsertCourse = async (req, res) => {
             course = await Course.create({
                 ...courseData,
                 createdBy: userId,
+                instructor: userId, // Set instructor as the creator
                 // Defaults for required fields if not provided
                 description: courseData.description || "New Course Description",
                 price: courseData.price || 0,

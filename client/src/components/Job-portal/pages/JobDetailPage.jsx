@@ -10,12 +10,14 @@ import {
 import { jobAPI, applicationAPI } from '../services/api';
 import { showToast } from '../services/toast';
 import ApplicationForm from '../components/ApplicationForm';
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
 
-const JobDetailPage = () => {
-  const { id } = useParams();
+const JobDetailPage = ({ jobId: propJobId, onApply, onBack }) => {
+  const { id: paramId } = useParams();
+  const jobId = propJobId || paramId; // Use prop if provided, otherwise use URL param
   const navigate = useNavigate();
-  const { user, role } = useAuth();
+  const { user } = useSelector((state) => state.auth);
+  const role = user?.role;
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -24,14 +26,23 @@ const JobDetailPage = () => {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    fetchJobDetails();
-    checkApplicationStatus();
-  }, [id]);
+    if (jobId) {
+      fetchJobDetails();
+      checkApplicationStatus();
+    }
+  }, [jobId]);
 
   const fetchJobDetails = async () => {
     try {
       setLoading(true);
-      const response = await jobAPI.getJobById(id);
+      // Avoid calling API for non-db ids (e.g., landing preview ids)
+      const isObjectId = /^[a-fA-F0-9]{24}$/.test(String(jobId));
+      if (!isObjectId) {
+        setError('Job not found');
+        setLoading(false);
+        return;
+      }
+      const response = await jobAPI.getJobById(jobId);
       setJob(response.data);
     } catch (err) {
       setError('Failed to load job details');
@@ -42,11 +53,11 @@ const JobDetailPage = () => {
   };
 
   const checkApplicationStatus = async () => {
-    if (role !== 'CANDIDATE' || !user) return;
-    
+    if (role !== 'STUDENT' || !user) return;
+
     try {
       const response = await applicationAPI.getMyApplications();
-      const hasApplied = response.data.some(app => app.job._id === id);
+      const hasApplied = response.data.some(app => app.job._id === jobId);
       setApplied(hasApplied);
     } catch (err) {
       console.error('Error checking application status:', err);
@@ -76,6 +87,10 @@ const JobDetailPage = () => {
     setApplied(true);
     setShowApplyForm(false);
     showToast.success('Application submitted successfully!');
+    // If onApply callback is provided (wrapper context), call it
+    if (onApply) {
+      onApply();
+    }
   };
 
   const formatDate = (dateString) => {
@@ -123,7 +138,7 @@ const JobDetailPage = () => {
       <div className="max-w-6xl mx-auto">
         {/* Back Button */}
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => onBack ? onBack() : navigate(-1)}
           className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-teal-500 dark:hover:text-teal-400 mb-8 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -144,8 +159,8 @@ const JobDetailPage = () => {
                   <div className="flex items-start gap-4">
                     <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
                       {job.company?.logo ? (
-                        <img 
-                          src={job.company.logo} 
+                        <img
+                          src={job.company.logo}
                           alt={job.company.name}
                           className="w-full h-full object-cover rounded-xl"
                         />
@@ -201,7 +216,7 @@ const JobDetailPage = () => {
 
                   {/* Action Buttons */}
                   <div className="flex flex-wrap gap-4 mt-8">
-                    {role === 'CANDIDATE' && (
+                    {(!role || role === 'STUDENT') && (
                       <>
                         {applied ? (
                           <button
@@ -213,7 +228,16 @@ const JobDetailPage = () => {
                           </button>
                         ) : (
                           <button
-                            onClick={() => setShowApplyForm(true)}
+                            onClick={() => {
+                              if (onApply) {
+                                onApply(jobId);
+                              } else if (!user) {
+                                navigate(`/signup?redirect=/jobs/${jobId}?action=apply`);
+                                showToast.success('Please create an account to apply for this job');
+                              } else {
+                                setShowApplyForm(true);
+                              }
+                            }}
                             className="px-8 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-teal-600 hover:to-cyan-600 transition-all shadow-lg"
                           >
                             Apply Now

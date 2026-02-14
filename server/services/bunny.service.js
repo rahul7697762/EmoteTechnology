@@ -9,7 +9,7 @@ export const uploadFileToBunny = async (directoryPath, fileBuffer, fileName) => 
     const STORAGE_ZONE_NAME = process.env.BUNNY_STORAGE_ZONE;
     const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
 
-    if (!STORAGE_ZONE_NAME || !ACCESS_KEY) {
+    if (!STORAGE_ZONE_NAME || !ACCESS_KEY) {f
         throw new Error('BunnyCDN configuration missing (STORAGE_ZONE_NAME or ACCESS_KEY)');
     }
 
@@ -59,3 +59,47 @@ export const deleteFileFromBunny = async (fileUrl) => {
     }
 };
 
+//Upload Resume / Job Files to Bunny
+export const uploadJobFileToBunny = async (file, folder = "job-portal") => {
+    const STORAGE_ZONE = process.env.BUNNY_STORAGE_ZONE;
+    const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
+    const PULL_ZONE = process.env.BUNNY_PULL_ZONE_URL;
+
+    const sanitizedFileName = file.originalname
+        .replace(/\s+/g, "-")
+        .replace(/[^a-zA-Z0-9.\-_]/g, "");
+
+    const filePath = `${folder}/${Date.now()}-${sanitizedFileName}`;
+
+    const uploadUrl = `https://sg.storage.bunnycdn.com/${STORAGE_ZONE}/${filePath}`;
+
+    await axios.put(uploadUrl, file.buffer, {
+        headers: {
+            AccessKey: ACCESS_KEY,
+            "Content-Type": file.mimetype,
+        },
+        maxBodyLength: Infinity,
+    });
+
+    return {
+        url: `https://${PULL_ZONE}/${filePath}`,
+        path: filePath
+    };
+};
+
+
+//Delete Job File from Bunny
+export const deleteJobFileFromBunny = async (filePath) => {
+    const STORAGE_ZONE = process.env.BUNNY_STORAGE_ZONE;
+    const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
+
+    const deleteUrl = `https://sg.storage.bunnycdn.com/${STORAGE_ZONE}/${filePath}`;
+
+    await axios.delete(deleteUrl, {
+        headers: {
+            AccessKey: ACCESS_KEY,
+        },
+    });
+
+    return true;
+};

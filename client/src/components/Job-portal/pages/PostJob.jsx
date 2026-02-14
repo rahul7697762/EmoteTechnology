@@ -9,11 +9,14 @@ import {
 } from 'lucide-react';
 import { jobAPI, companyAPI } from '../services/api';
 import { showToast } from '../services/toast';
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
 
 const PostJob = ({ editMode, jobId }) => {
+  const { user: _user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  const { user: _user } = useAuth();
+  // Guard: ensure only employer/admin users can access post job
+  const role = _user?.role || '';
+  const isEmployer = ['COMPANY', 'EMPLOYER', 'ADMIN'].includes(role.toUpperCase());
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -41,6 +44,7 @@ const PostJob = ({ editMode, jobId }) => {
     featured: false,
     urgent: false,
     applicationQuestions: [],
+    showQuestions: true,
     visibility: 'PUBLIC',
   });
 
@@ -59,7 +63,7 @@ const PostJob = ({ editMode, jobId }) => {
     try {
       const response = await companyAPI.getProfile();
       setCompanyProfile(response.data);
-      
+
       // Pre-fill location if company has one
       if (response.data.location && !formData.location) {
         setFormData(prev => ({ ...prev, location: response.data.location }));
@@ -69,22 +73,14 @@ const PostJob = ({ editMode, jobId }) => {
       showToast.error('Please complete your company profile first');
       navigate('/company/profile');
     }
-  }, []);
+  }, [formData.location, navigate]);
 
-  useEffect(() => {
-    if (editMode && jobId) {
-      fetchJobDetails();
-    } else {
-      fetchCompanyProfile();
-    }
-  }, [editMode, jobId, fetchCompanyProfile]);
-
-  const fetchJobDetails = async () => {
+  const fetchJobDetails = useCallback(async () => {
     try {
       setLoading(true);
       const response = await jobAPI.getJobById(jobId);
       const job = response.data;
-      
+
       setFormData({
         title: job.title || '',
         description: job.description || '',
@@ -106,6 +102,7 @@ const PostJob = ({ editMode, jobId }) => {
         featured: job.featured || false,
         urgent: job.urgent || false,
         applicationQuestions: job.applicationQuestions || [],
+        showQuestions: job.showQuestions !== undefined ? job.showQuestions : true,
         visibility: job.visibility || 'PUBLIC',
       });
     } catch (err) {
@@ -114,7 +111,22 @@ const PostJob = ({ editMode, jobId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [jobId]);
+
+  useEffect(() => {
+    if (!isEmployer) {
+      navigate('/login');
+      return;
+    }
+
+    if (editMode && jobId) {
+      fetchJobDetails();
+    } else {
+      fetchCompanyProfile();
+    }
+  }, [editMode, jobId, fetchCompanyProfile, fetchJobDetails, isEmployer, navigate]);
+
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -160,7 +172,7 @@ const PostJob = ({ editMode, jobId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!companyProfile) {
       setError('Please complete your company profile first');
       showToast.error('Complete company profile required');
@@ -186,17 +198,26 @@ const PostJob = ({ editMode, jobId }) => {
     setError('');
 
     try {
+      let createdJobId = null;
       if (editMode) {
-        await jobAPI.updateJob(jobId, formData);
+        const res = await jobAPI.updateJob(jobId, formData);
+        createdJobId = res.data?.job?._id || jobId;
         showToast.success('Job updated successfully!');
       } else {
-        await jobAPI.createJob(formData);
+        const res = await jobAPI.createJob(formData);
+        createdJobId = res.data?.job?._id;
         showToast.success('Job posted successfully!');
       }
-      
-      // Redirect to job dashboard after a short delay
+
+      // Redirect to job dashboard and open created job after a short delay.
+      // We include both location `state.openJobId` and a fallback query param `open=` so
+      // the Jobs page can open the job card even if `location.state` is lost (page reloads, navigation)
       setTimeout(() => {
-        navigate('/company/dashboard');
+        if (createdJobId) {
+          navigate(`/company/jobs/${createdJobId}`);
+        } else {
+          navigate('/company/dashboard');
+        }
       }, 1500);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to save job');
@@ -242,12 +263,12 @@ const PostJob = ({ editMode, jobId }) => {
                 {editMode ? 'Edit Job Posting' : 'Post a New Job'}
               </h1>
               <p className="text-gray-600 dark:text-gray-400 mt-2">
-                {editMode 
-                  ? 'Update your job posting details' 
+                {editMode
+                  ? 'Update your job posting details'
                   : 'Fill in the details to attract the best candidates'}
               </p>
             </div>
-            
+
             <div className="flex gap-3">
               <button
                 type="button"
@@ -682,53 +703,79 @@ const PostJob = ({ editMode, jobId }) => {
 
                 {/* Additional Questions */}
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Additional Questions (Optional)
-                    </label>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      {formData.applicationQuestions.length}/5
-                    </span>
-                  </div>
-                  <div className="flex gap-2 mb-3">
+                  <label className="flex items-center gap-3 p-3 border border-gray-100 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer mb-4">
                     <input
-                      type="text"
-                      value={newQuestion}
-                      onChange={(e) => setNewQuestion(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddQuestion())}
-                      className="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                      placeholder="Add a question for applicants (e.g., Why do you want to work here?)"
+                      type="checkbox"
+                      name="showQuestions"
+                      checked={formData.showQuestions}
+                      onChange={handleChange}
+                      className="w-4 h-4 text-teal-500 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
-                    <button
-                      type="button"
-                      onClick={handleAddQuestion}
-                      disabled={!newQuestion.trim() || formData.applicationQuestions.length >= 5}
-                      className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <Plus className="w-5 h-5" />
-                    </button>
-                  </div>
-                  {formData.applicationQuestions.length > 0 && (
-                    <div className="space-y-2">
-                      {formData.applicationQuestions.map((question, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
-                        >
-                          <div className="flex items-center gap-3">
-                            <span className="text-sm text-gray-500 dark:text-gray-400">{index + 1}.</span>
-                            <span className="text-gray-700 dark:text-gray-300">{question}</span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveQuestion(index)}
-                            className="text-gray-400 hover:text-red-500 dark:hover:text-red-400"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ))}
+                    <div>
+                      <div className="font-bold text-gray-900 dark:text-white">
+                        Include Custom Application Questions
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        Ask candidates specific questions to filter the best talent
+                      </div>
                     </div>
+                  </label>
+
+                  {formData.showQuestions && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="space-y-4"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                          Custom Questions
+                        </label>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          {formData.applicationQuestions.length}/5
+                        </span>
+                      </div>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={newQuestion}
+                          onChange={(e) => setNewQuestion(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddQuestion())}
+                          className="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                          placeholder="e.g., Why do you want to join our team?"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddQuestion}
+                          disabled={!newQuestion.trim() || formData.applicationQuestions.length >= 5}
+                          className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <Plus className="w-5 h-5" />
+                        </button>
+                      </div>
+                      {formData.applicationQuestions.length > 0 && (
+                        <div className="space-y-2">
+                          {formData.applicationQuestions.map((question, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg group"
+                            >
+                              <div className="flex items-center gap-3">
+                                <span className="text-sm text-gray-400">{index + 1}.</span>
+                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{question}</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveQuestion(index)}
+                                className="text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </motion.div>
                   )}
                 </div>
               </div>
@@ -795,7 +842,7 @@ const PostJob = ({ editMode, jobId }) => {
                           </div>
                         </div>
                       </label>
-                      
+
                       <label className="flex items-center gap-3 p-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
                         <input
                           type="checkbox"

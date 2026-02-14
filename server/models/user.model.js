@@ -23,11 +23,7 @@ const userSchema = new mongoose.Schema({
 
     role: {
         type: String,
-<<<<<<< HEAD
-        enum: ["STUDENT", "FACULTY", "ADMIN"],
-=======
         enum: ["STUDENT", "FACULTY", "ADMIN", "COMPANY"],
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
         default: "STUDENT"
     },
 
@@ -57,7 +53,32 @@ const userSchema = new mongoose.Schema({
         timezone: {
             type: String,
             default: null
-        }
+        },
+        experience: [{
+      title: String,
+      company: String,
+      location: String,
+      startDate: Date,
+      endDate: Date,
+      current: Boolean,
+      description: String
+    }],
+    education: [{
+      school: String,
+      degree: String,
+      field: String,
+      startDate: Date,
+      endDate: Date,
+      current: Boolean
+    }],
+     savedJobs: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Job'
+  }],
+  isProfileComplete: {
+    type: Boolean,
+    default: false
+  },
     },
 
     facultyProfile: {
@@ -81,8 +102,6 @@ const userSchema = new mongoose.Schema({
             default: null
         }
     },
-<<<<<<< HEAD
-=======
     companyProfile: {
         companyName: {
             type: String,
@@ -180,7 +199,6 @@ const userSchema = new mongoose.Schema({
     },
 
 
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 
     isVerified: {
         type: Boolean,

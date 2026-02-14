@@ -43,12 +43,9 @@ const ResumeUpload = ({ onUploadSuccess, existingResume }) => {
     setError('');
 
     try {
-      const formData = new FormData();
-      formData.append('resume', file);
-
-      const response = await resumeAPI.uploadResume(formData);
+      const response = await resumeAPI.uploadResume(file);
       const uploadedResume = response.data;
-      
+
       setResume(uploadedResume);
       onUploadSuccess?.(uploadedResume);
     } catch (err) {
@@ -117,11 +114,10 @@ const ResumeUpload = ({ onUploadSuccess, existingResume }) => {
       ) : (
         <div
           onClick={() => !uploading && fileInputRef.current?.click()}
-          className={`relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
-            uploading
+          className={`relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${uploading
               ? 'border-teal-300 bg-teal-50 dark:bg-teal-900/10'
               : 'border-gray-300 dark:border-gray-600 hover:border-teal-500 dark:hover:border-teal-500 hover:bg-teal-50 dark:hover:bg-teal-900/10'
-          }`}
+            }`}
         >
           <input
             type="file"
@@ -130,7 +126,7 @@ const ResumeUpload = ({ onUploadSuccess, existingResume }) => {
             accept=".pdf,.doc,.docx"
             className="hidden"
           />
-          
+
           <div className="space-y-4">
             <div className="w-16 h-16 mx-auto rounded-full bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
               {uploading ? (
@@ -139,7 +135,7 @@ const ResumeUpload = ({ onUploadSuccess, existingResume }) => {
                 <Upload className="w-8 h-8 text-teal-500" />
               )}
             </div>
-            
+
             <div>
               <h3 className="font-medium text-gray-900 dark:text-white mb-2">
                 {uploading ? 'Uploading Resume...' : 'Upload Your Resume'}

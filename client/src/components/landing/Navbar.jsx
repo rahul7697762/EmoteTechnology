@@ -13,6 +13,28 @@ const Navbar = () => {
     const { theme } = useSelector((state) => state.ui);
     const { user } = useSelector((state) => state.auth);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    // Only consider a user authenticated when `user` exists in redux state.
+    // Avoid showing "Dashboard" based solely on a stored token to ensure
+    // unauthenticated users always see "Get Started" and are redirected to login.
+    const goToDashboard = () => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+
+
+        // default to faculty/admin dashboard
+        const role = (user.role || '').toUpperCase();
+        if (role === 'STUDENT') {
+            navigate('/student-dashboard');
+            return;
+        }
+        if (role === 'COMPANY' || role === 'EMPLOYER') {
+            navigate('/company/dashboard');
+            return;
+        }
+        navigate('/dashboard');
+    };
 
     const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
@@ -85,7 +107,7 @@ const Navbar = () => {
                                 <motion.button
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    onClick={() => navigate(user.role === 'STUDENT' ? '/student-dashboard' : '/dashboard')}
+                                    onClick={goToDashboard}
                                     className="group relative px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full font-semibold text-sm text-white overflow-hidden shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:scale-105"
                                 >
                                     <span className="relative z-10">Dashboard</span>
@@ -94,7 +116,7 @@ const Navbar = () => {
                                 <motion.button
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    onClick={() => navigate('/login')}
+                                    onClick={goToDashboard}
                                     className="group relative px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full font-semibold text-sm text-white overflow-hidden shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:scale-105"
                                 >
                                     <span className="relative z-10">Get Started</span>
@@ -170,14 +192,14 @@ const Navbar = () => {
                             <div className="pt-2">
                                 {user ? (
                                     <button
-                                        onClick={() => navigate(user.role === 'STUDENT' ? '/student-dashboard' : '/dashboard')}
+                                        onClick={() => { goToDashboard(); toggleMobileMenu(); }}
                                         className="w-full py-3 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl font-bold text-white shadow-lg shadow-teal-500/20"
                                     >
                                         Dashboard
                                     </button>
                                 ) : (
                                     <button
-                                        onClick={() => navigate('/login')}
+                                        onClick={() => { goToDashboard(); toggleMobileMenu(); }}
                                         className="w-full py-3 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl font-bold text-white shadow-lg shadow-teal-500/20"
                                     >
                                         Get Started

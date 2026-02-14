@@ -9,41 +9,47 @@ export const protect = async (req, res, next) => {
     try {
         let token;
 
-<<<<<<< HEAD
-        if (req.cookies && req.cookies.jwt) {
-            token = req.cookies.jwt;
-        } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-            token = req.headers.authorization.split(' ')[1];
-=======
+        // Try to get token from Authorization header first
         if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
             token = req.headers.authorization.split(' ')[1];
-        } else if (req.cookies && req.cookies.jwt) {
+        }
+        // Fallback to JWT cookie
+        else if (req.cookies && req.cookies.jwt) {
             token = req.cookies.jwt;
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
         }
 
         if (!token) {
+            console.log('--- Auth Debug ---');
+            console.log('Path:', req.path);
+            console.log('Authorization Header:', req.headers.authorization ? 'Present' : 'Missing');
+            console.log('Cookies present:', req.cookies ? Object.keys(req.cookies) : 'None');
+            console.log('------------------');
             return res.status(401).json({ message: "Not authorized, no token" });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.userId);
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const user = await User.findById(decoded.userId);
 
-        if (!user) {
-            return res.status(401).json({ message: "Not authorized, token failed" });
+            if (!user) {
+                console.log('Auth failed: User not found for ID', decoded.userId);
+                return res.status(401).json({ message: "Not authorized, user not found" });
+            }
+
+            req.user = user;
+            req.userId = user._id;
+            next();
+        } catch (error) {
+            console.log('Token verification failed:', error.message);
+            console.log('Token provided:', token.substring(0, 10) + '...');
+            if (error.name === 'TokenExpiredError') {
+                return res.status(401).json({ message: "Session expired, please login again" });
+            }
+            return res.status(401).json({ message: "Not authorized, invalid token" });
         }
-
-        req.user = user;
-        next();
     } catch (error) {
-<<<<<<< HEAD
-=======
-        if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: "Session expired, please login again" });
-        }
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
-        console.log("Error in protectRoute", error);
-        return res.status(401).json({ message: "Not authorized, token failed" });
+        console.error("Error in protect middleware:", error);
+        return res.status(401).json({ message: "Not authorized" });
     }
 };
 
@@ -52,17 +58,24 @@ export const protect = async (req, res, next) => {
  */
 export const restrictTo = (...roles) => {
     return (req, res, next) => {
+        console.log(`Checking role access: User role=${req.user?.role}, Required roles=${roles}, Allowed=${roles.includes(req.user?.role)}`);
+
+        if (!req.user) {
+            return res.status(401).json({
+                success: false,
+                message: 'User not authenticated'
+            });
+        }
+
         if (!roles.includes(req.user.role)) {
             return res.status(403).json({
                 success: false,
-                message: 'You do not have permission to perform this action.'
+                message: `Access denied. Your role (${req.user.role}) does not have permission. Required roles: ${roles.join(', ')}`
             });
         }
         next();
     };
 };
-<<<<<<< HEAD
-=======
 
 /**
  * Optional Protect middleware - Populates req.user if valid token exists, otherwise continues without error
@@ -96,4 +109,3 @@ export const optionalProtect = async (req, res, next) => {
         next();
     }
 };
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae

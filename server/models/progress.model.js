@@ -54,8 +54,6 @@ const progressSchema = new mongoose.Schema({
 
     lastHeartbeatAt: Date,
 
-<<<<<<< HEAD
-=======
     // Segment-based tracking
     // Array of segment indices (e.g., [0, 1, 2] where each is 10s)
     viewedSegments: {
@@ -63,7 +61,6 @@ const progressSchema = new mongoose.Schema({
         default: []
     },
 
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
     deletedAt: Date
 }, {
     timestamps: true

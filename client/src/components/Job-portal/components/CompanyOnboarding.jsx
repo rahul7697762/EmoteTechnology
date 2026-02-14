@@ -7,6 +7,8 @@ import {
   X, Plus, Trash2, ExternalLink
 } from 'lucide-react';
 import { companyAPI } from '../services/api';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { showToast } from '../services/toast';
 
 const CompanyOnboarding = ({ onComplete }) => {
@@ -58,9 +60,18 @@ const CompanyOnboarding = ({ onComplete }) => {
     { number: 4, title: 'Review', icon: CheckCircle },
   ];
 
+  const { user: authUser } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
   useEffect(() => {
+    const role = authUser?.role || '';
+    const isEmployer = ['COMPANY', 'EMPLOYER', 'ADMIN'].includes(role.toUpperCase());
+    if (!isEmployer) {
+      // hide onboarding for non-employers
+      return;
+    }
     loadExistingProfile();
-  }, []);
+  }, [authUser]);
 
   const loadExistingProfile = async () => {
     try {

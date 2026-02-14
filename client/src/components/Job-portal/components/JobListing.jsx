@@ -8,7 +8,7 @@ import {
 import { jobAPI } from '../services/api';
 import JobCard from './JobCard';
 
-const JobListing = ({ jobs: initialJobs = [], loading: initialLoading = false }) => {
+const JobListing = ({ jobs: initialJobs = [], loading: initialLoading = false, onViewJob }) => {
   const [jobs, setJobs] = useState(initialJobs);
   const [loading, setLoading] = useState(initialLoading);
   const [filters, setFilters] = useState({
@@ -393,7 +393,7 @@ const JobListing = ({ jobs: initialJobs = [], loading: initialLoading = false })
               className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               {jobs.map((job, index) => (
-                <JobCard key={job._id || index} job={job} />
+                <JobCard key={job._id || index} job={job} onViewJob={onViewJob} />
               ))}
             </motion.div>
 

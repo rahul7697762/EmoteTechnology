@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-import Course from "../models/course.model.js";
-=======
 import mongoose from "mongoose";
 import Course from "../models/course.model.js";
 import { Enrollment } from "../models/enrollment.model.js";
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 import { uploadFileToBunny, deleteFileFromBunny } from "../services/bunny.service.js";
 import { Review } from "../models/review.model.js";
 
@@ -88,11 +84,7 @@ export const createCourse = async (req, res) => {
 export const getFacultyCourseById = async (req, res) => {
     try {
         const courseId = req.params.id;
-<<<<<<< HEAD
-        const course = await Course.findById(courseId)
-=======
         const course = await Course.findOne({ _id: courseId, deletedAt: null })
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
             .populate('instructor', 'name profile.avatar facultyProfile.expertize')
             .populate({
                 path: 'modules',
@@ -131,11 +123,7 @@ export const getFacultyCourseById = async (req, res) => {
 export const getFacultyCourses = async (req, res) => {
     try {
         const userId = req.user._id;
-<<<<<<< HEAD
-        const courses = await Course.find({ createdBy: userId }).sort({ createdAt: -1 });
-=======
         const courses = await Course.find({ createdBy: userId, deletedAt: null }).sort({ createdAt: -1 });
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 
         res.status(200).json({
             success: true,
@@ -162,11 +150,7 @@ export const updateCourse = async (req, res) => {
             certificateEnabled, price, category
         } = req.body;
 
-<<<<<<< HEAD
-        let course = await Course.findById(courseId);
-=======
         let course = await Course.findOne({ _id: courseId, deletedAt: null });
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 
         if (!course) {
             return res.status(404).json({ success: false, message: "Course not found" });
@@ -259,11 +243,7 @@ export const updateCourseStatus = async (req, res) => {
         const { status } = req.body;
         const userId = req.user._id;
 
-<<<<<<< HEAD
-        let course = await Course.findById(id);
-=======
         let course = await Course.findOne({ _id: id, deletedAt: null });
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 
         if (!course) {
             return res.status(404).json({ success: false, message: "Course not found" });
@@ -301,11 +281,7 @@ export const deleteCourse = async (req, res) => {
         const { id } = req.params;
         const userId = req.user._id;
 
-<<<<<<< HEAD
-        const course = await Course.findOne({ _id: id });
-=======
         const course = await Course.findOne({ _id: id, deletedAt: null });
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 
         if (!course) {
             return res.status(404).json({ success: false, message: "Course not found" });
@@ -320,14 +296,8 @@ export const deleteCourse = async (req, res) => {
             return res.status(400).json({ success: false, message: "Cannot delete course with enrolled students. Contact Admin." });
         }
 
-<<<<<<< HEAD
-        // todo : clear all module and submodule and all files from bunny.net
-
-        await Course.findByIdAndDelete(id);
-=======
         // Soft delete
         await Course.findByIdAndUpdate(id, { deletedAt: new Date() });
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 
         res.status(200).json({
             success: true,
@@ -352,23 +322,14 @@ export const getAllCourses = async (req, res) => {
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-<<<<<<< HEAD
-        const courses = await Course.find({ status: "PUBLISHED" })
-            .select('title description category price instructor createdAt thumbnail slug rating level')
-=======
         const courses = await Course.find({ status: "PUBLISHED", deletedAt: null })
             .select('title description category price instructor createdAt thumbnail slug rating level currency discount')
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
             .populate('instructor', 'name avatar')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
 
-<<<<<<< HEAD
-        const total = await Course.countDocuments({ status: "PUBLISHED" });
-=======
         const total = await Course.countDocuments({ status: "PUBLISHED", deletedAt: null });
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 
         res.status(200).json({
             success: true,
@@ -392,25 +353,6 @@ export const getAllCourses = async (req, res) => {
  */
 export const getCourseById = async (req, res) => {
     try {
-<<<<<<< HEAD
-        // getting course id from req params
-        const courseId = req.params.id;
-
-        // getting course by id
-        const course = await Course.findOne({ _id: courseId, status: "PUBLISHED" })
-            .populate('instructor', 'name profile.avatar facultyProfile.expertize')
-            .populate({
-                path: 'modules',
-                select: 'title subModulesCount order',
-                options: { sort: { order: 1 } }
-            });
-
-        // if course not found then return 404
-        if (!course) {
-            return res.status(404).json({
-                success: false,
-                message: 'Course not found'
-=======
         // getting course id or slug from req params
         const { id } = req.params;
 
@@ -467,18 +409,13 @@ export const getCourseById = async (req, res) => {
                         }
                     });
                 }
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
             });
         }
 
         res.status(200).json({
             success: true,
-<<<<<<< HEAD
-            course: course
-=======
             course: course,
             isEnrolled // Optional: let frontend know enrollment status from this call
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
         });
     } catch (error) {
         console.log("error in getCourseById controller", error);
@@ -495,15 +432,6 @@ export const getCourseBySlug = async (req, res) => {
     try {
         const { slug } = req.params;
         // getting course by slug with instructor and modules
-<<<<<<< HEAD
-        const course = await Course.findOne({ slug, status: "PUBLISHED" })
-            .populate('instructor', 'name profile.avatar facultyProfile.expertize')
-            .populate({
-                path: 'modules',
-                select: 'title subModulesCount order',
-                options: { sort: { order: 1 } }
-            });
-=======
         let course = await Course.findOne({ slug, status: "PUBLISHED", deletedAt: null })
             .populate('instructor', 'name profile.avatar facultyProfile.expertize')
             .populate({
@@ -518,7 +446,6 @@ export const getCourseBySlug = async (req, res) => {
                     options: { sort: { order: 1 } }
                 }
             }).lean(); // Use lean()
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 
         if (!course) {
             return res.status(404).json({
@@ -527,11 +454,6 @@ export const getCourseBySlug = async (req, res) => {
             });
         }
 
-<<<<<<< HEAD
-        res.status(200).json({
-            success: true,
-            course
-=======
         // Security & Access Control
         let isEnrolled = false;
 
@@ -569,7 +491,6 @@ export const getCourseBySlug = async (req, res) => {
             success: true,
             course,
             isEnrolled
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
         });
     } catch (error) {
         console.log("error in getCourseBySlug controller", error);
@@ -590,11 +511,7 @@ export const searchCourses = async (req, res) => {
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-<<<<<<< HEAD
-        const filter = { status: "PUBLISHED" };
-=======
         const filter = { status: "PUBLISHED", deletedAt: null };
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 
         if (query) {
             filter.$or = [
@@ -608,11 +525,7 @@ export const searchCourses = async (req, res) => {
         if (level && level !== 'All') filter.level = level;
 
         const courses = await Course.find(filter)
-<<<<<<< HEAD
-            .select('title description category price instructor thumbnail slug rating level')
-=======
             .select('title description category price instructor thumbnail slug rating level currency discount')
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
             .populate('instructor', 'name avatar') // Added population
             .sort({ createdAt: -1 })
             .skip(skip)
@@ -666,11 +579,7 @@ export const getCourseReviews = async (req, res) => {
  */
 export const getAllCoursesAdmin = async (req, res) => {
     try {
-<<<<<<< HEAD
-        const courses = await Course.find()
-=======
         const courses = await Course.find({ deletedAt: null })
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
             .populate('instructor', 'name email')
             .sort({ createdAt: -1 });
 
@@ -693,13 +602,8 @@ export const getAllCoursesAdmin = async (req, res) => {
 export const approveCourse = async (req, res) => {
     try {
         const { id } = req.params;
-<<<<<<< HEAD
-        const course = await Course.findByIdAndUpdate(
-            id,
-=======
         const course = await Course.findOneAndUpdate(
             { _id: id, deletedAt: null },
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
             { status: "PUBLISHED", rejectionReason: null, publishedAt: Date.now() },
             { new: true }
         );
@@ -729,13 +633,8 @@ export const rejectCourse = async (req, res) => {
         const { id } = req.params;
         const { rejectionReason } = req.body;
 
-<<<<<<< HEAD
-        const course = await Course.findByIdAndUpdate(
-            id,
-=======
         const course = await Course.findOneAndUpdate(
             { _id: id, deletedAt: null },
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
             { status: "REJECTED", rejectionReason },
             { new: true }
         );
@@ -763,11 +662,7 @@ export const rejectCourse = async (req, res) => {
 export const deleteCourseAdmin = async (req, res) => {
     try {
         const { id } = req.params;
-<<<<<<< HEAD
-        const course = await Course.findByIdAndDelete(id);
-=======
         const course = await Course.findByIdAndUpdate(id, { deletedAt: new Date() });
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
 
         if (!course) {
             return res.status(404).json({ success: false, message: "Course not found" });

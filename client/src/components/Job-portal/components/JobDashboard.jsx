@@ -6,6 +6,8 @@ import {
   MoreVertical, Edit, Trash2, BarChart3, ExternalLink
 } from 'lucide-react';
 import { jobAPI } from '../services/api';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { showToast } from '../services/toast';
 import { Link } from 'react-router-dom';
 
@@ -19,16 +21,24 @@ const JobDashboard = () => {
     pendingApplications: 0,
   });
 
+  const { user: authUser } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
   useEffect(() => {
-    fetchJobs();
-  }, []);
+    // Only fetch company jobs for authenticated employer/admin users
+    const role = authUser?.role || '';
+    const isEmployer = ['COMPANY', 'EMPLOYER', 'ADMIN'].includes(role.toUpperCase());
+    if (isEmployer) {
+      fetchJobs();
+    }
+  }, [authUser]);
 
   const fetchJobs = async () => {
     try {
       setLoading(true);
       const response = await jobAPI.getCompanyJobs();
       setJobs(response.data);
-      
+
       // Calculate stats
       const totalJobs = response.data.length;
       const activeJobs = response.data.filter(job => job.status === 'ACTIVE').length;
@@ -62,7 +72,7 @@ const JobDashboard = () => {
 
     try {
       await jobAPI.closeJob(jobId);
-      setJobs(prev => prev.map(job => 
+      setJobs(prev => prev.map(job =>
         job._id === jobId ? { ...job, status: 'CLOSED' } : job
       ));
       showToast.success('Job closed successfully');
@@ -77,6 +87,24 @@ const JobDashboard = () => {
       day: 'numeric',
     });
   };
+
+  // If not authorized, show message
+  const role = authUser?.role || '';
+  const isEmployer = ['COMPANY', 'EMPLOYER', 'ADMIN'].includes(role.toUpperCase());
+
+  if (!isEmployer) {
+    return (
+      <div className="p-8 text-center">
+        <h3 className="text-xl font-semibold mb-2">Employer access required</h3>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          This section is only available to company/employer accounts. Please login with an employer account to view your job postings.
+        </p>
+        <div className="flex items-center justify-center gap-4">
+          <button onClick={() => navigate('/login')} className="px-6 py-3 bg-teal-500 text-white rounded-lg">Login</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -165,7 +193,7 @@ const JobDashboard = () => {
           <p className="text-gray-600 dark:text-gray-400">Manage and track your job listings</p>
         </div>
         <Link
-          to="/jobs/post"
+          to="/company/post-job"
           className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-teal-600 hover:to-cyan-600 transition-all"
         >
           <Plus className="w-5 h-5" />
@@ -191,7 +219,7 @@ const JobDashboard = () => {
               Create your first job posting to start receiving applications
             </p>
             <Link
-              to="/jobs/post"
+              to="/company/post-job"
               className="inline-flex items-center gap-2 px-6 py-3 bg-teal-500 text-white font-semibold rounded-lg hover:bg-teal-600 transition-colors"
             >
               <Plus className="w-5 h-5" />
@@ -231,7 +259,7 @@ const JobDashboard = () => {
                     <td className="px-6 py-4">
                       <div>
                         <Link
-                          to={`/jobs/${job._id}`}
+                          to={`/company/jobs/${job._id}`}
                           className="font-medium text-gray-900 dark:text-white hover:text-teal-500 dark:hover:text-teal-400"
                         >
                           {job.title}
@@ -242,11 +270,10 @@ const JobDashboard = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                        job.status === 'ACTIVE'
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                          : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
-                      }`}>
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${job.status === 'ACTIVE'
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                        : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
+                        }`}>
                         {job.status === 'ACTIVE' ? (
                           <>
                             <CheckCircle className="w-4 h-4 mr-1" />
@@ -260,7 +287,7 @@ const JobDashboard = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <Link
-                          to={`/applicants?job=${job._id}`}
+                          to={`/company/applicants?job=${job._id}`}
                           className="font-medium text-gray-900 dark:text-white hover:text-teal-500 dark:hover:text-teal-400"
                         >
                           {job.applicationCount || 0} applicants
@@ -278,21 +305,21 @@ const JobDashboard = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <Link
-                          to={`/jobs/${job._id}`}
+                          to={`/company/jobs/${job._id}`}
                           className="p-2 text-gray-500 hover:text-teal-500 dark:text-gray-400 dark:hover:text-teal-400 transition-colors"
                           title="View Job"
                         >
                           <ExternalLink className="w-5 h-5" />
                         </Link>
                         <Link
-                          to={`/jobs/edit/${job._id}`}
+                          to={`/company/jobs/edit/${job._id}`}
                           className="p-2 text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
                           title="Edit Job"
                         >
                           <Edit className="w-5 h-5" />
                         </Link>
                         <Link
-                          to={`/applicants?job=${job._id}`}
+                          to={`/company/applicants?job=${job._id}`}
                           className="p-2 text-gray-500 hover:text-green-500 dark:text-gray-400 dark:hover:text-green-400 transition-colors"
                           title="View Applicants"
                         >

@@ -1,11 +1,13 @@
 // Missing: ManageApplicants.jsx
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
+import {
   Users, FileText, Download, Eye, CheckCircle, XCircle, Clock,
   ChevronLeft, ChevronRight, Search, Filter
 } from 'lucide-react';
 import { jobAPI, applicationAPI } from '../services/api';
+import { useSelector } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ApplicantCard from '../components/ApplicantCard';
 
 const ManageApplicants = () => {
@@ -18,9 +20,32 @@ const ManageApplicants = () => {
     search: '',
   });
 
+  const { user: authUser } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const location = useLocation();
+
   useEffect(() => {
-    fetchCompanyJobs();
-  }, []);
+    const params = new URLSearchParams(location.search);
+    const jobIdParam = params.get('job');
+
+    if (jobIdParam && jobs.length > 0) {
+      const jobToSelect = jobs.find(j => j._id === jobIdParam);
+      if (jobToSelect) {
+        setSelectedJob(jobToSelect);
+      }
+    } else if (jobs.length > 0 && !selectedJob) {
+      // Only default if no param or param not found
+      setSelectedJob(jobs[0]);
+    }
+  }, [location.search, jobs]); // Run when url params or jobs list changes
+
+  useEffect(() => {
+    const role = authUser?.role || '';
+    const isEmployer = ['COMPANY', 'EMPLOYER', 'ADMIN'].includes(role.toUpperCase());
+    if (isEmployer) {
+      fetchCompanyJobs();
+    }
+  }, [authUser]);
 
   useEffect(() => {
     if (selectedJob) {
@@ -32,9 +57,7 @@ const ManageApplicants = () => {
     try {
       const response = await jobAPI.getCompanyJobs();
       setJobs(response.data);
-      if (response.data.length > 0 && !selectedJob) {
-        setSelectedJob(response.data[0]);
-      }
+      // Selection logic moved to useEffect to support URL params
     } catch (error) {
       console.error('Error fetching jobs:', error);
     }
@@ -43,12 +66,22 @@ const ManageApplicants = () => {
   const fetchApplicants = async (jobId) => {
     setLoading(true);
     try {
-      const params = {};
-      if (filters.status) params.status = filters.status;
-      if (filters.search) params.search = filters.search;
-      
-      const response = await jobAPI.getJobApplications(jobId, { params });
-      setApplicants(response.data);
+      const response = await jobAPI.getJobApplications(jobId);
+      let filteredApplicants = response.data;
+
+      // Apply client-side filtering
+      if (filters.status) {
+        filteredApplicants = filteredApplicants.filter(app => app.status === filters.status);
+      }
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        filteredApplicants = filteredApplicants.filter(app =>
+          app.candidate?.name?.toLowerCase().includes(searchLower) ||
+          app.candidate?.email?.toLowerCase().includes(searchLower)
+        );
+      }
+
+      setApplicants(filteredApplicants);
     } catch (error) {
       console.error('Error fetching applicants:', error);
     } finally {
@@ -60,7 +93,7 @@ const ManageApplicants = () => {
     try {
       await applicationAPI.updateApplicationStatus(applicationId, status);
       // Update local state
-      setApplicants(prev => prev.map(app => 
+      setApplicants(prev => prev.map(app =>
         app._id === applicationId ? { ...app, status } : app
       ));
     } catch (error) {
@@ -93,65 +126,77 @@ const ManageApplicants = () => {
         </div>
 
         {/* Job Selector */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Select Job
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {jobs.map((job) => (
-              <button
-                key={job._id}
-                onClick={() => setSelectedJob(job)}
-                className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                  selectedJob?._id === job._id
-                    ? 'bg-teal-500 text-white'
-                    : 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                }`}
-              >
-                {job.title}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Filters */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 mb-6 shadow-lg">
-          <div className="grid md:grid-cols-3 gap-4">
-            {/* Search */}
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                <Search className="w-4 h-4" />
-                Search Applicants
-              </label>
-              <input
-                type="text"
-                placeholder="Search by name or email..."
-                value={filters.search}
-                onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-              />
+        {!authUser || !['COMPANY', 'EMPLOYER', 'ADMIN'].includes((authUser.role || '').toUpperCase()) ? (
+          <div className="p-8 text-center">
+            <h3 className="text-lg font-semibold">Employer access required</h3>
+            <p className="text-gray-600 dark:text-gray-400">Please login with a company/employer account to manage applicants.</p>
+            <div className="mt-4">
+              <button onClick={() => navigate('/login')} className="px-6 py-2 bg-teal-500 text-white rounded-lg">Login</button>
             </div>
-
-            {/* Status Filter */}
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                <Filter className="w-4 h-4" />
-                Application Status
+          </div>
+        ) : (
+          <>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Select Job
               </label>
-              <select
-                value={filters.status}
-                onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-              >
-                {statusOptions.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
+              <div className="flex flex-wrap gap-2">
+                {jobs.map((job) => (
+                  <button
+                    key={job._id}
+                    onClick={() => setSelectedJob(job)}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all ${selectedJob?._id === job._id
+                      ? 'bg-teal-500 text-white'
+                      : 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      }`}
+                  >
+                    {job.title}
+                  </button>
                 ))}
-              </select>
+              </div>
             </div>
-          </div>
-        </div>
+
+            {/* Filters */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 mb-6 shadow-lg">
+              <div className="grid md:grid-cols-3 gap-4">
+                {/* Search */}
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <Search className="w-4 h-4" />
+                    Search Applicants
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Search by name or email..."
+                    value={filters.search}
+                    onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                {/* Status Filter */}
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <Filter className="w-4 h-4" />
+                    Application Status
+                  </label>
+                  <select
+                    value={filters.status}
+                    onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  >
+                    {statusOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+          </>
+        )}
 
         {/* Applicants List */}
         {selectedJob && (

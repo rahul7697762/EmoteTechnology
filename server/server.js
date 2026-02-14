@@ -1,6 +1,6 @@
 import express from 'express';
+import 'dotenv/config';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { connectDB } from './config/database.js';
@@ -13,16 +13,14 @@ import courseRoutes from './routes/course.routes.js';
 import studentRoutes from './routes/student.routes.js';
 import moduleRoutes from './routes/module.routes.js';
 import subModuleRoutes from './routes/subModule.routes.js';
-<<<<<<< HEAD
-=======
 import enrollmentRoutes from './routes/enrollment.routes.js';
 import paymentRoutes from './routes/payment.routes.js';
 import progressRoutes from './routes/progress.routes.js';
 import certificateRoutes from './routes/certificate.routes.js';
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
-
-// Load environment variables
-dotenv.config();
+import companyRoutes from './routes/company.routes.js';
+import jobRoutes from './routes/job.routes.js';
+import applicationRoutes from './routes/application.routes.js';
+import uploadRoutes from './routes/upload.routes.js';
 
 // ES Module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -52,6 +50,7 @@ const corsOptions = {
         }
     },
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
     optionsSuccessStatus: 200
 };
 
@@ -74,13 +73,19 @@ app.use('/api/courses', courseRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/module', moduleRoutes);
 app.use('/api/submodule', subModuleRoutes);
-<<<<<<< HEAD
-=======
 app.use('/api/enrollment', enrollmentRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/certificate', certificateRoutes);
->>>>>>> f2a47aa7e7ac002499aa6eed3f692796daf5f1ae
+// Serve static files
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// API Routes
+app.use('/api/companies', companyRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/applications', applicationRoutes);
+app.use('/api/upload', uploadRoutes);
+
 
 // Health check route
 app.get('/api/health', (req, res) => {
@@ -114,6 +119,16 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 // Handle React routing, return all requests to React app
 app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+    console.error('Unhandled Error:', err);
+    res.status(500).json({
+        success: false,
+        message: err.message || 'Internal Server Error',
+        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
 });
 
 app.listen(port, () => {

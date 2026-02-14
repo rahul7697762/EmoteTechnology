@@ -1,4 +1,6 @@
 // job-portal/components/JobPostForm.jsx
+// NOTE: Simple standalone job posting form used in small UIs. Prefer using
+// `PostJob.jsx` for the full posting experience (company profile checks, preview, etc.).
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Briefcase, DollarSign, MapPin, Calendar, FileText, Tag } from 'lucide-react';

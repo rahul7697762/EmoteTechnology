@@ -7,10 +7,13 @@ import {
 } from 'lucide-react';
 import { applicationAPI } from '../services/api';
 import { showToast } from '../services/toast';
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const MyApplications = () => {
-  const { user } = useAuth();
+  const { user } = useSelector((state) => state.auth);
+  const role = user?.role;
+  const navigate = useNavigate();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
@@ -20,8 +23,13 @@ const MyApplications = () => {
   });
 
   useEffect(() => {
+    // Only students should access this page
+    if ((role || '').toUpperCase() !== 'STUDENT') {
+      navigate('/company/dashboard');
+      return;
+    }
     fetchApplications();
-  }, [filters]);
+  }, [filters, role, navigate]);
 
   const fetchApplications = async () => {
     try {
@@ -36,7 +44,7 @@ const MyApplications = () => {
 
       if (filters.search) {
         const searchTerm = filters.search.toLowerCase();
-        filteredApps = filteredApps.filter(app => 
+        filteredApps = filteredApps.filter(app =>
           app.job.title.toLowerCase().includes(searchTerm) ||
           app.job.company?.name?.toLowerCase().includes(searchTerm)
         );
@@ -334,7 +342,7 @@ const MyApplications = () => {
                       >
                         View Job
                       </a>
-                      
+
                       <button
                         onClick={() => downloadResume(application.resume._id)}
                         className="w-full px-4 py-2 text-center border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"

@@ -140,6 +140,10 @@ const authSlice = createSlice({
                 state.isLoggingIn = false;
                 state.user = action.payload.user;
                 state.isAuthenticated = true;
+                // Store token in localStorage for API requests
+                if (action.payload.token) {
+                    localStorage.setItem('token', action.payload.token);
+                }
             })
             .addCase(login.rejected, (state, action) => {
                 state.isLoggingIn = false;
@@ -153,6 +157,10 @@ const authSlice = createSlice({
                 state.isSigningUp = false;
                 state.user = action.payload.user;
                 state.isAuthenticated = true;
+                // Store token in localStorage for API requests
+                if (action.payload.token) {
+                    localStorage.setItem('token', action.payload.token);
+                }
             })
             .addCase(signup.rejected, (state, action) => {
                 state.isSigningUp = false;
@@ -165,11 +173,15 @@ const authSlice = createSlice({
                 state.isLoggingOut = false;
                 state.user = null;
                 state.isAuthenticated = false;
+                // Clear token from localStorage
+                localStorage.removeItem('token');
             })
             .addCase(logout.rejected, (state, action) => {
                 state.isLoggingOut = false;
                 state.user = null;
                 state.isAuthenticated = false;
+                // Clear token from localStorage even on failure
+                localStorage.removeItem('token');
             })
             // GetMe
             .addCase(getMe.pending, (state) => {

@@ -8,6 +8,7 @@ import progressReducer from './slices/progressSlice';
 import certificateReducer from './slices/certificateSlice';
 import assessmentReducer from './slices/assessmentSlice';
 import submissionReducer from './slices/submissionSlice';
+import discussionReducer from './slices/discussionSlice';
 
 const appReducer = combineReducers({
     auth: authReducer,
@@ -18,7 +19,8 @@ const appReducer = combineReducers({
     progress: progressReducer,
     certificate: certificateReducer,
     assessment: assessmentReducer,
-    submission: submissionReducer
+    submission: submissionReducer,
+    discussion: discussionReducer
 });
 
 const rootReducer = (state, action) => {

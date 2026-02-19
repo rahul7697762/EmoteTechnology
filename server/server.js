@@ -19,6 +19,7 @@ import progressRoutes from './routes/progress.routes.js';
 import certificateRoutes from './routes/certificate.routes.js';
 import assessmentRoutes from './routes/assessment.routes.js';
 import submissionRoutes from './routes/submission.routes.js';
+import discussionRoutes from './routes/discussion.routes.js';
 
 // Load environment variables
 dotenv.config();
@@ -79,6 +80,7 @@ app.use('/api/progress', progressRoutes);
 app.use('/api/certificate', certificateRoutes);
 app.use('/api/assessment', assessmentRoutes);
 app.use('/api/submission', submissionRoutes);
+app.use('/api/discussions', discussionRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

@@ -1,5 +1,6 @@
 // job-portal/pages/Jobs.jsx
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Search, Filter, MapPin, Briefcase, Building2, Clock, 
@@ -25,6 +26,8 @@ const Jobs = () => {
     total: 0,
     totalPages: 0,
   });
+
+  const navigate = useNavigate();
 
   const jobTypes = ['All', 'Full-time', 'Part-time', 'Contract', 'Remote', 'Internship'];
   const experienceLevels = ['All', 'Entry-level', 'Mid-level', 'Senior', 'Lead'];
@@ -282,7 +285,7 @@ const Jobs = () => {
               className="grid md:grid-cols-2 gap-6"
             >
               {jobs.map((job) => (
-                <JobCard key={job._id} job={job} />
+                <JobCard key={job._id} job={job} onViewJob={(id) => navigate(`/jobs/${id}`)} />
               ))}
             </motion.div>
 

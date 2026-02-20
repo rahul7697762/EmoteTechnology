@@ -118,17 +118,26 @@ const MyApplications = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <FileText className="w-8 h-8 text-teal-500" />
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              My Applications
-            </h1>
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <FileText className="w-8 h-8 text-teal-500" />
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                My Applications
+              </h1>
+            </div>
+            <p className="text-gray-600 dark:text-gray-400">
+              Track the status of all your job applications in one place
+            </p>
           </div>
-          <p className="text-gray-600 dark:text-gray-400">
-            Track the status of all your job applications in one place
-          </p>
+          <button
+            onClick={() => navigate('/jobs')}
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-teal-600 hover:to-cyan-600 transition-all shadow-lg hover:shadow-xl"
+          >
+            <Search className="w-5 h-5" />
+            Browse Jobs
+          </button>
         </motion.div>
 
         {/* Stats */}

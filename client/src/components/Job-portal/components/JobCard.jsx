@@ -1,14 +1,14 @@
 // job-portal/components/JobCard.jsx
 import { motion } from 'framer-motion';
 import {
-  IndianRupee,
+  MapPin,
+  Banknote,
   Calendar,
-  FileText,
   Clock,
   Zap,
-  RotateCcw,
-  Home,
-  ChevronRight
+  Briefcase,
+  Layers,
+  ArrowRight
 } from 'lucide-react';
 
 const JobCard = ({ job, onViewJob }) => {
@@ -25,8 +25,11 @@ const JobCard = ({ job, onViewJob }) => {
     return date.toLocaleDateString();
   };
 
-  const companyName = job.company?.companyName || job.companyName || 'Unknown Company';
-  const category = job.category || 'General';
+  const companyName = job.company?.name || job.companyName || 'Unknown Company';
+  const duration = job.duration || job.jobType || 'Full-time';
+  const salary = job.salaryMin && job.salaryMax
+    ? `₹ ${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()}`
+    : job.salaryMin ? `₹ ${job.salaryMin.toLocaleString()}` : 'Not Disclosed';
 
   return (
     <motion.div
@@ -34,110 +37,95 @@ const JobCard = ({ job, onViewJob }) => {
         hidden: { opacity: 0, y: 20 },
         show: { opacity: 1, y: 0 }
       }}
-      whileHover={{
-        y: -4,
-        transition: { duration: 0.2 }
-      }}
+      whileHover={{ y: -5 }}
+      transition={{ duration: 0.2 }}
       onClick={() => onViewJob?.(job._id)}
-      className="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all duration-300 cursor-pointer"
+      className="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 hover:border-teal-500/30 hover:shadow-xl hover:shadow-teal-500/10 transition-all duration-300 cursor-pointer relative flex flex-col h-full"
     >
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 rounded">
-              {category}
-            </span>
-          </div>
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-tight mb-1">
+      {/* Header */}
+      <div className="flex justify-between items-start mb-5">
+        <div className="flex-1 pr-4">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-teal-600 transition-colors line-clamp-1" title={job.title}>
             {job.title}
           </h3>
-          <p className="text-gray-500 dark:text-gray-400 font-medium">
-            {companyName}
-          </p>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-gray-600 dark:text-gray-400 font-medium text-sm flex items-center gap-1.5">
+              <Briefcase size={14} className="text-teal-500" />
+              {companyName}
+            </span>
+            {job.isHiring && (
+              <span className="px-2.5 py-0.5 rounded-full border border-blue-200/60 bg-blue-50/80 text-blue-600 text-[10px] font-bold uppercase tracking-wide">
+                Hiring
+              </span>
+            )}
+          </div>
         </div>
-
-        <div className="w-12 h-12 rounded-lg bg-gray-50 dark:bg-gray-700 p-1 border border-gray-100 dark:border-gray-600 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 p-1 border border-gray-100 dark:border-gray-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
           {job.company?.logo ? (
             <img
               src={job.company.logo}
               alt={companyName}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain rounded-lg"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-bold text-lg">
-              {companyName.substring(0, 1)}
-            </div>
+            <span className="text-xl font-bold bg-gradient-to-br from-teal-500 to-cyan-600 bg-clip-text text-transparent">
+              {companyName.charAt(0)}
+            </span>
           )}
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-x-6 gap-y-3 mb-4">
-        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm">
-          <Home size={16} className="text-gray-400" />
-          <span>{job.remote ? 'Work from home' : job.location || 'Flexible'}</span>
+      {/* Meta Info */}
+      <div className="flex flex-wrap gap-3 mb-5">
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-xs font-medium text-gray-600 dark:text-gray-300 border border-gray-100 dark:border-gray-700/50">
+          <MapPin size={14} className="text-rose-500" />
+          <span>{job.location || 'Remote'}</span>
         </div>
-
-        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm">
-          <IndianRupee size={16} className="text-gray-400" />
-          <span>
-            {job.salaryMin || job.salaryMax
-              ? `₹ ${job.salaryMin?.toLocaleString() || '0'} - ${job.salaryMax?.toLocaleString() || 'Negotiable'}`
-              : 'Salary Negotiable'}
-          </span>
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-xs font-medium text-gray-600 dark:text-gray-300 border border-gray-100 dark:border-gray-700/50">
+          <Banknote size={14} className="text-emerald-500" />
+          <span>{salary}</span>
         </div>
-
-        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm">
-          <Calendar size={16} className="text-gray-400" />
-          <span>{job.jobType || 'Full-time'}</span>
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-xs font-medium text-gray-600 dark:text-gray-300 border border-gray-100 dark:border-gray-700/50">
+          <Calendar size={14} className="text-indigo-500" />
+          <span>{duration}</span>
         </div>
       </div>
 
-      <div className="flex items-start gap-2 mb-4">
-        <FileText size={16} className="text-gray-400 mt-1 shrink-0" />
-        <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2 leading-relaxed">
+      {/* Description Preview */}
+      <div className="mb-6 flex-grow">
+        <p className="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 leading-relaxed">
           {job.description}
         </p>
       </div>
 
-      {job.tags && job.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6">
-          {job.tags.slice(0, 5).map((tag, index) => (
-            <span
-              key={index}
-              className="px-2 py-0.5 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 rounded transition-colors"
-            >
-              {tag}
-            </span>
-          ))}
-          {job.tags.length > 5 && (
-            <span className="text-xs text-gray-400 py-0.5 font-medium">
-              +{job.tags.length - 5} more
-            </span>
-          )}
-        </div>
-      )}
-
-      <div className="flex items-center justify-between mt-auto">
-        <div className="flex flex-wrap gap-3">
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-green-200 bg-green-50 text-green-700 text-[11px] font-bold">
-            <RotateCcw size={12} className="rotate-180" />
+      {/* Footer Actions */}
+      <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700/50 mt-auto">
+        <div className="flex items-center gap-2">
+          <span className="flex items-center gap-1 text-[11px] font-medium text-gray-400 bg-gray-50 dark:bg-gray-800 px-2 py-1 rounded">
+            <Clock size={12} />
             {formatDate(job.createdAt)}
           </span>
-          {job.urgent && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-orange-200 bg-orange-50 text-orange-700 text-[11px] font-bold">
+          {/* Dynamic Badge Example */}
+          {job.applicantsCount < 20 ? (
+            <span className="flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-100">
               <Zap size={12} fill="currentColor" />
-              Urgent
+              Fast Apply
+            </span>
+          ) : (
+            <span className="flex items-center gap-1 text-[11px] font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded border border-purple-100">
+              <Layers size={12} />
+              Popular
             </span>
           )}
         </div>
 
-        <div className="px-2 py-1 flex items-center gap-1 text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-wider group-hover:translate-x-1 transition-transform">
-          View <ChevronRight size={14} />
-        </div>
+        <button className="flex items-center gap-1.5 px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-bold rounded-lg group-hover:bg-teal-500 dark:group-hover:bg-teal-400 group-hover:text-white transition-all shadow-sm group-hover:shadow-teal-500/25">
+          View Details
+          <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+        </button>
       </div>
     </motion.div>
   );
 };
 
 export default JobCard;
-

@@ -138,7 +138,7 @@ const JobDetailPage = ({ jobId: propJobId, onApply, onBack }) => {
       <div className="max-w-6xl mx-auto">
         {/* Back Button */}
         <button
-          onClick={() => onBack ? onBack() : navigate(-1)}
+          onClick={() => onBack ? onBack() : navigate('/jobs')}
           className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-teal-500 dark:hover:text-teal-400 mb-8 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />

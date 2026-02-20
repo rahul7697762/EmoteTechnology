@@ -12,7 +12,8 @@ const SignupForm = () => {
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('STUDENT');
+    // Always sign up as STUDENT
+    const role = 'STUDENT';
     const [showPassword, setShowPassword] = useState(false);
     const { isSigningUp } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
@@ -70,9 +71,7 @@ const SignupForm = () => {
             <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-2xl">
                 <div className="text-center mb-8">
                     <h2 className="text-2xl font-bold text-white mb-2">Create Account</h2>
-                    <p className="text-gray-400">
-                        {role === 'STUDENT' ? 'Join as a Student' : 'Join as an Employer'}
-                    </p>
+                    <p className="text-gray-400">Join as a Student</p>
                 </div>
 
 
@@ -112,32 +111,7 @@ const SignupForm = () => {
                         </div>
                     </div>
 
-                    {/* Role Selection */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Sign up as</label>
-                        <div className="flex gap-3">
-                            <button
-                                type="button"
-                                onClick={() => setRole('STUDENT')}
-                                className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${role === 'STUDENT'
-                                        ? 'bg-teal-500/30 border border-teal-500 text-teal-300'
-                                        : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'
-                                    }`}
-                            >
-                                📚 Student
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setRole('EMPLOYER')}
-                                className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${role === 'EMPLOYER'
-                                        ? 'bg-teal-500/30 border border-teal-500 text-teal-300'
-                                        : 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10'
-                                    }`}
-                            >
-                                💼 Employer
-                            </button>
-                        </div>
-                    </div>
+                    {/* Role is fixed to STUDENT (UI removed) */}
 
                     {/* Email */}
                     <div>

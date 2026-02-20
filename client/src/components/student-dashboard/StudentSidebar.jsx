@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, Award, ClipboardList, Settings, LogOut, Sun, Moon, ArrowLeft, Menu, Home, Briefcase } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Award, ClipboardList, Settings, LogOut, Sun, Moon, ArrowLeft, Menu, Home } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/slices/authSlice';
 import { toggleTheme } from '../../redux/slices/uiSlice';
@@ -14,7 +14,6 @@ const StudentSidebar = () => {
 
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/student-dashboard' },
-        { icon: Briefcase, label: 'Browse Jobs', path: '/jobs' },
         { icon: ClipboardList, label: 'My Applications', path: '/student/applications' },
         { icon: BookOpen, label: 'My Courses', path: '/student-courses' },
         { icon: Award, label: 'Certificates', path: '/student-certificates' },

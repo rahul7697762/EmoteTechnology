@@ -9,7 +9,8 @@ export const uploadFileToBunny = async (directoryPath, fileBuffer, fileName) => 
     const STORAGE_ZONE_NAME = process.env.BUNNY_STORAGE_ZONE;
     const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
 
-    if (!STORAGE_ZONE_NAME || !ACCESS_KEY) {f
+    if (!STORAGE_ZONE_NAME || !ACCESS_KEY) {
+        f
         throw new Error('BunnyCDN configuration missing (STORAGE_ZONE_NAME or ACCESS_KEY)');
     }
 
@@ -61,28 +62,24 @@ export const deleteFileFromBunny = async (fileUrl) => {
 
 //Upload Resume / Job Files to Bunny
 export const uploadJobFileToBunny = async (file, folder = "job-portal") => {
-    const STORAGE_ZONE = process.env.BUNNY_STORAGE_ZONE;
-    const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
-    const PULL_ZONE = process.env.BUNNY_PULL_ZONE_URL;
+    // Reuse the existing uploadFileToBunny function to ensure consistency
+    // It handles the SG endpoint headers and AccessKey correctly
 
+    // 1. Prepare filename with timestamp (consistent with previous behavior)
     const sanitizedFileName = file.originalname
         .replace(/\s+/g, "-")
         .replace(/[^a-zA-Z0-9.\-_]/g, "");
 
-    const filePath = `${folder}/${Date.now()}-${sanitizedFileName}`;
+    const finalFileName = `${Date.now()}-${sanitizedFileName}`;
 
-    const uploadUrl = `https://sg.storage.bunnycdn.com/${STORAGE_ZONE}/${filePath}`;
+    // 2. Upload using the generic function
+    // uploadFileToBunny(directoryPath, fileBuffer, fileName)
+    const publicUrl = await uploadFileToBunny(folder, file.buffer, finalFileName);
 
-    await axios.put(uploadUrl, file.buffer, {
-        headers: {
-            AccessKey: ACCESS_KEY,
-            "Content-Type": file.mimetype,
-        },
-        maxBodyLength: Infinity,
-    });
+    const filePath = `${folder}/${finalFileName}`;
 
     return {
-        url: `https://${PULL_ZONE}/${filePath}`,
+        url: publicUrl,
         path: filePath
     };
 };

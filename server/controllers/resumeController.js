@@ -1,7 +1,7 @@
 import Resume from '../models/Resume.js';
 import fs from 'fs';
 import path from 'path';
-import { uploadToBunny } from '../middleware/upload.middleware.js';
+import { uploadJobFileToBunny } from '../services/bunny.service.js';
 
 // Ensure upload directories exist (for local fallbacks like logos/avatars)
 const uploadDirs = [
@@ -46,8 +46,9 @@ export const uploadResume = async (req, res) => {
       });
     }
 
-    // Upload to Bunny CDN
-    const bunnyResult = await uploadToBunny(req.file, 'resumes');
+    // Upload to Bunny CDN using the shared service
+    // Pass 'resumes' as the folder name
+    const bunnyResult = await uploadJobFileToBunny(req.file, 'resumes');
 
     // Check for existing resumes (optional: deactivate old ones)
     const existingResume = await Resume.findOne({
@@ -67,7 +68,7 @@ export const uploadResume = async (req, res) => {
       fileName: path.basename(bunnyResult.url),
       filePath: bunnyResult.url, // Store CDN URL as path for compatibility
       fileUrl: bunnyResult.url,
-      size: bunnyResult.fileSize,
+      size: req.file.size, // Use size from the request file object
       mimetype: req.file.mimetype
     });
 

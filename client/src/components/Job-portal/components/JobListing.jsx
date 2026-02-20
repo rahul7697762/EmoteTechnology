@@ -1,7 +1,7 @@
 // job-portal/components/JobListing.jsx
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
+import {
   Briefcase, MapPin, Building2, ArrowRight, Search, Filter,
   Clock, DollarSign, Users, Star, Zap, Globe, ChevronLeft, ChevronRight
 } from 'lucide-react';
@@ -61,7 +61,7 @@ const JobListing = ({ jobs: initialJobs = [], loading: initialLoading = false, o
         sort: sortBy,
         ...filters,
       };
-      
+
       // Remove empty filters
       Object.keys(params).forEach(key => {
         if (!params[key] && params[key] !== false) {
@@ -154,7 +154,7 @@ const JobListing = ({ jobs: initialJobs = [], loading: initialLoading = false, o
                 Browse through our curated list of tech jobs from innovative companies worldwide.
               </p>
             </div>
-            
+
             <div className="flex items-center gap-4">
               <div className="text-right">
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -201,7 +201,7 @@ const JobListing = ({ jobs: initialJobs = [], loading: initialLoading = false, o
                 ({jobs.length} jobs found)
               </span>
             </div>
-            
+
             <div className="flex flex-wrap items-center gap-4">
               <select
                 value={sortBy}
@@ -214,7 +214,7 @@ const JobListing = ({ jobs: initialJobs = [], loading: initialLoading = false, o
                   </option>
                 ))}
               </select>
-              
+
               <button
                 onClick={handleClearFilters}
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
@@ -296,55 +296,23 @@ const JobListing = ({ jobs: initialJobs = [], loading: initialLoading = false, o
           </div>
         </motion.div>
 
-        {/* Featured Jobs Banner */}
+        {/* Featured Jobs Section */}
         {featuredJobs.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mb-8"
+            className="mb-12"
           >
-            <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-6 text-white">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <Star className="w-6 h-6" />
-                  <div>
-                    <h3 className="text-xl font-bold">Featured Jobs</h3>
-                    <p className="text-amber-100">Top opportunities from leading companies</p>
-                  </div>
-                </div>
-                <Zap className="w-6 h-6" />
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-4">
-                {featuredJobs.map((job, index) => (
-                  <div
-                    key={job._id}
-                    className="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
-                          {job.company?.logo ? (
-                            <img 
-                              src={job.company.logo} 
-                              alt={job.company.name}
-                              className="w-8 h-8 rounded object-cover"
-                            />
-                          ) : (
-                            <Building2 className="w-5 h-5" />
-                          )}
-                        </div>
-                        <div>
-                          <h4 className="font-bold">{job.title}</h4>
-                          <p className="text-sm text-amber-100">{job.company?.name}</p>
-                        </div>
-                      </div>
-                      <ArrowRight className="w-5 h-5" />
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="flex items-center gap-2 mb-6">
+              <Star className="w-6 h-6 text-amber-500 fill-amber-500" />
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Featured Jobs</h2>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {featuredJobs.map((job, index) => (
+                <JobCard key={job._id || index} job={job} onViewJob={onViewJob} />
+              ))}
             </div>
           </motion.div>
         )}
@@ -409,7 +377,7 @@ const JobListing = ({ jobs: initialJobs = [], loading: initialLoading = false, o
                   {Math.min(pagination.page * pagination.limit, pagination.total)} of{' '}
                   {pagination.total} jobs
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handlePageChange(pagination.page - 1)}
@@ -435,11 +403,10 @@ const JobListing = ({ jobs: initialJobs = [], loading: initialLoading = false, o
                       <button
                         key={pageNum}
                         onClick={() => handlePageChange(pageNum)}
-                        className={`w-10 h-10 flex items-center justify-center rounded-lg font-medium transition-all ${
-                          pagination.page === pageNum
+                        className={`w-10 h-10 flex items-center justify-center rounded-lg font-medium transition-all ${pagination.page === pageNum
                             ? 'bg-teal-500 text-white'
                             : 'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                        }`}
+                          }`}
                       >
                         {pageNum}
                       </button>

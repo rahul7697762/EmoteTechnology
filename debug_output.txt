@@ -1,4 +1,0 @@
-Course found via slug: Complete Python Bootcamp: Go from zero to hero
-Modules count: 3
-First Module Submodules count: 3
-Submodules populated successfully.

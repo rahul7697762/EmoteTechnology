@@ -29,6 +29,16 @@ import { Toaster } from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux';
 import { getMe } from './redux/slices/authSlice';
 import { useEffect } from 'react';
+import CompanyDashboard from './pages/CompanyDashboard';
+import CompanyProfilePage from './pages/CompanyProfilePage';
+import CompanyPostJobPage from './pages/CompanyPostJobPage';
+import CompanyApplicantsPage from './pages/CompanyApplicantsPage';
+import CompanyJobDetailPage from './pages/CompanyJobDetailPage';
+import CompanyOnboardingPage from './pages/CompanyOnboardingPage';
+import CompanySettingsPage from './pages/CompanySettingsPage';
+import StudentJobDashboard from './pages/StudentJobDashboard';
+import StudentApplications from './pages/StudentApplications';
+import ProfileCompletionPopup from './components/company-dashboard/ProfileCompletionPopup';
 
 function App() {
   const dispatch = useDispatch();
@@ -47,7 +57,6 @@ function App() {
   }, [theme]);
 
   return (
-
     <>
       <Router>
         <Routes>
@@ -55,6 +64,7 @@ function App() {
           <Route path="/courses" element={<Courses />} />
           <Route path="/course/:id" element={<CourseDetails />} />
           <Route path="/jobs" element={<Jobs />} />
+          <Route path="/jobs/:id" element={<Jobs />} />
           <Route path="/ai-interview" element={<AiInterview />} />
           <Route path="/login" element={
             <PublicRoute>
@@ -131,6 +141,52 @@ function App() {
             <ProtectedRoute allowedRoles={['STUDENT', 'FACULTY', 'ADMIN']}>
               <StudentDashboard />
             </ProtectedRoute>
+          } />          <Route path="/company/dashboard" element={
+            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
+              <CompanyDashboard />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/company/profile" element={
+            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
+              <CompanyProfilePage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/company/post-job" element={
+            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
+              <CompanyPostJobPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/company/jobs/edit/:id" element={
+            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
+              <CompanyPostJobPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/company/jobs/:id" element={
+            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
+              <CompanyJobDetailPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/company/applicants" element={
+            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
+              <CompanyApplicantsPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/company/onboarding" element={
+            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
+              <CompanyOnboardingPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/company/settings" element={
+            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
+              <CompanySettingsPage />
+            </ProtectedRoute>
           } />
 
           <Route path="/student-courses" element={
@@ -163,13 +219,24 @@ function App() {
             </ProtectedRoute>
           } />
 
+          <Route path="/student/job-dashboard" element={
+            <ProtectedRoute allowedRoles={['STUDENT', 'ADMIN']}>
+              <StudentJobDashboard />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/student/applications" element={
+            <ProtectedRoute allowedRoles={['STUDENT', 'ADMIN']}>
+              <StudentApplications />
+            </ProtectedRoute>
+          } />
+
           {/* Redirect unknown routes to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <Toaster />
       </Router>
-      <Toaster />
     </>
-
   );
 }
 

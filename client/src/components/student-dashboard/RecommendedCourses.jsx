@@ -48,7 +48,7 @@ const RecommendedCourses = () => {
             reviews: "1.2k reviews",
             category: "Development",
             duration: "12h 45m",
-            gradient: "bg-gradient-to-br from-[#1d4e4e] to-[#0f2e2e]",
+            gradient: "bg-linear-to-br from-[#1d4e4e] to-[#0f2e2e]",
             icon: (
                 <div className="text-6xl font-bold opacity-80 select-none">🐍</div>
             )
@@ -60,7 +60,7 @@ const RecommendedCourses = () => {
             reviews: "850 reviews",
             category: "Business",
             duration: "6h 20m",
-            gradient: "bg-gradient-to-br from-[#c28e2b] to-[#8a6217]",
+            gradient: "bg-linear-to-br from-[#c28e2b] to-[#8a6217]",
             icon: (
                 <div className="text-6xl font-bold opacity-80 select-none text-white font-serif">A+</div>
             )

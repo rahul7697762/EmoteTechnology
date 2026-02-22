@@ -29,7 +29,7 @@ const Settings = () => {
                 <div className="pb-20">
                     <div className="flex flex-col lg:flex-row gap-8 mt-8">
                         {/* Settings Navigation */}
-                        <div className="w-full lg:w-72 flex-shrink-0">
+                        <div className="w-full lg:w-72 shrink-0">
                             <div className="bg-white dark:bg-[#1a1c23] rounded-2xl border border-gray-100 dark:border-gray-800 p-3 shadow-lg shadow-gray-200/50 dark:shadow-none sticky top-8">
                                 <nav className="space-y-1">
                                     {[
@@ -42,7 +42,7 @@ const Settings = () => {
                                             key={item.id}
                                             onClick={() => setActiveTab(item.id)}
                                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-semibold ${activeTab === item.id
-                                                ? 'bg-gradient-to-r from-teal-500/10 to-emerald-500/10 text-teal-600 dark:text-teal-400 border border-teal-100 dark:border-teal-500/20'
+                                                ? 'bg-linear-to-r from-teal-500/10 to-emerald-500/10 text-teal-600 dark:text-teal-400 border border-teal-100 dark:border-teal-500/20'
                                                 : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                                                 }`}
                                         >

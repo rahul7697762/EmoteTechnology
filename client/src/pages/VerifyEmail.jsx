@@ -79,7 +79,7 @@ const VerifyEmail = () => {
                             )}
                         </div>
 
-                        <h2 className="text-2xl font-bold bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent mb-4">
+                        <h2 className="text-2xl font-bold bg-linear-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent mb-4">
                             {status === 'loading' ? 'Verifying Email' : status === 'success' ? 'Verified!' : 'Verification Failed'}
                         </h2>
 
@@ -90,7 +90,7 @@ const VerifyEmail = () => {
                         {status !== 'loading' && (
                             <Link
                                 to={user ? (user.role === 'STUDENT' ? '/student-dashboard' : '/dashboard') : '/login'}
-                                className="w-full py-3 bg-gradient-to-r from-teal-500 to-blue-600 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
+                                className="w-full py-3 bg-linear-to-r from-teal-500 to-blue-600 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
                             >
                                 {user ? 'Continue to Dashboard' : 'Continue to Login'} <ArrowRight size={20} />
                             </Link>

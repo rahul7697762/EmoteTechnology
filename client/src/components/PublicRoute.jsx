@@ -17,7 +17,20 @@ const PublicRoute = ({ children }) => {
     }
 
     if (user) {
-        return <Navigate to={user.role === 'STUDENT' ? '/student-dashboard' : '/dashboard'} replace />;
+        // Route authenticated users to role-appropriate dashboards.
+        // Use case-insensitive matching to be resilient to backend casing.
+        const role = (user.role || '').toUpperCase();
+        if (['COMPANY', 'EMPLOYER'].includes(role)) {
+            return <Navigate to="/company/dashboard" replace />;
+        }
+        if (role === 'STUDENT') {
+            return <Navigate to="/student-dashboard" replace />;
+        }
+        if (['FACULTY', 'ADMIN'].includes(role)) {
+            return <Navigate to="/dashboard" replace />;
+        }
+        // Unknown role -> send to public home
+        return <Navigate to="/" replace />;
     }
 
     return children;

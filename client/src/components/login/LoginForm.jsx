@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../redux/slices/authSlice';
 import SocialLogin from './SocialLogin';
@@ -14,6 +14,10 @@ const LoginForm = () => {
     const { isLoggingIn } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const redirectPath = searchParams.get('redirect');
+    const from = redirectPath || location.state?.from || null;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -22,16 +26,38 @@ const LoginForm = () => {
             const response = await dispatch(login({ email, password })).unwrap();
 
             if (response && response.user) {
-                const {user } = response
+                const { user } = response
                 toast.success('Login successful!');
-                // Redirect based on role
-                if (user.role === 'FACULTY' || user.role === 'ADMIN') {
-                    navigate('/dashboard');
-                } else if (user.role === 'STUDENT') {
-                    navigate('/student-dashboard');
-                } else {
-                    navigate('/');
+
+                // Role-priority redirects:
+                // - Company/employer -> Job portal (employer view)
+                // - Faculty/Admin -> Faculty dashboard
+                // - Student -> honor `from` if present, otherwise student dashboard
+                if ((user.role || '').toUpperCase() === 'COMPANY' || (user.role || '').toUpperCase() === 'EMPLOYER') {
+                    navigate('/company/dashboard');
+                    return;
                 }
+
+                if ((user.role || '').toUpperCase() === 'FACULTY' || (user.role || '').toUpperCase() === 'ADMIN') {
+                    navigate('/dashboard');
+                    return;
+                }
+
+                if ((user.role || '').toUpperCase() === 'STUDENT') {
+                    if (from) {
+                        navigate(from);
+                        return;
+                    }
+                    navigate('/student-dashboard');
+                    return;
+                }
+
+                // fallback: honor `from` or go home
+                if (from) {
+                    navigate(from);
+                    return;
+                }
+                navigate('/');
             }
         } catch (err) {
             console.error('Login failed:', err);
@@ -50,7 +76,7 @@ const LoginForm = () => {
         >
             {/* Mobile Logo */}
             <div className="lg:hidden flex items-center justify-center gap-3 mb-10">
-                <div className="w-10 h-10 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-linear-to-br from-teal-400 to-cyan-500 rounded-xl flex items-center justify-center">
                     <Zap size={22} className="text-white" />
                 </div>
                 <span className="text-xl font-bold text-white">
@@ -129,7 +155,7 @@ const LoginForm = () => {
                         whileTap={{ scale: isLoggingIn ? 1 : 0.98 }}
                         className={`
                             w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center gap-2
-                            bg-gradient-to-r from-teal-500 to-cyan-500 shadow-xl shadow-teal-500/30
+                            bg-linear-to-r from-teal-500 to-cyan-500 shadow-xl shadow-teal-500/30
                             hover:shadow-2xl transition-all disabled:opacity-70
                         `}
                     >

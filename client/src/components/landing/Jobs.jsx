@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import { Briefcase, MapPin, Building2, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const jobs = [
     {
@@ -52,6 +54,20 @@ const itemVariants = {
 };
 
 const Jobs = () => {
+    const navigate = useNavigate();
+    const { user } = useSelector((state) => state.auth);
+
+    const handleJobClick = (job, index) => {
+        // If not logged in, send user to login and preserve intended destination
+        const jobRef = job._id || `landing-${encodeURIComponent(job.role)}-${index}`;
+        if (!user) {
+            navigate('/login', { state: { from: `/jobs?open=${jobRef}` } });
+            return;
+        }
+
+        // For logged in users, take them to jobs page and instruct it to open the job
+        navigate('/jobs', { state: { openJobId: job._id || jobRef } });
+    };
     return (
         <section className="py-24 px-6 lg:px-8 bg-white dark:bg-[#0a0a0f]">
             <div className="max-w-7xl mx-auto">
@@ -79,11 +95,12 @@ const Jobs = () => {
                             key={index}
                             variants={itemVariants}
                             whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+                            onClick={() => handleJobClick(job, index)}
                             className="group p-6 rounded-2xl bg-gray-50 dark:bg-white/5 border border-transparent hover:border-teal-500/30 hover:bg-white dark:hover:bg-white/10 hover:shadow-xl hover:shadow-teal-500/5 transition-all duration-300 cursor-pointer"
                         >
                             <div className="flex items-start justify-between">
                                 <div className="flex gap-4">
-                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-teal-500/20 group-hover:scale-110 transition-transform duration-300">
+                                    <div className="w-12 h-12 rounded-xl bg-linear-to-br from-teal-400 to-cyan-500 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-teal-500/20 group-hover:scale-110 transition-transform duration-300">
                                         {job.logo}
                                     </div>
                                     <div>

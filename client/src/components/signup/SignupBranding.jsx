@@ -25,7 +25,7 @@ const SignupBranding = () => {
                 <h1 className="text-5xl font-extrabold text-white leading-tight mb-6">
                     Join the
                     <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-500">
+                    <span className="text-transparent bg-clip-text bg-linear-to-r from-teal-400 via-cyan-400 to-blue-500">
                         Future of Learning
                     </span>
                 </h1>

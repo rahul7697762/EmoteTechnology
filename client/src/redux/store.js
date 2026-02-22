@@ -9,6 +9,10 @@ import certificateReducer from './slices/certificateSlice';
 import assessmentReducer from './slices/assessmentSlice';
 import submissionReducer from './slices/submissionSlice';
 import discussionReducer from './slices/discussionSlice';
+import jobReducer from './slices/jobSlice';
+import companyReducer from './slices/companySlice';
+import applicationReducer from './slices/applicationSlice';
+import resumeReducer from './slices/resumeSlice';
 
 const appReducer = combineReducers({
     auth: authReducer,
@@ -20,7 +24,11 @@ const appReducer = combineReducers({
     certificate: certificateReducer,
     assessment: assessmentReducer,
     submission: submissionReducer,
-    discussion: discussionReducer
+    discussion: discussionReducer,
+    job: jobReducer,
+    company: companyReducer,
+    application: applicationReducer,
+    resume: resumeReducer
 });
 
 const rootReducer = (state, action) => {

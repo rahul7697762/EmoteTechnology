@@ -24,7 +24,7 @@ const LoginBranding = () => {
                 <h1 className="text-5xl font-extrabold text-gray-900 dark:text-white leading-tight mb-6">
                     Unlock Your
                     <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-500">
+                    <span className="text-transparent bg-clip-text bg-linear-to-r from-teal-400 via-cyan-400 to-blue-500">
                         Full Potential
                     </span>
                 </h1>

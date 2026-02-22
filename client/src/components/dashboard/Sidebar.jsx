@@ -38,7 +38,7 @@ const Sidebar = () => {
                             <Menu size={20} />
                         </button>
                         <Link to="/">
-                            <h1 className="text-xl font-bold bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">
+                            <h1 className="text-xl font-bold bg-linear-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">
                                 EmoteTech
                             </h1>
                         </Link>

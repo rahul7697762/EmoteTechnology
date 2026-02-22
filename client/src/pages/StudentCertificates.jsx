@@ -54,7 +54,7 @@ const StudentCertificates = () => {
                         {filteredCertificates.map(cert => (
                             <div key={cert._id} className="bg-white dark:bg-[#1a1c23] rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden hover:shadow-lg transition-all group">
                                 {/* Certificate Preview Area */}
-                                <div className="h-48 bg-gradient-to-br from-teal-500/10 to-blue-500/10 flex items-center justify-center relative p-6 border-b border-gray-100 dark:border-gray-800">
+                                <div className="h-48 bg-linear-to-br from-teal-500/10 to-blue-500/10 flex items-center justify-center relative p-6 border-b border-gray-100 dark:border-gray-800">
                                     <div className="border-4 border-teal-500/20 rounded-lg w-full h-full flex flex-col items-center justify-center bg-white dark:bg-[#1a1c23] shadow-sm p-4 text-center">
                                         <Award size={32} className="text-teal-500 mb-2" />
                                         <h4 className="font-serif font-bold text-gray-900 dark:text-white text-sm line-clamp-2">{cert.courseId?.title || 'Unknown Course'}</h4>

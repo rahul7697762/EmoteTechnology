@@ -6,7 +6,7 @@ const QuizItem = ({ quiz }) => {
         <div className="bg-white dark:bg-[#1a1c23] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm mb-4">
             <div className="flex gap-4">
                 {/* Date Box */}
-                <div className="flex-shrink-0 w-14 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 py-2">
+                <div className="shrink-0 w-14 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 py-2">
                     <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400">{quiz.month}</span>
                     <span className="text-xl font-bold text-gray-900 dark:text-white">{quiz.day}</span>
                 </div>

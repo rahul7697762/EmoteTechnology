@@ -14,8 +14,8 @@ const UniversityCollabs = () => {
             <div className="relative flex overflow-x-hidden group">
                 <div className="flex animate-marquee whitespace-nowrap gap-16 min-w-full items-center opacity-70 hover:opacity-100 transition-opacity duration-300 py-4">
                     {duplicatedUniversities.map((uni, index) => (
-                        <div key={index} className="flex-shrink-0 mx-8">
-                            <span className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-700 to-gray-900 dark:from-gray-300 dark:to-white cursor-default">
+                        <div key={index} className="shrink-0 mx-8">
+                            <span className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-gray-700 to-gray-900 dark:from-gray-300 dark:to-white cursor-default">
                                 {uni}
                             </span>
                         </div>

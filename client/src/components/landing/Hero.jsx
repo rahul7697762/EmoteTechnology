@@ -21,7 +21,7 @@ const Hero = () => {
     return (
         <section className="relative min-h-screen flex items-center pt-24 pb-12 px-6 lg:px-8 bg-gradient-to-b from-white to-blue-50/50 dark:from-[#0a0a0f] dark:to-[#111116] overflow-hidden">
             {/* Background Decorations */}
-            <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-gradient-to-br from-teal-400/20 to-blue-500/20 blur-[100px] rounded-full pointer-events-none" />
+            <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-linear-to-br from-teal-400/20 to-blue-500/20 blur-[100px] rounded-full pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-gradient-to-tr from-purple-400/20 to-pink-500/20 blur-[100px] rounded-full pointer-events-none" />
 
             <div className="max-w-7xl mx-auto w-full relative z-10">
@@ -39,7 +39,7 @@ const Hero = () => {
                             className="text-5xl lg:text-6xl font-extrabold leading-[1.15] mb-6 text-gray-900 dark:text-white"
                         >
                             Unlock the Future of Learning with{' '}
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-400 dark:to-teal-400">
+                            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-teal-500 dark:from-blue-400 dark:to-teal-400">
                                 AI-Powered Education
                             </span>
                         </motion.h1>
@@ -124,7 +124,7 @@ const Hero = () => {
                                         {/* Sidebar */}
                                         <div className="w-16 md:w-48 border-r border-gray-100 dark:border-white/5 p-4 flex flex-col gap-4">
                                             <div className="flex items-center gap-2 mb-4">
-                                                <div className="w-6 h-6 rounded bg-gradient-to-br from-teal-400 to-blue-500"></div>
+                                                <div className="w-6 h-6 rounded bg-linear-to-br from-teal-400 to-blue-500"></div>
                                                 <div className="h-3 w-20 bg-gray-100 dark:bg-white/10 rounded hidden md:block"></div>
                                             </div>
                                             {[1, 2, 3, 4].map(i => (
@@ -149,14 +149,14 @@ const Hero = () => {
                                                 <div className="bg-white dark:bg-white/5 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-white/5">
                                                     <div className="h-2 w-12 bg-gray-100 dark:bg-white/10 rounded mb-4"></div>
                                                     <div className="flex items-end gap-2">
-                                                        <div className="h-8 w-16 bg-gradient-to-r from-teal-400 to-teal-500 rounded"></div>
+                                                        <div className="h-8 w-16 bg-linear-to-r from-teal-400 to-teal-500 rounded"></div>
                                                         <div className="text-xs text-green-500 font-bold">+12%</div>
                                                     </div>
                                                 </div>
                                                 <div className="bg-white dark:bg-white/5 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-white/5">
                                                     <div className="h-2 w-12 bg-gray-100 dark:bg-white/10 rounded mb-4"></div>
                                                     <div className="flex items-end gap-2">
-                                                        <div className="h-8 w-12 bg-gradient-to-r from-blue-400 to-blue-500 rounded"></div>
+                                                        <div className="h-8 w-12 bg-linear-to-r from-blue-400 to-blue-500 rounded"></div>
                                                     </div>
                                                 </div>
                                             </div>

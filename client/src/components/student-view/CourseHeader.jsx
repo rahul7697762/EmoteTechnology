@@ -152,7 +152,7 @@ const CourseHeader = ({
             {!isPreview && (
                 <div className="absolute bottom-0 left-0 w-full h-[3px] bg-slate-100 dark:bg-slate-800">
                     <div
-                        className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all duration-500 ease-out"
+                        className="h-full bg-linear-to-r from-violet-500 to-fuchsia-500 transition-all duration-500 ease-out"
                         style={{ width: `${Math.max(progress, 0)}%` }}
                     />
                 </div>

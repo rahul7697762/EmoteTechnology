@@ -9,12 +9,12 @@ const AiInterview = () => {
             <Navbar />
             <main className="pt-24 pb-16 px-6 lg:px-8 max-w-7xl mx-auto text-center">
                 <div className="max-w-3xl mx-auto">
-                    <div className="w-20 h-20 mx-auto bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl shadow-purple-500/30 mb-8 animate-bounce">
+                    <div className="w-20 h-20 mx-auto bg-linear-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl shadow-purple-500/30 mb-8 animate-bounce">
                         <Bot size={40} className="text-white" />
                     </div>
                     <h1 className="text-4xl md:text-6xl font-bold mb-6">
                         Master Your Interview <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
+                        <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-500">
                             With AI
                         </span>
                     </h1>
@@ -40,7 +40,7 @@ const AiInterview = () => {
                         </div>
                     </div>
 
-                    <button className="px-10 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-bold text-lg shadow-xl shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105 transition-all">
+                    <button className="px-10 py-4 bg-linear-to-r from-purple-500 to-pink-500 text-white rounded-full font-bold text-lg shadow-xl shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105 transition-all">
                         Start Practice Session
                     </button>
                 </div>

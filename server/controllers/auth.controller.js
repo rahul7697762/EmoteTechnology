@@ -40,6 +40,15 @@ export const signup = async (req, res) => {
             profile: { phone },
             lastLoginAt: new Date()
         }
+        //company object creation if role is company or employer
+        if (user.role === 'COMPANY') {
+            user.companyProfile = {
+                companyName: name,
+                contactEmail: email,
+                contactPhone: phone
+            }
+        }
+
 
         // creating new user in the database 
         const newUser = await User.create(user);

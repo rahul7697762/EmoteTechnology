@@ -15,7 +15,7 @@ const LoginStats = () => {
                 { value: '4.9', label: 'Rating' },
             ].map((stat, i) => (
                 <div key={i}>
-                    <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">
+                    <div className="text-2xl font-bold text-transparent bg-clip-text bg-linear-to-r from-teal-400 to-cyan-400">
                         {stat.value}
                     </div>
                     <div className="text-gray-500 text-sm">{stat.label}</div>

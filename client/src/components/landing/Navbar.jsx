@@ -13,6 +13,28 @@ const Navbar = () => {
     const { theme } = useSelector((state) => state.ui);
     const { user } = useSelector((state) => state.auth);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    // Only consider a user authenticated when `user` exists in redux state.
+    // Avoid showing "Dashboard" based solely on a stored token to ensure
+    // unauthenticated users always see "Get Started" and are redirected to login.
+    const goToDashboard = () => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+
+
+        // default to faculty/admin dashboard
+        const role = (user.role || '').toUpperCase();
+        if (role === 'STUDENT') {
+            navigate('/student-dashboard');
+            return;
+        }
+        if (role === 'COMPANY') {
+            navigate('/company/dashboard');
+            return;
+        }
+        navigate('/dashboard');
+    };
 
     const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
@@ -26,11 +48,11 @@ const Navbar = () => {
                         className="flex items-center gap-3 cursor-pointer"
                         onClick={() => navigate('/')}
                     >
-                        <div className="w-10 h-10 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/30">
+                        <div className="w-10 h-10 bg-linear-to-br from-teal-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/30">
                             <Zap size={22} className="text-white" />
                         </div>
                         <span className="text-xl font-bold text-gray-900 dark:text-white">
-                            Emote<span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">Technology</span>
+                            Emote<span className="text-transparent bg-clip-text bg-linear-to-r from-teal-400 to-cyan-400">Technology</span>
                         </span>
                     </motion.div>
 
@@ -85,8 +107,8 @@ const Navbar = () => {
                                 <motion.button
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    onClick={() => navigate(user.role === 'STUDENT' ? '/student-dashboard' : '/dashboard')}
-                                    className="group relative px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full font-semibold text-sm text-white overflow-hidden shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:scale-105"
+                                    onClick={goToDashboard}
+                                    className="group relative px-6 py-3 bg-linear-to-r from-teal-500 to-cyan-500 rounded-full font-semibold text-sm text-white overflow-hidden shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:scale-105"
                                 >
                                     <span className="relative z-10">Dashboard</span>
                                 </motion.button>
@@ -94,8 +116,8 @@ const Navbar = () => {
                                 <motion.button
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    onClick={() => navigate('/login')}
-                                    className="group relative px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full font-semibold text-sm text-white overflow-hidden shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:scale-105"
+                                    onClick={goToDashboard}
+                                    className="group relative px-6 py-3 bg-linear-to-r from-teal-500 to-cyan-500 rounded-full font-semibold text-sm text-white overflow-hidden shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:scale-105"
                                 >
                                     <span className="relative z-10">Get Started</span>
                                 </motion.button>
@@ -170,15 +192,15 @@ const Navbar = () => {
                             <div className="pt-2">
                                 {user ? (
                                     <button
-                                        onClick={() => navigate(user.role === 'STUDENT' ? '/student-dashboard' : '/dashboard')}
-                                        className="w-full py-3 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl font-bold text-white shadow-lg shadow-teal-500/20"
+                                        onClick={() => { goToDashboard(); toggleMobileMenu(); }}
+                                        className="w-full py-3 bg-linear-to-r from-teal-500 to-cyan-500 rounded-xl font-bold text-white shadow-lg shadow-teal-500/20"
                                     >
                                         Dashboard
                                     </button>
                                 ) : (
                                     <button
-                                        onClick={() => navigate('/login')}
-                                        className="w-full py-3 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl font-bold text-white shadow-lg shadow-teal-500/20"
+                                        onClick={() => { goToDashboard(); toggleMobileMenu(); }}
+                                        className="w-full py-3 bg-linear-to-r from-teal-500 to-cyan-500 rounded-xl font-bold text-white shadow-lg shadow-teal-500/20"
                                     >
                                         Get Started
                                     </button>

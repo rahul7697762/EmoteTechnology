@@ -36,7 +36,7 @@ const StudentQuizzes = () => {
         <div className="bg-white dark:bg-[#1a1c23] rounded-2xl border border-gray-100 dark:border-gray-800 p-6 hover:shadow-lg transition-shadow flex flex-col md:flex-row gap-6 items-start md:items-center">
 
             {/* Date Badge */}
-            <div className="flex-shrink-0 w-20 h-20 bg-teal-50 dark:bg-teal-900/10 rounded-2xl flex flex-col items-center justify-center text-teal-600 dark:text-teal-400 border border-teal-100 dark:border-teal-900/20">
+            <div className="shrink-0 w-20 h-20 bg-teal-50 dark:bg-teal-900/10 rounded-2xl flex flex-col items-center justify-center text-teal-600 dark:text-teal-400 border border-teal-100 dark:border-teal-900/20">
                 <span className="text-xs font-bold uppercase tracking-wider">{quiz.month}</span>
                 <span className="text-3xl font-bold">{quiz.day}</span>
             </div>

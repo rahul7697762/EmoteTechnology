@@ -14,10 +14,10 @@ const StudentSidebar = () => {
 
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/student-dashboard' },
+        { icon: ClipboardList, label: 'My Applications', path: '/student/applications' },
         { icon: BookOpen, label: 'My Courses', path: '/student-courses' },
         { icon: Award, label: 'Certificates', path: '/student-certificates' },
         { icon: ClipboardList, label: 'Upcoming Quizzes', path: '/student-quizzes' },
-        { icon: Settings, label: 'Settings', path: '/settings' },
     ];
 
     return (
@@ -62,7 +62,7 @@ const StudentSidebar = () => {
             )}
 
             <nav className={`px-4 space-y-1 mb-8 ${isCollapsed ? 'mt-4' : ''}`}>
-                {navItems.slice(0, 4).map((item) => (
+                {navItems.map((item) => (
                     <NavLink
                         key={item.path}
                         to={item.path}

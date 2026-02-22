@@ -4,8 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getFacultyCourseDetails } from '../redux/slices/courseSlice';
 import { getSubmissionsByCourse } from '../redux/slices/submissionSlice';
 import Sidebar from '../components/dashboard/Sidebar';
+import { Sidebar as LucideSidebar, MessageSquare } from 'lucide-react';
 import { ArrowLeft, FileText, Users } from 'lucide-react';
 import SubmissionsTab from '../components/dashboard/manage-course/SubmissionsTab';
+import DiscussionFullPage from '../components/student-view/DiscussionFullPage';
+
+import DiscussionSidebar from '../components/student-view/DiscussionSidebar';
 
 const ManageCourse = () => {
     const { courseId } = useParams();
@@ -37,6 +41,7 @@ const ManageCourse = () => {
 
     const tabs = [
         { id: 'submissions', label: 'Submissions', icon: FileText },
+        { id: 'discussions', label: 'Discussions', icon: MessageSquare },
         { id: 'applicants', label: 'Applicants', icon: Users, disabled: true }
     ];
 
@@ -101,14 +106,29 @@ const ManageCourse = () => {
                     </div>
 
                     {/* Main Content Area */}
-                    <div className="flex-1 overflow-y-auto">
-                        <div className="p-8">
+                    <div className="flex-1 overflow-y-auto relative">
+                        <div className="p-8 h-full">
                             {activeTab === 'submissions' && (
                                 <SubmissionsTab
                                     courseId={courseId}
                                     submissions={courseSubmissions}
                                     loading={loading}
                                 />
+                            )}
+                            {activeTab === 'discussions' && (
+                                <div className="h-[calc(100vh-140px)] bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden relative flex">
+                                    <DiscussionSidebar
+                                        courseId={courseId}
+                                        width="100%"
+                                        isMobile={false}
+                                        isEmbedded={true}
+                                    />
+                                    {/* Overlay component is rendered here but will be fixed/absolute controlled by its own internal state/styles */}
+                                    <DiscussionFullPage
+                                        courseId={courseId}
+                                        isFaculty={true}
+                                    />
+                                </div>
                             )}
                             {activeTab === 'applicants' && (
                                 <div className="text-center py-20 bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-200 dark:border-slate-700">
@@ -128,5 +148,6 @@ const ManageCourse = () => {
         </div>
     );
 };
+
 
 export default ManageCourse;

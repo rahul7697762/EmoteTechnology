@@ -2,7 +2,7 @@ import React from 'react';
 
 const WelcomeBanner = ({ user, stats }) => {
     return (
-        <div className="bg-gradient-to-r from-teal-50 to-blue-50 dark:from-teal-900/20 dark:to-blue-900/20 rounded-3xl p-8 mb-8 flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
+        <div className="bg-linear-to-r from-teal-50 to-blue-50 dark:from-teal-900/20 dark:to-blue-900/20 rounded-3xl p-8 mb-8 flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
             {/* content */}
             <div className="z-10 max-w-lg">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">

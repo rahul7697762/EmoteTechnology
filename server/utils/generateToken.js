@@ -9,12 +9,13 @@ export const generateToken = (userId, res) => {
         expiresIn: process.env.JWT_EXPIRES_IN || '7d'
     })
 
-    // Cookie settings for production
+    // Cookie settings - adjust for development vs production
+    const isProduction = process.env.NODE_ENV === 'production';
     const cookieOptions = {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         httpOnly: true,
-        sameSite: "none", // Required for cross-origin
-        secure: true, // Required when sameSite is "none"
+        sameSite: isProduction ? "none" : "lax",
+        secure: isProduction, // Only secure in production
         path: "/"
     }
 

@@ -1,6 +1,6 @@
 import express from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { connectDB } from './config/database.js';
@@ -19,6 +19,12 @@ import progressRoutes from './routes/progress.routes.js';
 import certificateRoutes from './routes/certificate.routes.js';
 import assessmentRoutes from './routes/assessment.routes.js';
 import submissionRoutes from './routes/submission.routes.js';
+import discussionRoutes from './routes/discussion.routes.js';
+import companyRoutes from './routes/company.routes.js';
+import jobRoutes from './routes/job.routes.js';
+import applicationRoutes from './routes/application.routes.js';
+import uploadRoutes from './routes/upload.routes.js';
+
 
 // Load environment variables
 dotenv.config();
@@ -51,6 +57,7 @@ const corsOptions = {
         }
     },
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
     optionsSuccessStatus: 200
 };
 
@@ -79,7 +86,14 @@ app.use('/api/progress', progressRoutes);
 app.use('/api/certificate', certificateRoutes);
 app.use('/api/assessment', assessmentRoutes);
 app.use('/api/submission', submissionRoutes);
+app.use('/api/discussions', discussionRoutes);
+app.use('/api/companies', companyRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/applications', applicationRoutes);
+app.use('/api/upload', uploadRoutes);
 
+
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Health check route
 app.get('/api/health', (req, res) => {
     res.json({
@@ -112,6 +126,16 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 // Handle React routing, return all requests to React app
 app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+    console.error('Unhandled Error:', err);
+    res.status(500).json({
+        success: false,
+        message: err.message || 'Internal Server Error',
+        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
 });
 
 app.listen(port, () => {

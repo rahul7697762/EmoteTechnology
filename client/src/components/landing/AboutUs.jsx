@@ -15,7 +15,7 @@ const AboutUs = () => {
                         <span className="text-teal-500 font-semibold tracking-wider uppercase text-sm mb-4 block">About Us</span>
                         <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white leading-tight">
                             Building the Future of <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-cyan-500">Tech Education</span>
+                            <span className="text-transparent bg-clip-text bg-linear-to-r from-teal-500 to-cyan-500">Tech Education</span>
                         </h2>
                         <p className="text-gray-600 dark:text-gray-400 text-lg mb-8 leading-relaxed">
                             At EmoteTechnology, we believe that education should be accessible, engaging, and directly connected to industry needs. We're bridging the gap between academic learning and real-world application.
@@ -57,7 +57,7 @@ const AboutUs = () => {
                         <motion.div
                             animate={{ rotate: [6, 0, 6] }}
                             transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-                            className="absolute inset-0 bg-gradient-to-br from-teal-500 to-blue-600 rounded-3xl blur-3xl opacity-20 transform rotate-6"
+                            className="absolute inset-0 bg-linear-to-br from-teal-500 to-blue-600 rounded-3xl blur-3xl opacity-20 transform rotate-6"
                         ></motion.div>
                         <motion.div
                             whileHover={{ y: -5 }}

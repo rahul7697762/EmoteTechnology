@@ -8,7 +8,7 @@ const CTA = () => {
     return (
         <section className="relative py-32 px-6 lg:px-8">
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 via-cyan-500/10 to-blue-500/10 dark:from-teal-500/20 dark:via-cyan-500/20 dark:to-blue-500/20 blur-3xl"></div>
+                <div className="absolute inset-0 bg-linear-to-r from-teal-500/10 via-cyan-500/10 to-blue-500/10 dark:from-teal-500/20 dark:via-cyan-500/20 dark:to-blue-500/20 blur-3xl"></div>
             </div>
             <div className="max-w-4xl mx-auto text-center relative z-10">
                 <motion.div
@@ -19,7 +19,7 @@ const CTA = () => {
                 >
                     <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
                         Ready to Start Your{' '}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-cyan-500 dark:from-teal-400 dark:to-cyan-400">
+                        <span className="text-transparent bg-clip-text bg-linear-to-r from-teal-500 to-cyan-500 dark:from-teal-400 dark:to-cyan-400">
                             Journey?
                         </span>
                     </h2>
@@ -28,7 +28,7 @@ const CTA = () => {
                     </p>
                     <button
                         onClick={() => navigate('/login')}
-                        className="group inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-2xl font-bold text-lg text-white shadow-2xl shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:scale-105"
+                        className="group inline-flex items-center gap-3 px-10 py-5 bg-linear-to-r from-teal-500 to-cyan-500 rounded-2xl font-bold text-lg text-white shadow-2xl shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:scale-105"
                     >
                         Get Started for Free
                         <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />

@@ -24,7 +24,7 @@ const Stats = () => {
                             <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center shadow-sm dark:shadow-none">
                                 <stat.icon size={28} className="text-teal-600 dark:text-teal-400" />
                             </div>
-                            <h3 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-transparent dark:bg-gradient-to-r dark:from-white dark:to-gray-400 dark:bg-clip-text mb-2">
+                            <h3 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-transparent dark:bg-linear-to-r dark:from-white dark:to-gray-400 dark:bg-clip-text mb-2">
                                 {stat.value}
                             </h3>
                             <p className="text-gray-600 dark:text-gray-500">{stat.label}</p>

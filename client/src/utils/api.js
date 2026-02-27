@@ -470,4 +470,24 @@ export const submissionAPI = {
     }
 };
 
+export const reviewAPI = {
+    // Create Review
+    createReview: async (data) => {
+        const response = await api.post('/reviews', data);
+        return response.data;
+    },
+
+    // Get Reviews by Course
+    getReviewsByCourse: async (courseId, page = 1) => {
+        const response = await api.get(`/reviews/course/${courseId}?page=${page}`);
+        return response.data;
+    },
+
+    // Check Review Status
+    checkReviewStatus: async (courseId) => {
+        const response = await api.get(`/reviews/check/${courseId}`);
+        return response.data;
+    }
+};
+
 export default api;

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api, { courseAPI, studentAPI } from '../../utils/api';
+import api, { courseAPI, studentAPI, reviewAPI } from '../../utils/api';
 import { updateHeartbeat, completeLesson } from './progressSlice';
 
 // Async Thunks
@@ -127,6 +127,35 @@ export const enrollInCourse = createAsyncThunk('course/enrollInCourse', async ({
     }
 });
 
+
+// --- REVIEW ACTIONS ---
+export const createReview = createAsyncThunk('course/createReview', async (reviewData, { rejectWithValue }) => {
+    try {
+        const response = await reviewAPI.createReview(reviewData);
+        return response.review;
+    } catch (error) {
+        return rejectWithValue(error.response?.data?.message || 'Failed to submit review');
+    }
+});
+
+export const getCourseReviews = createAsyncThunk('course/getCourseReviews', async ({ courseId, page = 1 }, { rejectWithValue }) => {
+    try {
+        const response = await reviewAPI.getReviewsByCourse(courseId, page);
+        return response; // { reviews, pagination, count }
+    } catch (error) {
+        return rejectWithValue(error.response?.data?.message || 'Failed to fetch reviews');
+    }
+});
+
+export const checkReviewStatus = createAsyncThunk('course/checkReviewStatus', async (courseId, { rejectWithValue }) => {
+    try {
+        const response = await reviewAPI.checkReviewStatus(courseId);
+        return response; // { hasReviewed, review }
+    } catch (error) {
+        return rejectWithValue(error.response?.data?.message || 'Failed to check review status');
+    }
+});
+
 const initialState = {
     courses: [], // For all courses (future public view)
     searchQuery: '', // Store persistence
@@ -137,7 +166,12 @@ const initialState = {
     inProgressCourses: [], // NEW: For dashboard in-progress courses
 
     currentCourse: null,
+    currentCourse: null,
     stats: null,
+    reviews: [],
+    reviewPagination: null,
+    userReview: null, // If user has reviewed the current course
+    hasReviewed: false,
 
     // granular loading states
     isFetchingPublicCourses: false,
@@ -148,6 +182,8 @@ const initialState = {
     isDeletingCourse: false,
     isFetchingDetails: false,
     isFetchingStats: false,
+    isSubmittingReview: false,
+    isFetchingReviews: false,
 
     error: null
 };
@@ -162,6 +198,9 @@ const courseSlice = createSlice({
             state.facultyCourses = [];
             state.studentCourses = [];
             state.stats = null;
+            state.reviews = [];
+            state.userReview = null;
+            state.hasReviewed = false;
             state.error = null;
         },
         clearError: (state) => {
@@ -394,6 +433,42 @@ const courseSlice = createSlice({
                         if (isCourseCompleted) inProgressCourse.status = 'COMPLETED';
                     }
                 }
+            })
+
+            // --- REVIEW REDUCERS ---
+            .addCase(createReview.pending, (state) => {
+                state.isSubmittingReview = true;
+                state.error = null;
+            })
+            .addCase(createReview.fulfilled, (state, action) => {
+                state.isSubmittingReview = false;
+                state.hasReviewed = true;
+                state.userReview = action.payload;
+                // Optionally add to reviews list if it matches
+                state.reviews.unshift(action.payload);
+            })
+            .addCase(createReview.rejected, (state, action) => {
+                state.isSubmittingReview = false;
+                state.error = action.payload;
+            })
+
+            .addCase(getCourseReviews.pending, (state) => {
+                state.isFetchingReviews = true;
+                state.error = null;
+            })
+            .addCase(getCourseReviews.fulfilled, (state, action) => {
+                state.isFetchingReviews = false;
+                state.reviews = action.payload.reviews;
+                state.reviewPagination = action.payload.pagination;
+            })
+            .addCase(getCourseReviews.rejected, (state, action) => {
+                state.isFetchingReviews = false;
+                state.error = action.payload;
+            })
+
+            .addCase(checkReviewStatus.fulfilled, (state, action) => {
+                state.hasReviewed = action.payload.hasReviewed;
+                state.userReview = action.payload.review;
             });
     }
 });

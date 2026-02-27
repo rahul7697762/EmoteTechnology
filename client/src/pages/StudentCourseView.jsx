@@ -12,6 +12,8 @@ import CourseSidebar from '../components/student-view/CourseSidebar';
 import AIChat from '../components/student-view/AIChat';
 import CourseHeader from '../components/student-view/CourseHeader';
 import StudentAssessmentView from '../components/student-view/StudentAssessmentView';
+import RatingReview from '../components/student-view/RatingReview';
+import { checkReviewStatus } from '../redux/slices/courseSlice';
 
 const StudentCourseView = () => {
     const { id } = useParams();
@@ -31,6 +33,13 @@ const StudentCourseView = () => {
     const [chatWidth, setChatWidth] = useState(320);
     const [isResizingSidebar, setIsResizingSidebar] = useState(false);
     const [isResizingChat, setIsResizingChat] = useState(false);
+
+    // Review Modal State
+    const [isReviewOpen, setIsReviewOpen] = useState(false);
+    const [hasAutoPromptedReview, setHasAutoPromptedReview] = useState(false);
+    const { hasReviewed, isCompleted: isCourseCompletedRedux } = useSelector((state) => state.course); // Assuming isCompleted is in courseSlice or use progressSlice
+    const { isCompleted } = useSelector((state) => state.progress);
+
 
     // ... (Responsive Check & Resizing Handlers - unchanged)
 
@@ -114,8 +123,29 @@ const StudentCourseView = () => {
             dispatch(getCourseDetails(id));
             dispatch(fetchCourseProgress(id));
             dispatch(initProgress({ courseId: id }));
+            dispatch(checkReviewStatus(id));
         }
     }, [dispatch, id]);
+
+    // Initial check for session storage
+    useEffect(() => {
+        if (id && sessionStorage.getItem(`review_prompted_${id}`)) {
+            setHasAutoPromptedReview(true);
+        }
+    }, [id]);
+
+    // Check for completion and trigger review automatically once per session
+    useEffect(() => {
+        if (isCompleted && !isReviewOpen && !hasAutoPromptedReview) {
+            // Add a small delay for better UX
+            const timer = setTimeout(() => {
+                setIsReviewOpen(true);
+                setHasAutoPromptedReview(true);
+                sessionStorage.setItem(`review_prompted_${id}`, 'true');
+            }, 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [isCompleted, isReviewOpen, hasAutoPromptedReview, id]);
 
     // Set initial active lesson and expand first module
     useEffect(() => {
@@ -170,6 +200,8 @@ const StudentCourseView = () => {
                 isChatOpen={isChatOpen}
                 setIsChatOpen={setIsChatOpen}
                 onExit={() => navigate('/student-courses')}
+                hasReviewed={hasReviewed}
+                onOpenReview={() => setIsReviewOpen(true)}
             />
 
             {/* 2. MAIN BODY CONTAINER */}
@@ -254,6 +286,12 @@ const StudentCourseView = () => {
                     />
                 </div>
             </div >
+
+            <RatingReview
+                courseId={id}
+                isOpen={isReviewOpen}
+                onClose={() => setIsReviewOpen(false)}
+            />
         </div >
     );
 };

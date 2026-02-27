@@ -17,7 +17,7 @@ const CircularProgress = ({ value, color }) => {
     };
 
     return (
-        <div className="relative w-16 h-16 flex-shrink-0">
+        <div className="relative w-16 h-16 shrink-0">
             <svg className="w-full h-full transform -rotate-90">
                 <circle
                     cx="32"

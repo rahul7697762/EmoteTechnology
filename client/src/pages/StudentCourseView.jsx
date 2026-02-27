@@ -14,6 +14,8 @@ import CourseHeader from '../components/student-view/CourseHeader';
 import StudentAssessmentView from '../components/student-view/StudentAssessmentView';
 import RatingReview from '../components/student-view/RatingReview';
 import { checkReviewStatus } from '../redux/slices/courseSlice';
+import DiscussionSidebar from '../components/student-view/DiscussionSidebar';
+import DiscussionFullPage from '../components/student-view/DiscussionFullPage';
 
 const StudentCourseView = () => {
     const { id } = useParams();
@@ -28,11 +30,24 @@ const StudentCourseView = () => {
     // ... (Layout State)
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isChatOpen, setIsChatOpen] = useState(false);
+    const [isDiscussionOpen, setIsDiscussionOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [sidebarWidth, setSidebarWidth] = useState(320);
-    const [chatWidth, setChatWidth] = useState(320);
+    const [rightSidebarWidth, setRightSidebarWidth] = useState(320);
     const [isResizingSidebar, setIsResizingSidebar] = useState(false);
-    const [isResizingChat, setIsResizingChat] = useState(false);
+    const [isResizingRightSidebar, setIsResizingRightSidebar] = useState(false);
+
+    // Toggle Chat - Closes Discussion
+    const handleChatToggle = (isOpen) => {
+        setIsChatOpen(isOpen);
+        if (isOpen) setIsDiscussionOpen(false);
+    };
+
+    // Toggle Discussion - Closes Chat
+    const handleDiscussionToggle = (isOpen) => {
+        setIsDiscussionOpen(isOpen);
+        if (isOpen) setIsChatOpen(false);
+    };
 
     // Review Modal State
     const [isReviewOpen, setIsReviewOpen] = useState(false);
@@ -88,34 +103,34 @@ const StudentCourseView = () => {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    // Resizing Handlers setup (keep existing)
+    // Resizing Handlers setup
     useEffect(() => {
         const handleMouseMove = (e) => {
             if (isResizingSidebar) {
                 const newWidth = e.clientX;
                 if (newWidth > 200 && newWidth < 600) setSidebarWidth(newWidth);
             }
-            if (isResizingChat) {
+            if (isResizingRightSidebar) {
                 const newWidth = window.innerWidth - e.clientX;
-                if (newWidth > 250 && newWidth < 600) setChatWidth(newWidth);
+                if (newWidth > 250 && newWidth < 600) setRightSidebarWidth(newWidth);
             }
         };
         const handleMouseUp = () => {
             if (isResizingSidebar) setIsResizingSidebar(false);
-            if (isResizingChat) setIsResizingChat(false);
+            if (isResizingRightSidebar) setIsResizingRightSidebar(false);
             document.body.style.cursor = 'default';
         };
-        if (isResizingSidebar || isResizingChat) {
+        if (isResizingSidebar || isResizingRightSidebar) {
             window.addEventListener('mousemove', handleMouseMove);
             window.addEventListener('mouseup', handleMouseUp);
-            document.body.style.cursor = isResizingSidebar || isResizingChat ? 'col-resize' : 'default';
+            document.body.style.cursor = isResizingSidebar || isResizingRightSidebar ? 'col-resize' : 'default';
         }
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('mouseup', handleMouseUp);
             document.body.style.cursor = 'default';
         };
-    }, [isResizingSidebar, isResizingChat]);
+    }, [isResizingSidebar, isResizingRightSidebar]);
 
     // Fetch Course & Progress
     useEffect(() => {
@@ -198,11 +213,16 @@ const StudentCourseView = () => {
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
                 isChatOpen={isChatOpen}
-                setIsChatOpen={setIsChatOpen}
+                setIsChatOpen={handleChatToggle}
+                isDiscussionOpen={isDiscussionOpen}
+                setIsDiscussionOpen={handleDiscussionToggle}
                 onExit={() => navigate('/student-courses')}
                 hasReviewed={hasReviewed}
                 onOpenReview={() => setIsReviewOpen(true)}
             />
+
+            {/* DISCUSSION FULL PAGE OVERLAY */}
+            <DiscussionFullPage courseId={course._id || course.id} />
 
             {/* 2. MAIN BODY CONTAINER */}
             <div className="flex flex-1 overflow-hidden relative">
@@ -268,24 +288,48 @@ const StudentCourseView = () => {
                     </div>
                 </main>
 
-                {/* AI CHAT PANEL */}
+                {/* RIGHT SIDEBAR (CHAT OR DISCUSSION) */}
                 <div className="relative flex shrink-0 h-full">
-                    {/* Drag Handle - Chat */}
-                    {isChatOpen && !isMobile && (
-                        <div
-                            className="w-1 hover:w-1.5 h-full cursor-col-resize hover:bg-violet-500/50 active:bg-violet-600 transition-all z-40 absolute left-0 -translate-x-1/2"
-                            onMouseDown={() => setIsResizingChat(true)}
-                        />
+
+                    {/* AI CHAT PANEL */}
+                    {isChatOpen && (
+                        <>
+                            {!isMobile && (
+                                <div
+                                    className="w-1 hover:w-1.5 h-full cursor-col-resize hover:bg-violet-500/50 active:bg-violet-600 transition-all z-40 absolute left-0 -translate-x-1/2"
+                                    onMouseDown={() => setIsResizingRightSidebar(true)}
+                                />
+                            )}
+                            <AIChat
+                                isOpen={isChatOpen}
+                                onClose={() => handleChatToggle(false)}
+                                width={rightSidebarWidth}
+                                isMobile={isMobile}
+                            />
+                        </>
                     )}
 
-                    <AIChat
-                        isOpen={isChatOpen}
-                        onClose={() => setIsChatOpen(false)}
-                        width={chatWidth}
-                        isMobile={isMobile}
-                    />
+                    {/* DISCUSSION PANEL */}
+                    {isDiscussionOpen && (
+                        <>
+                            {!isMobile && (
+                                <div
+                                    className="w-1 hover:w-1.5 h-full cursor-col-resize hover:bg-violet-500/50 active:bg-violet-600 transition-all z-40 absolute left-0 -translate-x-1/2"
+                                    onMouseDown={() => setIsResizingRightSidebar(true)}
+                                />
+                            )}
+                            <DiscussionSidebar
+                                courseId={course._id || course.id}
+                                onClose={() => handleDiscussionToggle(false)}
+                                width={rightSidebarWidth}
+                                isMobile={isMobile}
+                            />
+                        </>
+
+                    )}
+
                 </div>
-            </div >
+            </div>
 
             <RatingReview
                 courseId={id}

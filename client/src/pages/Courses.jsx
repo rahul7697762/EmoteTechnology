@@ -59,7 +59,7 @@ const Courses = () => {
 
             <main className="pt-24 pb-16 px-6 lg:px-8 max-w-7xl mx-auto">
                 <div className="text-center mb-16">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-teal-400 to-cyan-500 bg-clip-text text-transparent">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-linear-to-r from-teal-400 to-cyan-500 bg-clip-text text-transparent">
                         Explore Our Courses
                     </h1>
                     <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">

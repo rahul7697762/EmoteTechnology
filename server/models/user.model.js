@@ -53,7 +53,32 @@ const userSchema = new mongoose.Schema({
         timezone: {
             type: String,
             default: null
-        }
+        },
+        experience: [{
+      title: String,
+      company: String,
+      location: String,
+      startDate: Date,
+      endDate: Date,
+      current: Boolean,
+      description: String
+    }],
+    education: [{
+      school: String,
+      degree: String,
+      field: String,
+      startDate: Date,
+      endDate: Date,
+      current: Boolean
+    }],
+     savedJobs: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Job'
+  }],
+  isProfileComplete: {
+    type: Boolean,
+    default: false
+  },
     },
 
     facultyProfile: {

@@ -111,7 +111,7 @@ const StudentAssessmentView = ({ moduleId, courseId, onCompleted, previewMode = 
                 <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
 
                     {/* Header Banner */}
-                    <div className="bg-gradient-to-r from-violet-600 to-indigo-600 px-8 py-10 text-white relative overflow-hidden">
+                    <div className="bg-linear-to-r from-violet-600 to-indigo-600 px-8 py-10 text-white relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-10 opacity-10 transform translate-x-1/4 -translate-y-1/4">
                             {assessment.type === 'QUIZ' ? <CheckCircle size={200} /> : <FileText size={200} />}
                         </div>

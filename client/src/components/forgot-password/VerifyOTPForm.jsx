@@ -48,7 +48,7 @@ const VerifyOTPForm = () => {
         >
             <div className="bg-white dark:bg-[#1a1c23] rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-gray-800 backdrop-blur-xl bg-opacity-90 dark:bg-opacity-90">
                 <div className="text-center mb-10">
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent mb-2">
+                    <h2 className="text-3xl font-bold bg-linear-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent mb-2">
                         Verify OTP
                     </h2>
                     <p className="text-gray-500 dark:text-gray-400">
@@ -81,7 +81,7 @@ const VerifyOTPForm = () => {
                     <button
                         type="submit"
                         disabled={isVerifyOTPLoading}
-                        className="w-full py-4 bg-gradient-to-r from-teal-500 to-blue-600 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="w-full py-4 bg-linear-to-r from-teal-500 to-blue-600 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                         {isVerifyOTPLoading ? (
                             <Loader className="animate-spin" size={24} />

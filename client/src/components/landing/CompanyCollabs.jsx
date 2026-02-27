@@ -15,7 +15,7 @@ const CompanyCollabs = () => {
                 <div className="flex animate-marquee whitespace-nowrap gap-16 min-w-full items-center opacity-70 hover:opacity-100 transition-opacity duration-300 py-4 reverse">
                     <div className="flex animate-marquee whitespace-nowrap gap-16 min-w-full items-center">
                         {duplicatedCompanies.map((company, index) => (
-                            <div key={index} className="flex-shrink-0 mx-8">
+                            <div key={index} className="shrink-0 mx-8">
                                 <span className="text-2xl md:text-3xl font-bold text-gray-400 hover:text-teal-500 transition-colors cursor-default">
                                     {company}
                                 </span>

@@ -10,6 +10,8 @@ const CourseHeader = ({
     setIsSidebarOpen,
     isChatOpen,
     setIsChatOpen,
+    isDiscussionOpen,
+    setIsDiscussionOpen,
     onExit,
     isPreview = false,
     hasReviewed,
@@ -128,7 +130,14 @@ const CourseHeader = ({
                             <button title="Confusing" className="p-2 text-slate-400 hover:text-red-500 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
                                 <ThumbsDown size={18} />
                             </button>
-                            <button title="Discussion" className="p-2 text-slate-400 hover:text-blue-500 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                            <button
+                                onClick={() => setIsDiscussionOpen(!isDiscussionOpen)}
+                                title="Discussion"
+                                className={`p-2 rounded-lg transition-colors ${isDiscussionOpen
+                                        ? 'text-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:text-blue-400'
+                                        : 'text-slate-400 hover:text-blue-500 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                    }`}
+                            >
                                 <MessageCircle size={18} />
                             </button>
                         </div>
@@ -156,7 +165,7 @@ const CourseHeader = ({
             {!isPreview && (
                 <div className="absolute bottom-0 left-0 w-full h-[3px] bg-slate-100 dark:bg-slate-800">
                     <div
-                        className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all duration-500 ease-out"
+                        className="h-full bg-linear-to-r from-violet-500 to-fuchsia-500 transition-all duration-500 ease-out"
                         style={{ width: `${Math.max(progress, 0)}%` }}
                     />
                 </div>

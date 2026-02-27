@@ -219,7 +219,7 @@ const CourseDetails = () => {
 
             {/* Hero Section */}
             <div className="bg-gray-900 text-white pt-32 pb-20 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-teal-900/40 to-black/80 z-0"></div>
+                <div className="absolute inset-0 bg-linear-to-br from-teal-900/40 to-black/80 z-0"></div>
                 <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
                         <div className="lg:col-span-2">

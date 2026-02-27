@@ -16,7 +16,7 @@ const Features = () => {
                     </span>
                     <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
                         Everything You Need to{' '}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-cyan-500 dark:from-teal-400 dark:to-cyan-400">
+                        <span className="text-transparent bg-clip-text bg-linear-to-r from-teal-500 to-cyan-500 dark:from-teal-400 dark:to-cyan-400">
                             Excel
                         </span>
                     </h2>
@@ -57,8 +57,8 @@ const Features = () => {
                             viewport={{ once: true }}
                             className="group relative p-8 rounded-3xl bg-white dark:bg-white/[0.02] border border-gray-100 dark:border-white/10 hover:border-teal-200 dark:hover:border-white/20 transition-all text-center shadow-xl shadow-gray-200/50 dark:shadow-none"
                         >
-                            <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 bg-gradient-to-br ${feature.gradient} opacity-5 dark:opacity-10 blur-3xl group-hover:opacity-10 dark:group-hover:opacity-20 transition-opacity`}></div>
-                            <div className={`w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-6 shadow-lg`}>
+                            <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 bg-linear-to-br ${feature.gradient} opacity-5 dark:opacity-10 blur-3xl group-hover:opacity-10 dark:group-hover:opacity-20 transition-opacity`}></div>
+                            <div className={`w-16 h-16 mx-auto rounded-2xl bg-linear-to-br ${feature.gradient} flex items-center justify-center mb-6 shadow-lg`}>
                                 <feature.icon size={28} className="text-white" />
                             </div>
                             <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">{feature.title}</h3>

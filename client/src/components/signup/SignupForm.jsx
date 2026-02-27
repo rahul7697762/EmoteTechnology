@@ -12,6 +12,8 @@ const SignupForm = () => {
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    // Always sign up as STUDENT
+    const role = 'STUDENT';
     const [showPassword, setShowPassword] = useState(false);
     const { isSigningUp } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
@@ -21,15 +23,23 @@ const SignupForm = () => {
         e.preventDefault();
 
         try {
-            const user = await dispatch(signup({ name, email, password, phone })).unwrap();
+            const user = await dispatch(signup({ name, email, password, phone, role })).unwrap();
 
             if (user) {
                 toast.success('Account created successfully!');
-                // Redirect based on role
-                if (user.role === 'FACULTY' || user.role === 'ADMIN') {
+
+                // Check for redirect parameter
+                const searchParams = new URLSearchParams(window.location.search);
+                const redirectPath = searchParams.get('redirect');
+
+                if (redirectPath) {
+                    navigate(redirectPath);
+                } else if (user.role === 'FACULTY' || user.role === 'ADMIN') {
                     navigate('/dashboard');
                 } else if (user.role === 'STUDENT') {
                     navigate('/student-dashboard');
+                } else if (user.role === 'EMPLOYER') {
+                    navigate('/job-portal');
                 } else {
                     navigate('/');
                 }
@@ -49,7 +59,7 @@ const SignupForm = () => {
         >
             {/* Mobile Logo */}
             <div className="lg:hidden flex items-center justify-center gap-3 mb-10">
-                <div className="w-10 h-10 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-linear-to-br from-teal-400 to-cyan-500 rounded-xl flex items-center justify-center">
                     <Zap size={22} className="text-white" />
                 </div>
                 <span className="text-xl font-bold text-white">
@@ -101,6 +111,8 @@ const SignupForm = () => {
                         </div>
                     </div>
 
+                    {/* Role is fixed to STUDENT (UI removed) */}
+
                     {/* Email */}
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
@@ -148,7 +160,7 @@ const SignupForm = () => {
                         whileTap={{ scale: isSigningUp ? 1 : 0.98 }}
                         className={`
                             w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center gap-2
-                            bg-gradient-to-r from-teal-500 to-cyan-500 shadow-xl shadow-teal-500/30
+                            bg-linear-to-r from-teal-500 to-cyan-500 shadow-xl shadow-teal-500/30
                             hover:shadow-2xl transition-all disabled:opacity-70
                         `}
                     >

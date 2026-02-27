@@ -21,9 +21,14 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
         return <Navigate to="/login" replace />;
     }
 
-    // Check role if specified
-    if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-        return <Navigate to="/" replace />;
+    // Check role if specified (case-insensitive)
+    // NOTE: Roles from backend can arrive in varying case; normalize to avoid accidental redirects.
+    if (allowedRoles.length > 0) {
+        const userRole = (user.role || '').toUpperCase();
+        const allowed = allowedRoles.map(r => (r || '').toUpperCase());
+        if (!allowed.includes(userRole)) {
+            return <Navigate to="/" replace />;
+        }
     }
 
     return children;

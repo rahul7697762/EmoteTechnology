@@ -12,6 +12,18 @@ const api = axios.create({
     }
 });
 
+// Add token interceptor to include auth headers
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
+
 export { api };
 
 // Auth API calls
@@ -267,7 +279,6 @@ export const subModuleAPI = {
 
 // Payment API calls
 export const paymentAPI = {
-    // Get Razorpay Key: /api/payment/key
     getKey: async () => {
         const response = await api.get('/payment/key');
         return response.data;
@@ -285,6 +296,7 @@ export const paymentAPI = {
         return response.data;
     }
 };
+
 
 // Default export for backward compatibility with my recent changes
 // Progress API calls
@@ -486,6 +498,110 @@ export const reviewAPI = {
     // Check Review Status
     checkReviewStatus: async (courseId) => {
         const response = await api.get(`/reviews/check/${courseId}`);
+        return response.data;
+    }
+};
+
+// --- Job Portal APIs ---
+
+// Company Profile APIs
+export const companyAPI = {
+    createProfile: async (data) => {
+        const response = await api.post('/companies/profile', data);
+        return response.data;
+    },
+    getProfile: async () => {
+        const response = await api.get('/companies/profile');
+        return response.data;
+    },
+    updateProfile: async (data) => {
+        const response = await api.put('/companies/profile', data);
+        return response.data;
+    },
+    getCompanyJobs: async () => {
+        const response = await api.get('/companies/jobs');
+        return response.data;
+    },
+    getCompanyStats: async () => {
+        const response = await api.get('/companies/stats');
+        return response.data;
+    }
+};
+
+// Job APIs
+export const jobAPI = {
+    createJob: async (data) => {
+        const response = await api.post('/jobs', data);
+        return response.data;
+    },
+    updateJob: async (id, data) => {
+        const response = await api.put(`/jobs/${id}`, data);
+        return response.data;
+    },
+    closeJob: async (id) => {
+        const response = await api.patch(`/jobs/${id}/close`);
+        return response.data;
+    },
+    getAllJobs: async (params) => {
+        const response = await api.get('/jobs', { params });
+        return response.data;
+    },
+    getJobById: async (id) => {
+        const response = await api.get(`/jobs/${id}`);
+        return response.data;
+    },
+    getJobApplications: async (id, params) => {
+        // params could be { status, search } based on controller
+        const response = await api.get(`/jobs/${id}/applications`, { params });
+        return response.data;
+    },
+};
+
+// Application APIs
+export const applicationAPI = {
+    createApplication: async (data) => {
+        const response = await api.post('/applications', data);
+        return response.data;
+    },
+    getMyApplications: async () => {
+        const response = await api.get('/applications/my');
+        return response.data;
+    },
+    withdrawApplication: async (id) => {
+        const response = await api.delete(`/applications/${id}/withdraw`);
+        return response.data;
+    },
+    updateApplicationStatus: async (id, data) => {
+        const response = await api.patch(`/applications/${id}/status`, data); // { status, notes, rating, etc. }
+        return response.data;
+    },
+};
+
+// Resume APIs
+export const resumeAPI = {
+    uploadResume: async (data) => {
+        const config = {};
+        if (data instanceof FormData) {
+            config.headers = { 'Content-Type': 'multipart/form-data' };
+        } else {
+            const formData = new FormData();
+            formData.append('resume', data);
+            data = formData;
+            config.headers = { 'Content-Type': 'multipart/form-data' };
+        }
+        const response = await api.post('/upload/resume', data, config);
+        return response.data;
+    },
+    getMyResumes: async () => {
+        const response = await api.get('/upload/resumes');
+        return response.data;
+    },
+    getResumeById: async (id) => {
+        const response = await api.get(`/upload/resumes/${id}`);
+        return response.data;
+    },
+    deleteResume: async (id) => {
+        const response = await api.delete(`/upload/resumes/${id}`);
         return response.data;
     }
 };

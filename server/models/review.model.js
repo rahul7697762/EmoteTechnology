@@ -52,11 +52,8 @@ const reviewSchema = new mongoose.Schema({
    INDEXES
 ======================= */
 
-// One review per user per course
-reviewSchema.index(
-    { userId: 1, courseId: 1 },
-    { unique: true }
-);
+// Allowed multiple reviews per user per course
+reviewSchema.index({ userId: 1, courseId: 1 });
 
 // Course reviews listing
 reviewSchema.index({ courseId: 1, createdAt: -1 });

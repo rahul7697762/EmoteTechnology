@@ -22,20 +22,22 @@ router.get("/in-progress-courses", protect, restrictTo("STUDENT"), async (req, r
             .sort({ updatedAt: -1 }); // Recently accessed first
 
         // Format for frontend
-        const courses = enrollments.map(enrollment => {
-            const course = enrollment.courseId;
-            return {
-                _id: course._id,
-                title: course.title,
-                thumbnail: course.thumbnail,
-                progress: enrollment.progressPercentage,
-                lastAccessed: new Date(enrollment.updatedAt).toLocaleDateString(), // Simple formatting
-                status: enrollment.progressPercentage > 80 ? "High Priority" : "On Track", // Simple logic
-                color: "teal", // Default color
-                active: true,
-                actionText: "Resume Learning"
-            };
-        });
+        const courses = enrollments
+            .filter(enrollment => enrollment.courseId)
+            .map(enrollment => {
+                const course = enrollment.courseId;
+                return {
+                    _id: course._id,
+                    title: course.title,
+                    thumbnail: course.thumbnail,
+                    progress: enrollment.progressPercentage,
+                    lastAccessed: new Date(enrollment.updatedAt).toLocaleDateString(), // Simple formatting
+                    status: enrollment.progressPercentage > 80 ? "High Priority" : "On Track", // Simple logic
+                    color: "teal", // Default color
+                    active: true,
+                    actionText: "Resume Learning"
+                };
+            });
 
         res.status(200).json({
             success: true,

@@ -19,12 +19,12 @@ import progressRoutes from './routes/progress.routes.js';
 import certificateRoutes from './routes/certificate.routes.js';
 import assessmentRoutes from './routes/assessment.routes.js';
 import submissionRoutes from './routes/submission.routes.js';
+import reviewRoutes from './routes/review.routes.js';
 import discussionRoutes from './routes/discussion.routes.js';
 import companyRoutes from './routes/company.routes.js';
 import jobRoutes from './routes/job.routes.js';
 import applicationRoutes from './routes/application.routes.js';
 import uploadRoutes from './routes/upload.routes.js';
-
 
 // Load environment variables
 dotenv.config();
@@ -86,6 +86,7 @@ app.use('/api/progress', progressRoutes);
 app.use('/api/certificate', certificateRoutes);
 app.use('/api/assessment', assessmentRoutes);
 app.use('/api/submission', submissionRoutes);
+app.use('/api/reviews', reviewRoutes);
 app.use('/api/discussions', discussionRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/jobs', jobRoutes);

@@ -89,7 +89,8 @@ const CompanyLayout = ({ children }) => {
   // SOCKET.IO REAL-TIME NOTIFICATIONS
   useEffect(() => {
     if (user?._id) {
-      const socket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000', {
+      const backendUrl = (import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || '').replace(/\/api$/, '') || window.location.origin;
+      const socket = io(backendUrl, {
         withCredentials: true
       });
 

@@ -7,7 +7,9 @@ export const initSocket = (server) => {
         cors: {
             origin: [
                 'http://localhost:5173',
+                'http://localhost:3000',
                 'http://localhost:5000',
+                'https://emotetechnology.onrender.com',
                 process.env.FRONTEND_URL,
                 process.env.RENDER_EXTERNAL_URL
             ].filter(Boolean),

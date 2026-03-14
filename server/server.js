@@ -49,11 +49,16 @@ const corsOptions = {
             'http://localhost:5173',
             'http://localhost:3000',
             'http://localhost:5000',
+            'https://emotetechnology.onrender.com', // Explicitly add production URL
             process.env.FRONTEND_URL,
             process.env.RENDER_EXTERNAL_URL
         ].filter(Boolean);
 
-        if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('render.com')) {
+        const isAllowed = allowedOrigins.includes(origin) || 
+                         (origin && origin.endsWith('.onrender.com')) ||
+                         !origin; // Allow server-to-server or tools like Postman
+
+        if (isAllowed) {
             callback(null, true);
         } else {
             console.log('Blocked by CORS:', origin);

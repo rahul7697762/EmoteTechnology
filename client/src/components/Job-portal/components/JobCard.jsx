@@ -27,9 +27,10 @@ const JobCard = ({ job, onViewJob }) => {
 
   const companyName = job.company?.companyName || job.companyName || 'Unknown Company';
   const duration = job.duration || job.jobType || 'Full-time';
+  const currencySymbol = job.salaryCurrency === 'INR' ? '₹' : '$';
   const salary = job.salaryMin && job.salaryMax
-    ? `₹ ${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()}`
-    : job.salaryMin ? `₹ ${job.salaryMin.toLocaleString()}` : 'Not Disclosed';
+    ? `${currencySymbol} ${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()}`
+    : job.salaryMin ? `${currencySymbol} ${job.salaryMin.toLocaleString()}` : 'Not Disclosed';
 
   return (
     <motion.div

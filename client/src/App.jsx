@@ -37,6 +37,7 @@ import CompanyOnboardingPage from './pages/CompanyOnboardingPage';
 import CompanySettingsPage from './pages/CompanySettingsPage';
 import StudentJobDashboard from './pages/StudentJobDashboard';
 import StudentApplications from './pages/StudentApplications';
+import { NotificationProvider } from './context/NotificationContext';
 
 function App() {
   const dispatch = useDispatch();
@@ -56,8 +57,7 @@ function App() {
   }, [theme]);
 
   return (
-
-    <>
+    <NotificationProvider>
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -235,8 +235,7 @@ function App() {
         </Routes>
       </Router>
       <Toaster />
-    </>
-
+    </NotificationProvider>
   );
 }
 

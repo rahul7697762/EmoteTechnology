@@ -81,27 +81,6 @@ const StudentSidebar = () => {
                 ))}
             </nav>
 
-            {!isCollapsed && (
-                <div className="px-6 mb-2">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Personal</p>
-                </div>
-            )}
-
-            <nav className="px-4 space-y-1 flex-1">
-                <NavLink
-                    to="/settings"
-                    className={({ isActive }) =>
-                        `flex items-center ${isCollapsed ? 'justify-center px-2' : 'space-x-3 px-4'} py-3 rounded-xl transition-all duration-200 group ${isActive
-                            ? 'bg-teal-500/10 text-teal-600 dark:text-teal-400 font-bold'
-                            : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200'
-                        }`
-                    }
-                    title={isCollapsed ? 'Settings' : ''}
-                >
-                    <Settings size={20} className="group-hover:scale-110 transition-transform" />
-                    {!isCollapsed && <span>Settings</span>}
-                </NavLink>
-            </nav>
 
             <div className={`p-4 mt-auto space-y-2 ${isCollapsed ? 'items-center flex flex-col' : 'px-4 mb-4'}`}>
                 <button

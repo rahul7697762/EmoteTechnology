@@ -91,7 +91,7 @@ const ManageApplicants = () => {
 
   const updateStatus = async (applicationId, status) => {
     try {
-      await applicationAPI.updateApplicationStatus(applicationId, status);
+      await applicationAPI.updateApplicationStatus(applicationId, { status });
       // Update local state
       setApplicants(prev => prev.map(app =>
         app._id === applicationId ? { ...app, status } : app

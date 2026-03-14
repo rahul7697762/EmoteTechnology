@@ -67,7 +67,7 @@ export const applicationAPI = {
   createApplication: (data) => api.post('/applications', data),
   getMyApplications: () => api.get('/applications/my'),
   getMyResumes: () => api.get('/upload/resumes'), // Added for robustness/alias
-  updateApplicationStatus: (id, status) => api.patch(`/applications/${id}/status`, { status }),
+  updateApplicationStatus: (id, data) => api.patch(`/applications/${id}/status`, data),
 };
 
 // Resume APIs

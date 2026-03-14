@@ -179,6 +179,34 @@ export const updateApplicationStatus = async (req, res) => {
 
     await application.save();
 
+    // TRIGGER NOTIFICATION TO CANDIDATE
+    try {
+      const title = "Application Status Updated";
+      const message = `The status of your application for "${application.job.title}" has been updated to: ${req.body.status}`;
+      
+      // Save to Database
+      await Notification.create({
+        userId: application.candidate,
+        type: "APPLICATION_STATUS",
+        title,
+        message,
+        metadata: {
+           jobId: application.job._id,
+           applicationId: application._id
+        }
+      });
+
+      // Emit Real-time
+      emitNotification(application.candidate, "APPLICATION_STATUS", {
+        title,
+        message,
+        jobId: application.job._id,
+        status: req.body.status
+      });
+    } catch (notifError) {
+      console.error('Error sending application status notification:', notifError);
+    }
+
     res.json({
       message: 'Application status updated',
       application

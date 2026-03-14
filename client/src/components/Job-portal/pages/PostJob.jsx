@@ -96,7 +96,7 @@ const PostJob = ({ editMode, jobId }) => {
         experienceLevel: job.experienceLevel || 'Mid-level',
         category: job.category || '',
         tags: job.tags || [],
-        deadline: job.deadline || '',
+        deadline: job.deadline ? job.deadline.substring(0, 10) : '',
         applicationInstructions: job.applicationInstructions || '',
         hiringProcess: job.hiringProcess || '',
         featured: job.featured || false,
@@ -118,11 +118,10 @@ const PostJob = ({ editMode, jobId }) => {
       navigate('/login');
       return;
     }
-
+ 
+    fetchCompanyProfile();
     if (editMode && jobId) {
       fetchJobDetails();
-    } else {
-      fetchCompanyProfile();
     }
   }, [editMode, jobId, fetchCompanyProfile, fetchJobDetails, isEmployer, navigate]);
 
@@ -176,6 +175,13 @@ const PostJob = ({ editMode, jobId }) => {
     if (!companyProfile) {
       setError('Please complete your company profile first');
       showToast.error('Complete company profile required');
+      return;
+    }
+ 
+    if (!companyProfile.completed) {
+      setError('Your company profile is incomplete. Please add all required information (Logo, Description, Industry, etc.)');
+      showToast.error('Incomplete company profile');
+      navigate('/company/onboarding');
       return;
     }
 

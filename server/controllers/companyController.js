@@ -2,6 +2,25 @@ import Company from '../models/Company.js';
 import Job from '../models/Job.js';
 import Application from '../models/Application.js';
 import { uploadFileToBunny } from '../services/bunny.service.js';
+ 
+const checkProfileCompletion = (company) => {
+  const requiredFields = [
+    'companyName',
+    'industry',
+    'location',
+    'description',
+    'contactEmail'
+  ];
+ 
+  const hasRequiredFields = requiredFields.every(field => {
+    const value = company[field];
+    return value && value.toString().trim() !== '';
+  });
+ 
+  const hasLogo = !!(company.logo && company.logo.url);
+ 
+  return hasRequiredFields && hasLogo;
+};
 
 export const getProfile = async (req, res) => {
   try {
@@ -17,7 +36,10 @@ export const getProfile = async (req, res) => {
     console.log(`[Company] getProfile for user ${req.userId}: found company ${company._id}`);
     console.log(`[Company] Logo URL in DB: ${company.logo?.url || 'NONE'}`);
     
-    res.json(company);
+    const companyObj = company.toObject();
+    companyObj.completed = checkProfileCompletion(company);
+    
+    res.json(companyObj);
   } catch (error) {
     res.status(500).json({
       message: 'Server error',
@@ -195,10 +217,12 @@ export const createOrUpdateProfile = async (req, res) => {
     }
 
     await company.save();
+    const companyObj = company.toObject();
+    companyObj.completed = checkProfileCompletion(company);
 
     res.status(company.isNew ? 201 : 200).json({
       message: company.isNew ? 'Company profile created' : 'Company profile updated',
-      company
+      company: companyObj
     });
   } catch (error) {
     res.status(500).json({

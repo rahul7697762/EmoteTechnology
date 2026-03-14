@@ -286,6 +286,21 @@ const MyApplications = () => {
                   className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow"
                 >
                   <div className="flex flex-col lg:flex-row lg:items-start gap-6">
+                    {/* Company Logo */}
+                    <div className="flex-shrink-0">
+                      <div className="w-16 h-16 rounded-xl bg-gray-100 dark:bg-gray-700 overflow-hidden border border-gray-100 dark:border-gray-800 flex items-center justify-center">
+                        {application.job.company?.logo?.url || application.job.company?.logo ? (
+                          <img
+                            src={application.job.company.logo.url || application.job.company.logo}
+                            alt={application.job.company?.companyName}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <Building2 className="w-8 h-8 text-gray-400" />
+                        )}
+                      </div>
+                    </div>
+
                     {/* Job Info */}
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-4">
@@ -294,9 +309,9 @@ const MyApplications = () => {
                             {application.job.title}
                           </h3>
                           <div className="flex flex-wrap gap-4 text-gray-600 dark:text-gray-400 mb-3">
-                            <span className="flex items-center gap-2">
+                            <span className="flex items-center gap-2 font-semibold text-teal-600 dark:text-teal-400">
                               <Building2 className="w-4 h-4" />
-                              {application.job.company?.name}
+                              {application.job.company?.companyName}
                             </span>
                             <span className="flex items-center gap-2">
                               <MapPin className="w-4 h-4" />

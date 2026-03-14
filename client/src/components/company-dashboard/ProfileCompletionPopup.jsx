@@ -55,8 +55,8 @@ const ProfileCompletionPopup = () => {
     const percentage = Math.round((score / totalPoints) * 100);
     setCompletion(Math.min(percentage, 100));
 
-    // Always show if not 100% complete, as requested by the user
-    if (percentage < 100) {
+    // Always show if not 100% complete OR not marked as completed by backend
+    if (percentage < 100 && !profile.completed) {
       setIsVisible(true);
     } else {
       setIsVisible(false);

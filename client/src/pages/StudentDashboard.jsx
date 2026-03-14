@@ -1,4 +1,3 @@
-// Add useState, useRef, useEffect to imports
 import React, { useState, useRef, useEffect } from 'react';
 import StudentSidebar from '../components/student-dashboard/StudentSidebar';
 import WelcomeBanner from '../components/student-dashboard/WelcomeBanner';
@@ -7,11 +6,11 @@ import RecommendedCourses from '../components/student-dashboard/RecommendedCours
 import UpcomingQuizzes from '../components/student-dashboard/UpcomingQuizzes';
 import RecentCertificates from '../components/student-dashboard/RecentCertificates';
 import WeeklyStreak from '../components/student-dashboard/WeeklyStreak';
-import { Search, Bell, Settings, LogOut, User } from 'lucide-react'; // Added icons for reuse
+import { Search, Settings, LogOut, User } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../redux/slices/authSlice';
 import { Link } from 'react-router-dom';
-
+import NotificationBell from '../components/common/NotificationBell';
 
 import api from '../utils/api'; // Import centralized api
 
@@ -84,10 +83,7 @@ const StudentDashboard = () => {
 
                     {/* Right Side: Notification & Profile */}
                     <div className="flex items-center gap-6 w-full md:w-auto justify-end">
-                        <button className="relative text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
-                            <Bell size={24} />
-                            <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-[#0a0a0f]"></span>
-                        </button>
+                        <NotificationBell />
 
                         <div className="relative" ref={profileRef}>
                             <button

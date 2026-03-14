@@ -71,7 +71,18 @@ export const getAllJobs = async (req, res) => {
       sort = 'newest'
     } = req.query;
 
-    const query = { status: 'ACTIVE', visibility: 'PUBLIC' };
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const query = { 
+      status: 'ACTIVE', 
+      visibility: 'PUBLIC',
+      $or: [
+        { deadline: { $exists: false } },
+        { deadline: null },
+        { deadline: { $gte: today } }
+      ]
+    };
 
     // Build search query
     if (search) {
@@ -117,16 +128,8 @@ export const getAllJobs = async (req, res) => {
       Job.countDocuments(query)
     ]);
 
-    // Check if job is still active (not past deadline)
-    const activeJobs = jobs.filter(job => {
-      if (job.deadline && new Date(job.deadline) < new Date()) {
-        return false;
-      }
-      return true;
-    });
-
     res.json({
-      jobs: activeJobs,
+      jobs,
       total,
       totalPages: Math.ceil(total / limit),
       currentPage: parseInt(page)
@@ -208,6 +211,12 @@ export const updateJob = async (req, res) => {
     }
 
     Object.assign(job, req.body);
+
+    // Automatically reactivate job if it was closed or filled
+    if (job.status === 'CLOSED' || job.status === 'FILLED') {
+      job.status = 'ACTIVE';
+    }
+
     await job.save();
 
     res.json({

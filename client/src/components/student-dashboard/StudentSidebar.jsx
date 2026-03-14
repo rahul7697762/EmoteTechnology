@@ -103,7 +103,7 @@ const StudentSidebar = () => {
                 </NavLink>
             </nav>
 
-            <div className={`p-4 space-y-2 ${isCollapsed ? 'items-center flex flex-col' : 'absolute bottom-8 left-0 right-0 px-4'}`}>
+            <div className={`p-4 mt-auto space-y-2 ${isCollapsed ? 'items-center flex flex-col' : 'px-4 mb-4'}`}>
                 <button
                     onClick={() => dispatch(toggleTheme())}
                     className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3 w-full text-left'} text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200 rounded-xl transition-colors`}

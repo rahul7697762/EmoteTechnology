@@ -68,7 +68,7 @@ const JobDetailPage = ({ jobId: propJobId, onApply, onBack }) => {
     if (navigator.share) {
       navigator.share({
         title: job.title,
-        text: `Check out this job: ${job.title} at ${job.company?.name}`,
+        text: `Check out this job: ${job.title} at ${job.company?.companyName}`,
         url: window.location.href,
       });
     } else {
@@ -158,14 +158,14 @@ const JobDetailPage = ({ jobId: propJobId, onApply, onBack }) => {
                 <div className="flex-1">
                   <div className="flex items-start gap-4">
                     <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                      {job.company?.logo ? (
+                      {job.company?.logo?.url ? (
                         <img
-                          src={job.company.logo}
-                          alt={job.company.name}
+                          src={job.company.logo.url}
+                          alt={job.company.companyName}
                           className="w-full h-full object-cover rounded-xl"
                         />
                       ) : (
-                        job.company?.name?.substring(0, 2).toUpperCase() || 'CO'
+                        job.company?.companyName?.substring(0, 2).toUpperCase() || 'CO'
                       )}
                     </div>
                     <div className="flex-1">
@@ -175,7 +175,7 @@ const JobDetailPage = ({ jobId: propJobId, onApply, onBack }) => {
                       <div className="flex flex-wrap gap-4 text-gray-600 dark:text-gray-400 mb-4">
                         <span className="flex items-center gap-2">
                           <Building2 className="w-4 h-4" />
-                          {job.company?.name}
+                          {job.company?.companyName}
                         </span>
                         <span className="flex items-center gap-2">
                           <MapPin className="w-4 h-4" />
@@ -379,11 +379,11 @@ const JobDetailPage = ({ jobId: propJobId, onApply, onBack }) => {
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center text-white font-bold">
-                      {job.company.name?.substring(0, 2).toUpperCase()}
+                      {job.company.companyName?.substring(0, 2).toUpperCase()}
                     </div>
                     <div>
                       <h4 className="font-bold text-gray-900 dark:text-white">
-                        {job.company.name}
+                        {job.company.companyName}
                       </h4>
                       {job.company.industry && (
                         <p className="text-sm text-gray-600 dark:text-gray-400">

@@ -25,7 +25,7 @@ const JobCard = ({ job, onViewJob }) => {
     return date.toLocaleDateString();
   };
 
-  const companyName = job.company?.name || job.companyName || 'Unknown Company';
+  const companyName = job.company?.companyName || job.companyName || 'Unknown Company';
   const duration = job.duration || job.jobType || 'Full-time';
   const salary = job.salaryMin && job.salaryMax
     ? `₹ ${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()}`
@@ -61,9 +61,9 @@ const JobCard = ({ job, onViewJob }) => {
           </div>
         </div>
         <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 p-1 border border-gray-100 dark:border-gray-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
-          {job.company?.logo ? (
+          {job.company?.logo?.url ? (
             <img
-              src={job.company.logo}
+              src={job.company.logo.url}
               alt={companyName}
               className="w-full h-full object-contain rounded-lg"
             />

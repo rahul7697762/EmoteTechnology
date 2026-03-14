@@ -38,7 +38,9 @@ const notificationSchema = new mongoose.Schema({
         courseId: mongoose.Schema.Types.ObjectId,
         moduleId: mongoose.Schema.Types.ObjectId,
         subModuleId: mongoose.Schema.Types.ObjectId,
-        threadId: mongoose.Schema.Types.ObjectId
+        threadId: mongoose.Schema.Types.ObjectId,
+        jobId: mongoose.Schema.Types.ObjectId,
+        applicationId: mongoose.Schema.Types.ObjectId
     },
 
     isRead: {

@@ -60,7 +60,7 @@ applicationSchema.index({ job: 1, status: 1, createdAt: -1 });
 applicationSchema.index({ status: 1, createdAt: -1 });
 
 // Pre-save to check for existing application
-applicationSchema.pre('save', async function (next) {
+applicationSchema.pre('save', async function () {
   const existing = await this.constructor.findOne({
     job: this.job,
     candidate: this.candidate
@@ -69,9 +69,8 @@ applicationSchema.pre('save', async function (next) {
   if (existing && existing._id.toString() !== this._id.toString()) {
     const error = new Error('You have already applied to this job');
     error.status = 409;
-    return next(error);
+    throw error;
   }
-  next();
 });
 
 const Application = mongoose.model('Application', applicationSchema);

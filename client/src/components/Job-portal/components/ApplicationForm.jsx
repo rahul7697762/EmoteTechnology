@@ -45,7 +45,7 @@ const ApplicationForm = ({ jobId, jobTitle, companyName, onSuccess, onCancel }) 
       const jobData = response.data;
       setJob(jobData);
       if (!jobTitle) setDisplayJobTitle(jobData.title);
-      if (!companyName) setDisplayCompanyName(jobData.company?.name || jobData.companyName);
+      if (!companyName) setDisplayCompanyName(jobData.company?.companyName || jobData.companyName);
 
       // Initialize answers array if job has questions and showQuestions is true
       if (jobData.showQuestions && jobData.applicationQuestions?.length > 0) {
@@ -205,7 +205,7 @@ const ApplicationForm = ({ jobId, jobTitle, companyName, onSuccess, onCancel }) 
         {job?.showQuestions && formData.answers.length > 0 && (
           <section className="space-y-8">
             {formData.answers.map((item, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm">
+              <div key={`answer-${index}`} className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm">
                 <label className="block text-sm font-bold text-gray-900 dark:text-white mb-3">
                   {item.question}
                 </label>

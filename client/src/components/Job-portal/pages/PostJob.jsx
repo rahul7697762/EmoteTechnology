@@ -509,9 +509,9 @@ const PostJob = ({ editMode, jobId }) => {
               </div>
 
               <div className="space-y-6">
-                <div className="grid md:grid-cols-3 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Minimum Salary
                     </label>
                     <div className="flex">
@@ -519,7 +519,7 @@ const PostJob = ({ editMode, jobId }) => {
                         name="salaryCurrency"
                         value={formData.salaryCurrency}
                         onChange={handleChange}
-                        className="px-3 py-2 rounded-l-lg border border-r-0 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                        className="w-20 md:w-24 px-2 py-2 rounded-l-lg border border-r-0 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-teal-500 outline-none"
                       >
                         {currencies.map(currency => (
                           <option key={currency} value={currency}>{currency}</option>
@@ -530,14 +530,14 @@ const PostJob = ({ editMode, jobId }) => {
                         name="salaryMin"
                         value={formData.salaryMin}
                         onChange={handleChange}
-                        className="flex-1 px-4 py-2 rounded-r-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                        placeholder="e.g., 80000"
+                        className="flex-1 min-w-0 px-4 py-2 rounded-r-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none"
+                        placeholder="e.g. 8000"
                       />
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Maximum Salary
                     </label>
                     <input
@@ -545,23 +545,24 @@ const PostJob = ({ editMode, jobId }) => {
                       name="salaryMax"
                       value={formData.salaryMax}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                      placeholder="e.g., 150000"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none"
+                      placeholder="e.g. 150000"
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <div className="sm:col-span-2 lg:col-span-1 space-y-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Application Deadline
                     </label>
                     <div className="relative">
-                      <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
                       <input
                         type="date"
                         name="deadline"
                         value={formData.deadline}
                         onChange={handleChange}
-                        className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                        min={new Date().toLocaleDateString('en-CA')}
+                        className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none"
                       />
                     </div>
                   </div>

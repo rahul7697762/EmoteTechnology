@@ -361,20 +361,20 @@ const CompanyProfile = () => {
             </h3>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="relative">
-                <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input type="url" value={formData.socialLinks.linkedin} onChange={(e) => handleSocialChange('linkedin', e.target.value)} className="input-field pl-10" placeholder="LinkedIn URL" />
+                <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
+                <input type="url" value={formData.socialLinks.linkedin} onChange={(e) => handleSocialChange('linkedin', e.target.value)} className="input-field !pl-11" placeholder="LinkedIn URL" />
               </div>
               <div className="relative">
-                <Twitter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input type="url" value={formData.socialLinks.twitter} onChange={(e) => handleSocialChange('twitter', e.target.value)} className="input-field pl-10" placeholder="Twitter URL" />
+                <Twitter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
+                <input type="url" value={formData.socialLinks.twitter} onChange={(e) => handleSocialChange('twitter', e.target.value)} className="input-field !pl-11" placeholder="Twitter URL" />
               </div>
               <div className="relative">
-                <Facebook className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input type="url" value={formData.socialLinks.facebook} onChange={(e) => handleSocialChange('facebook', e.target.value)} className="input-field pl-10" placeholder="Facebook URL" />
+                <Facebook className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
+                <input type="url" value={formData.socialLinks.facebook} onChange={(e) => handleSocialChange('facebook', e.target.value)} className="input-field !pl-11" placeholder="Facebook URL" />
               </div>
               <div className="relative">
-                <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input type="url" value={formData.socialLinks.instagram} onChange={(e) => handleSocialChange('instagram', e.target.value)} className="input-field pl-10" placeholder="Instagram URL" />
+                <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
+                <input type="url" value={formData.socialLinks.instagram} onChange={(e) => handleSocialChange('instagram', e.target.value)} className="input-field !pl-11" placeholder="Instagram URL" />
               </div>
             </div>
           </section>

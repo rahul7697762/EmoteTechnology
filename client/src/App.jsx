@@ -286,7 +286,6 @@ function App() {
         </Routes>
         <Toaster />
       </Router>
-      <Toaster />
     </NotificationProvider>
   );
 }

@@ -27,7 +27,16 @@ export const createReview = async (req, res) => {
             });
         }
 
-        // 2. Check removed: Students can write multiple reviews.        // 3. Create Review
+        // 2. Check if user already reviewed this course
+        const existingReview = await Review.findOne({ userId, courseId });
+        if (existingReview) {
+            return res.status(400).json({
+                success: false,
+                message: "You have already reviewed this course."
+            });
+        }
+
+        // 3. Create Review
         const review = await Review.create({
             userId,
             courseId,

@@ -1,8 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createReview } from '../../redux/slices/courseSlice';
+import { createReview, clearError } from '../../redux/slices/courseSlice';
 import { Star, X } from 'lucide-react';
+import { showToast } from '../../components/Job-portal/services/toast';
 
 const RatingReview = ({ courseId, isOpen, onClose }) => {
     const dispatch = useDispatch();
@@ -12,6 +13,12 @@ const RatingReview = ({ courseId, isOpen, onClose }) => {
     const [hoverRating, setHoverRating] = useState(0);
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
+
+    useEffect(() => {
+        if (isOpen) {
+            dispatch(clearError());
+        }
+    }, [isOpen, dispatch]);
 
     if (!isOpen) return null;
 
@@ -27,7 +34,10 @@ const RatingReview = ({ courseId, isOpen, onClose }) => {
         }));
 
         if (createReview.fulfilled.match(result)) {
+            showToast.success("Review submitted successfully!");
             onClose();
+        } else {
+            showToast.error(result.payload || "Failed to submit review");
         }
     };
 
@@ -112,12 +122,6 @@ const RatingReview = ({ courseId, isOpen, onClose }) => {
                             />
                         </div>
                     </div>
-
-                    {error && (
-                        <div className="p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm rounded-lg">
-                            {typeof error === 'string' ? error : 'Failed to submit review'}
-                        </div>
-                    )}
 
                     {/* Footer */}
                     <div className="pt-2">

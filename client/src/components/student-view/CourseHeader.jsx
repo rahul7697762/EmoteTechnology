@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, MessageSquare, Moon, Sun, ThumbsUp, ThumbsDown, MessageCircle, ChevronRight } from 'lucide-react';
+import { Menu, MessageSquare, Moon, Sun, ThumbsUp, ThumbsDown, MessageCircle, ChevronRight, Star } from 'lucide-react';
 
 const CourseHeader = ({
     course,
@@ -13,7 +13,9 @@ const CourseHeader = ({
     isDiscussionOpen,
     setIsDiscussionOpen,
     onExit,
-    isPreview = false
+    isPreview = false,
+    hasReviewed,
+    onOpenReview
 }) => {
     const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -84,6 +86,17 @@ const CourseHeader = ({
 
                 {/* RIGHT: Controls & Actions */}
                 <div className="flex items-center gap-2 md:gap-3 shrink-0">
+
+                    {/* Leave Review Button */}
+                    {!isPreview && onOpenReview && (
+                        <button
+                            onClick={onOpenReview}
+                            className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all shadow-sm border bg-white text-slate-600 border-slate-200 hover:border-violet-300 hover:text-violet-600 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:border-violet-500 dark:hover:text-violet-400"
+                        >
+                            <Star size={16} />
+                            <span>Review</span>
+                        </button>
+                    )}
 
                     {/* Ask AI Button - Primary Action */}
                     <button

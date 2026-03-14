@@ -1,8 +1,10 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from 'express';
 import { createServer } from 'http';
 import { initSocket } from './services/socket.service.js';
 import notificationRoutes from './routes/notification.routes.js';
-import 'dotenv/config';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -20,6 +22,10 @@ import enrollmentRoutes from './routes/enrollment.routes.js';
 import paymentRoutes from './routes/payment.routes.js';
 import progressRoutes from './routes/progress.routes.js';
 import certificateRoutes from './routes/certificate.routes.js';
+import assessmentRoutes from './routes/assessment.routes.js';
+import submissionRoutes from './routes/submission.routes.js';
+import reviewRoutes from './routes/review.routes.js';
+import discussionRoutes from './routes/discussion.routes.js';
 import companyRoutes from './routes/company.routes.js';
 import jobRoutes from './routes/job.routes.js';
 import applicationRoutes from './routes/application.routes.js';
@@ -37,15 +43,15 @@ const port = process.env.PORT || 5000;
 // CORS configuration
 const corsOptions = {
     origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
 
         const allowedOrigins = [
             'http://localhost:5173',
+            'http://localhost:3000',
             'http://localhost:5000',
             process.env.FRONTEND_URL,
             process.env.RENDER_EXTERNAL_URL
-        ].filter(Boolean); // Remove undefined/null values
+        ].filter(Boolean);
 
         if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('render.com')) {
             callback(null, true);
@@ -60,7 +66,7 @@ const corsOptions = {
 };
 
 // rate limit middleware
-app.use(globalRateLimiter)
+app.use(globalRateLimiter);
 
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
@@ -82,19 +88,21 @@ app.use('/api/enrollment', enrollmentRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/certificate', certificateRoutes);
-// Serve static files
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/api/assessments', assessmentRoutes);
+app.use('/api/submissions', submissionRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/discussions', discussionRoutes);
 
-// API Routes
 app.use('/api/companies', companyRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/notifications', notificationRoutes);
 
-
-
+// Static Files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
 // Health check route
 app.get('/api/health', (req, res) => {
     res.json({
@@ -104,15 +112,8 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-app.get('/api/data', (req, res) => {
-    res.json({ message: 'Here is some data from the backend', localTime: new Date().toISOString() });
-});
-
-// Debug endpoint to test login request body
+// Debug endpoint
 app.post('/api/test-login', (req, res) => {
-    console.log('=== TEST LOGIN ENDPOINT ===');
-    console.log('Request body:', req.body);
-    console.log('Request headers:', req.headers['content-type']);
     res.json({
         success: true,
         receivedBody: req.body,
@@ -121,10 +122,7 @@ app.post('/api/test-login', (req, res) => {
     });
 });
 
-// Serve static files from the React client
-app.use(express.static(path.join(__dirname, '../client/dist')));
-
-// Handle React routing, return all requests to React app
+// Handle React routing
 app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
 });

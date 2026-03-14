@@ -142,7 +142,7 @@ const DiscussionSidebar = ({ courseId, onClose, width, isMobile, isEmbedded = fa
                 <div className="space-y-4">
                     {threads.map(thread => (
                         <div key={thread._id} className="group relative bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 hover:border-violet-300 dark:hover:border-violet-700 hover:shadow-md transition-all cursor-pointer"
-                            onClick={() => dispatch(setDiscussionMaximized(true))} // For now, clicking expands full view as per request
+                            onClick={() => dispatch(setDiscussionMaximized(true))} /* For now, clicking expands full view as per request */
                         >
                             <div className="flex items-start justify-between mb-2">
                                 <div className="flex items-center gap-2">

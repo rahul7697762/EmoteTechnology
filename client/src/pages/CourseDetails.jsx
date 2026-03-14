@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCourseDetails, enrollInCourse } from '../redux/slices/courseSlice';
+import { getCourseDetails, enrollInCourse, getCourseReviews } from '../redux/slices/courseSlice';
 import { createOrder, verifyPayment, getKey } from '../redux/slices/paymentSlice';
 import Navbar from '../components/landing/Navbar';
 import Footer from '../components/landing/Footer';
@@ -16,7 +16,7 @@ const CourseDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { currentCourse: course, isFetchingDetails: loading, error } = useSelector((state) => state.course);
+    const { currentCourse: course, isFetchingDetails: loading, error, reviews } = useSelector((state) => state.course);
     const { user } = useSelector((state) => state.auth);
 
     useEffect(() => {
@@ -24,6 +24,12 @@ const CourseDetails = () => {
             dispatch(getCourseDetails(id));
         }
     }, [dispatch, id]);
+
+    useEffect(() => {
+        if (course?._id) {
+            dispatch(getCourseReviews({ courseId: course._id }));
+        }
+    }, [dispatch, course?._id]);
 
 
 
@@ -328,6 +334,55 @@ const CourseDetails = () => {
                                     </div>
                                 ))}
                             </div>
+                        </div>
+
+                        {/* Reviews Section */}
+                        <div className="space-y-6">
+                            <h2 className="text-2xl font-bold">Student Reviews</h2>
+                            {reviews && reviews.length > 0 ? (
+                                <div className="grid gap-6">
+                                    {reviews.map((review) => (
+                                        <div key={review._id} className="bg-white dark:bg-[#1a1c23] p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 dark:text-violet-400 font-bold">
+                                                        {review.userId?.name?.charAt(0) || 'U'}
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-bold text-sm text-gray-900 dark:text-white">
+                                                            {review.userId?.name || 'Unknown User'}
+                                                        </h4>
+                                                        <div className="flex items-center gap-1">
+                                                            {[...Array(5)].map((_, i) => (
+                                                                <Star
+                                                                    key={i}
+                                                                    size={14}
+                                                                    className={`${i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300 dark:text-gray-600'}`}
+                                                                />
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <span className="text-xs text-gray-500">
+                                                    {new Date(review.createdAt).toLocaleDateString()}
+                                                </span>
+                                            </div>
+                                            {review.title && (
+                                                <h5 className="font-bold text-gray-900 dark:text-white mb-2">
+                                                    {review.title}
+                                                </h5>
+                                            )}
+                                            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                                                {review.comment}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-10 bg-gray-50 dark:bg-gray-800/30 rounded-3xl border border-dashed border-gray-200 dark:border-gray-700">
+                                    <p className="text-gray-500 dark:text-gray-400">No reviews yet. Be the first to review this course!</p>
+                                </div>
+                            )}
                         </div>
                     </div>
 

@@ -10,11 +10,10 @@ export const uploadFileToBunny = async (directoryPath, fileBuffer, fileName) => 
     const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
 
     if (!STORAGE_ZONE_NAME || !ACCESS_KEY) {
-        f
         throw new Error('BunnyCDN configuration missing (STORAGE_ZONE_NAME or ACCESS_KEY)');
     }
 
-    const url = `https://sg.storage.bunnycdn.com/${STORAGE_ZONE_NAME}/${directoryPath}/${sanitizedFileName}`;
+    const url = `https://storage.bunnycdn.com/${STORAGE_ZONE_NAME}/${directoryPath}/${sanitizedFileName}`;
 
     try {
         const res = await axios.put(url, fileBuffer, {
@@ -47,7 +46,7 @@ export const deleteFileFromBunny = async (fileUrl) => {
         throw new Error('BunnyCDN configuration missing (STORAGE_ZONE_NAME or ACCESS_KEY)');
     }
 
-    const url = `https://sg.storage.bunnycdn.com/${STORAGE_ZONE_NAME}/${fileUrl}`;
+    const url = `https://storage.bunnycdn.com/${STORAGE_ZONE_NAME}/${fileUrl}`;
 
     try {
         await axios.delete(url, {
@@ -90,7 +89,7 @@ export const deleteJobFileFromBunny = async (filePath) => {
     const STORAGE_ZONE = process.env.BUNNY_STORAGE_ZONE;
     const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
 
-    const deleteUrl = `https://sg.storage.bunnycdn.com/${STORAGE_ZONE}/${filePath}`;
+    const deleteUrl = `https://storage.bunnycdn.com/${STORAGE_ZONE}/${filePath}`;
 
     await axios.delete(deleteUrl, {
         headers: {

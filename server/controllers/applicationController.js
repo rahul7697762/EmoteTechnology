@@ -2,6 +2,8 @@ import Application from '../models/Application.js';
 import Job from '../models/Job.js';
 import Resume from '../models/Resume.js';
 import Company from '../models/Company.js';
+import { Notification } from '../models/notification.model.js';
+import { emitNotification } from '../services/socket.service.js';
 
 export const createApplication = async (req, res) => {
   try {
@@ -67,6 +69,37 @@ export const createApplication = async (req, res) => {
       job.metadata.lastApplicationAt = new Date();
     }
     await job.save();
+
+    // TRIGGER NOTIFICATION
+    try {
+      // Find company owner (user)
+      const company = await Company.findById(job.company);
+      if (company && company.user) {
+        const title = "New Application Received";
+        const message = `A new candidate has applied for your job: ${job.title}`;
+        
+        // Save to Database
+        await Notification.create({
+          userId: company.user,
+          type: "NEW_APPLICATION",
+          title,
+          message,
+          metadata: {
+             jobId: job._id,
+             applicationId: application._id
+          }
+        });
+
+        // Emit Real-time
+        emitNotification(company.user, "NEW_APPLICATION", {
+          title,
+          message,
+          jobId: job._id
+        });
+      }
+    } catch (notifError) {
+      console.error('Error sending notification:', notifError);
+    }
 
     res.status(201).json({
       message: 'Application submitted successfully',

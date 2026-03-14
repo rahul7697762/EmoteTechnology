@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Briefcase, Users, Eye, Clock, CheckCircle, Plus,
-  MoreVertical, Edit, Trash2, BarChart3, ExternalLink
+  MoreVertical, Edit, Trash2, BarChart3, ExternalLink, XCircle
 } from 'lucide-react';
 import { jobAPI } from '../services/api';
 import { useSelector } from 'react-redux';
@@ -272,7 +272,7 @@ const JobDashboard = () => {
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${job.status === 'ACTIVE'
                         ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                        : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
+                        : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
                         }`}>
                         {job.status === 'ACTIVE' ? (
                           <>
@@ -280,7 +280,10 @@ const JobDashboard = () => {
                             Active
                           </>
                         ) : (
-                          'Closed'
+                          <>
+                            <XCircle className="w-4 h-4 mr-1" />
+                            Closed
+                          </>
                         )}
                       </span>
                     </td>

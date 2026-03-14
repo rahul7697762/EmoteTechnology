@@ -21,7 +21,7 @@ const CompanySidebar = () => {
   return (
     <aside className={`${isCollapsed ? 'w-20' : 'w-64'} bg-white dark:bg-[#1a1c23] border-r border-gray-200 dark:border-gray-800 h-screen fixed left-0 top-0 overflow-y-auto z-20 hidden md:flex flex-col transition-all duration-300`}>
       {/* Header */}
-      <div className={`p-6 flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
+      <div className={`p-6 flex-shrink-0 flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
         {isCollapsed ? (
           <div className="flex flex-col gap-4 items-center">
             <button onClick={() => dispatch(toggleSidebar())} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
@@ -53,12 +53,12 @@ const CompanySidebar = () => {
       </div>
 
       {!isCollapsed && (
-        <div className="px-6 mb-2">
+        <div className="px-6 mb-2 flex-shrink-0">
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Menu</p>
         </div>
       )}
 
-      <nav className={`px-4 space-y-1 mb-8 ${isCollapsed ? 'mt-4' : ''}`}>
+      <nav className={`px-4 space-y-1 mb-6 flex-shrink-0 ${isCollapsed ? 'mt-4' : ''}`}>
         {navItems.map((item) => (
           <NavLink
             key={item.path}
@@ -78,12 +78,12 @@ const CompanySidebar = () => {
       </nav>
 
       {!isCollapsed && (
-        <div className="px-6 mb-2">
+        <div className="px-6 mb-2 flex-shrink-0">
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Personal</p>
         </div>
       )}
 
-      <nav className="px-4 space-y-1 flex-1">
+      <nav className="px-4 space-y-1 flex-shrink-0 mb-8">
         <NavLink
           to="/company/settings"
           className={({ isActive }) =>
@@ -99,7 +99,7 @@ const CompanySidebar = () => {
         </NavLink>
       </nav>
 
-      <div className={`p-4 space-y-2 ${isCollapsed ? 'items-center flex flex-col' : 'absolute bottom-8 left-0 right-0 px-4'}`}>
+      <div className={`mt-auto p-4 space-y-2 flex-shrink-0 border-t border-gray-100 dark:border-gray-800/50 ${isCollapsed ? 'items-center flex flex-col' : 'px-4 mb-4'}`}>
         <button
           onClick={() => dispatch(toggleTheme())}
           className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3 w-full text-left'} text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200 rounded-xl transition-colors`}

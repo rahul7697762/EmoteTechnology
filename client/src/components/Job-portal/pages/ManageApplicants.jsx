@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Users, FileText, Download, Eye, CheckCircle, XCircle, Clock,
-  ChevronLeft, ChevronRight, Search, Filter
+  ChevronLeft, ChevronRight, Search, Filter, Briefcase
 } from 'lucide-react';
 import { jobAPI, applicationAPI } from '../services/api';
 import { useSelector } from 'react-redux';
@@ -109,18 +109,35 @@ const ManageApplicants = () => {
     { value: 'REJECTED', label: 'Rejected', icon: XCircle, color: 'red' },
   ];
 
+  const handleRemoveJob = (e, jobId) => {
+    e.stopPropagation(); // Prevent selecting the job
+    setJobs(prev => prev.filter(j => j._id !== jobId));
+    if (selectedJob?._id === jobId) {
+      setSelectedJob(null);
+      setApplicants([]);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-[#0a0a0f] dark:to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 dark:from-[#0a0a0f] dark:to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <Users className="w-8 h-8 text-teal-500" />
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Applicant Management
-            </h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Users className="w-8 h-8 text-teal-500" />
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Applicant Management
+              </h1>
+            </div>
+            <div className="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                <span>Live Notifications Active</span>
+              </div>
+            </div>
           </div>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
             Review and manage applications for your job postings
           </p>
         </div>
@@ -136,21 +153,41 @@ const ManageApplicants = () => {
           </div>
         ) : (
           <>
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Select Job
-              </label>
-              <div className="flex flex-wrap gap-2">
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  Select Active Listing
+                </label>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {jobs.length} total listings
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-3">
                 {jobs.map((job) => (
                   <button
                     key={job._id}
                     onClick={() => setSelectedJob(job)}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all ${selectedJob?._id === job._id
-                      ? 'bg-teal-500 text-white'
-                      : 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    className={`group relative flex items-center gap-2 pl-4 pr-10 py-2.5 rounded-xl font-medium transition-all duration-200 border shadow-sm hover:shadow-md ${selectedJob?._id === job._id
+                      ? 'bg-teal-500 border-teal-500 text-white translate-y-[-2px]'
+                      : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-teal-300 dark:hover:border-teal-500/50 hover:bg-teal-50/50 dark:hover:bg-teal-900/10'
                       }`}
                   >
-                    {job.title}
+                    <div className={`p-1 rounded-lg ${selectedJob?._id === job._id ? 'bg-white/20' : job.status === 'ACTIVE' ? 'bg-teal-100 dark:bg-teal-900/30' : 'bg-gray-100 dark:bg-gray-700'}`}>
+                      <Briefcase className={`w-4 h-4 ${selectedJob?._id === job._id ? 'text-white' : job.status === 'ACTIVE' ? 'text-teal-600 dark:text-teal-400' : 'text-gray-500'}`} />
+                    </div>
+                    <span className="mr-1">{job.title}</span>
+
+                    {/* Dismiss Icon */}
+                    <div
+                      onClick={(e) => handleRemoveJob(e, job._id)}
+                      className={`absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md transition-colors ${selectedJob?._id === job._id
+                        ? 'hover:bg-white/20 text-white/70 hover:text-white'
+                        : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-red-500'
+                        }`}
+                      title="Remove from view"
+                    >
+                      <XCircle size={16} />
+                    </div>
                   </button>
                 ))}
               </div>

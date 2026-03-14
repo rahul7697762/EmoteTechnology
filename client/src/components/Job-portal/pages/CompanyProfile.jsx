@@ -71,8 +71,8 @@ const CompanyProfile = () => {
         setFormData(prev => ({
           ...prev,
           ...data,
-          logoPreview: data.logoUrl || '',
-          coverPreview: data.coverUrl || '',
+          logoPreview: data.logo?.url || '',
+          coverPreview: data.coverImage?.url || '',
           socialLinks: data.socialLinks || prev.socialLinks,
           benefits: data.benefits || [],
           techStack: data.techStack || [],
@@ -198,6 +198,10 @@ const CompanyProfile = () => {
       });
 
       await companyAPI.createProfile(submitData);
+      
+      // Refresh the global Redux state to update header logo/name
+      await dispatch(getCompanyProfile());
+      
       setSuccess(true);
       showToast.success('Profile updated successfully!');
       setTimeout(() => setSuccess(false), 3000);
@@ -235,8 +239,8 @@ const CompanyProfile = () => {
         </label>
       </div>
 
-      <div className="px-8 pb-8">
-        <div className="relative -mt-16 mb-8 flex flex-col md:flex-row items-end gap-6">
+      <div className="px-4 md:px-8 pb-8">
+        <div className="relative -mt-16 mb-8 flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left">
           <div className="relative group">
             <div className="w-32 h-32 rounded-2xl border-4 border-white dark:border-[#1a1c23] bg-white dark:bg-gray-800 shadow-lg overflow-hidden flex items-center justify-center">
               {formData.logoPreview ? (
@@ -275,31 +279,31 @@ const CompanyProfile = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-10">
+        <form onSubmit={handleSubmit} className="space-y-8 md:space-y-12">
 
           {/* Basic Info Section */}
           <section>
             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2 pb-2 border-b border-gray-100 dark:border-gray-800">
               <FileText className="w-5 h-5 text-teal-500" /> Basic Information
             </h3>
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Company Name *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 md:mb-2">Company Name *</label>
                 <input type="text" name="companyName" value={formData.companyName} onChange={handleChange} required className="input-field" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tagline</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 md:mb-2">Tagline</label>
                 <input type="text" name="tagline" value={formData.tagline} onChange={handleChange} className="input-field" placeholder="e.g. Innovating the future" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Industry *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 md:mb-2">Industry *</label>
                 <select name="industry" value={formData.industry} onChange={handleChange} required className="input-field">
                   <option value="">Select Industry</option>
                   {industries.map(i => <option key={i} value={i}>{i}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Company Size *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 md:mb-2">Company Size *</label>
                 <select name="size" value={formData.size} onChange={handleChange} required className="input-field">
                   <option value="">Select Size</option>
                   <option value="1-10">1-10 employees</option>
@@ -311,15 +315,15 @@ const CompanyProfile = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Year Founded</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 md:mb-2">Year Founded</label>
                 <input type="number" name="founded" value={formData.founded} onChange={handleChange} className="input-field" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Website</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 md:mb-2">Website</label>
                 <input type="url" name="website" value={formData.website} onChange={handleChange} className="input-field" placeholder="https://..." />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 md:mb-2">Description *</label>
                 <textarea name="description" value={formData.description} onChange={handleChange} required rows={5} className="input-field" ></textarea>
               </div>
             </div>
@@ -498,16 +502,22 @@ const CompanyProfile = () => {
            border: 1px solid #e5e7eb;
            background-color: white;
            color: #111827;
-           transition: all 0.2s;
+           font-size: 0.875rem;
+           transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .input-field:focus {
+           outline: none;
+           border-color: #14b8a6;
+           box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.1);
         }
         .dark .input-field {
            border-color: #374151;
-           background-color: #374151;
-           color: white;
+           background-color: #1f2937;
+           color: #f9fafb;
         }
         .dark .input-field:focus {
-           border-color: #14b8a6;
-           ring: 1px solid #14b8a6;
+           border-color: #2dd4bf;
+           box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.1);
         }
       `}</style>
     </div>

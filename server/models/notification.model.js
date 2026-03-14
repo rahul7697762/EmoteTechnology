@@ -15,6 +15,7 @@ const notificationSchema = new mongoose.Schema({
             "ASSESSMENT_PUBLISHED",
             "DISCUSSION_REPLY",
             "CERTIFICATE_ISSUED",
+            "NEW_APPLICATION",
             "SYSTEM"
         ],
         required: true

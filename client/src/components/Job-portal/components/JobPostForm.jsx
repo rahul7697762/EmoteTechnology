@@ -61,6 +61,18 @@ const JobPostForm = ({ onSuccess }) => {
     setLoading(true);
     setError('');
 
+    if (formData.deadline) {
+      const selectedDate = new Date(formData.deadline);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate < today) {
+        setError('Application deadline cannot be in the past');
+        setLoading(false);
+        return;
+      }
+    }
+
     try {
       await jobAPI.createJob(formData);
       onSuccess?.();
@@ -162,8 +174,8 @@ const JobPostForm = ({ onSuccess }) => {
           </div>
         </div>
 
-        {/* Location & Remote */}
-        <div className="grid md:grid-cols-2 gap-6">
+        {/* Location & Deadline */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <MapPin className="w-4 h-4" />
@@ -190,15 +202,16 @@ const JobPostForm = ({ onSuccess }) => {
               name="deadline"
               value={formData.deadline}
               onChange={handleChange}
+              min={new Date().toLocaleDateString('en-CA')} // YYYY-MM-DD in local time
               className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
             />
           </div>
         </div>
 
         {/* Salary Range */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               <DollarSign className="w-4 h-4" />
               Minimum Salary ($)
             </label>
@@ -212,8 +225,8 @@ const JobPostForm = ({ onSuccess }) => {
             />
           </div>
 
-          <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <div className="space-y-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
               <DollarSign className="w-4 h-4" />
               Maximum Salary ($)
             </label>

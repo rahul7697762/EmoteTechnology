@@ -17,6 +17,18 @@ export const createJob = async (req, res) => {
       company: company._id
     };
 
+    if (jobData.deadline) {
+      const selectedDate = new Date(jobData.deadline);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate < today) {
+        return res.status(400).json({
+          message: 'Application deadline cannot be in the past'
+        });
+      }
+    }
+
     // Parse tags if string
     if (typeof jobData.tags === 'string') {
       jobData.tags = JSON.parse(jobData.tags);
@@ -181,6 +193,18 @@ export const updateJob = async (req, res) => {
       return res.status(404).json({
         message: 'Job not found'
       });
+    }
+
+    if (req.body.deadline) {
+      const selectedDate = new Date(req.body.deadline);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate < today) {
+        return res.status(400).json({
+          message: 'Application deadline cannot be in the past'
+        });
+      }
     }
 
     Object.assign(job, req.body);

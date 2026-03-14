@@ -1,6 +1,7 @@
 import Company from '../models/Company.js';
 import Job from '../models/Job.js';
 import Application from '../models/Application.js';
+import { uploadFileToBunny } from '../services/bunny.service.js';
 
 export const getProfile = async (req, res) => {
   try {
@@ -8,16 +9,16 @@ export const getProfile = async (req, res) => {
       .populate('user', 'name email');
 
     if (!company) {
-      return res.status(404).json({ 
-        message: 'Company profile not found' 
+      return res.status(404).json({
+        message: 'Company profile not found'
       });
     }
 
     res.json(company);
   } catch (error) {
-    res.status(500).json({ 
-      message: 'Server error', 
-      error: error.message 
+    res.status(500).json({
+      message: 'Server error',
+      error: error.message
     });
   }
 };
@@ -58,42 +59,46 @@ export const createOrUpdateProfile = async (req, res) => {
       company.headquarters = headquarters || company.headquarters;
       company.contactEmail = contactEmail || company.contactEmail;
       company.contactPhone = contactPhone || company.contactPhone;
-      
+
       if (socialLinks) {
         company.socialLinks = {
           ...company.socialLinks,
           ...JSON.parse(socialLinks)
         };
       }
-      
+
       if (benefits) {
         company.benefits = JSON.parse(benefits);
       }
-      
+
       if (techStack) {
         company.techStack = JSON.parse(techStack);
       }
-      
+
       if (hiringManager) {
         company.hiringManager = JSON.parse(hiringManager);
       }
 
-      // Handle logo upload
+      // Handle logo upload to Bunny CDN
       if (req.files?.logo) {
         const logo = req.files.logo[0];
+        const fileName = `logo-${Date.now()}-${logo.originalname}`;
+        const url = await uploadFileToBunny("logos", logo.buffer, fileName);
         company.logo = {
-          url: logo.location || `/uploads/${logo.filename}`,
+          url,
           originalName: logo.originalname,
           size: logo.size,
           mimetype: logo.mimetype
         };
       }
 
-      // Handle cover image upload
+      // Handle cover image upload to Bunny CDN
       if (req.files?.coverImage) {
         const coverImage = req.files.coverImage[0];
+        const fileName = `cover-${Date.now()}-${coverImage.originalname}`;
+        const url = await uploadFileToBunny("covers", coverImage.buffer, fileName);
         company.coverImage = {
-          url: coverImage.location || `/uploads/${coverImage.filename}`,
+          url,
           originalName: coverImage.originalname,
           size: coverImage.size,
           mimetype: coverImage.mimetype
@@ -120,11 +125,13 @@ export const createOrUpdateProfile = async (req, res) => {
         hiringManager: hiringManager ? JSON.parse(hiringManager) : {}
       });
 
-      // Handle file uploads
+      // Handle file uploads to Bunny CDN for new profile
       if (req.files?.logo) {
         const logo = req.files.logo[0];
+        const fileName = `logo-${Date.now()}-${logo.originalname}`;
+        const url = await uploadFileToBunny("logos", logo.buffer, fileName);
         company.logo = {
-          url: logo.location || `/uploads/${logo.filename}`,
+          url,
           originalName: logo.originalname,
           size: logo.size,
           mimetype: logo.mimetype
@@ -133,8 +140,10 @@ export const createOrUpdateProfile = async (req, res) => {
 
       if (req.files?.coverImage) {
         const coverImage = req.files.coverImage[0];
+        const fileName = `cover-${Date.now()}-${coverImage.originalname}`;
+        const url = await uploadFileToBunny("covers", coverImage.buffer, fileName);
         company.coverImage = {
-          url: coverImage.location || `/uploads/${coverImage.filename}`,
+          url,
           originalName: coverImage.originalname,
           size: coverImage.size,
           mimetype: coverImage.mimetype
@@ -149,9 +158,9 @@ export const createOrUpdateProfile = async (req, res) => {
       company
     });
   } catch (error) {
-    res.status(500).json({ 
-      message: 'Server error', 
-      error: error.message 
+    res.status(500).json({
+      message: 'Server error',
+      error: error.message
     });
   }
 };
@@ -159,12 +168,19 @@ export const createOrUpdateProfile = async (req, res) => {
 export const getCompanyJobs = async (req, res) => {
   try {
     const company = await Company.findOne({ user: req.userId });
-    
+
     if (!company) {
-      return res.status(404).json({ 
-        message: 'Company profile not found' 
+      return res.status(404).json({
+        message: 'Company profile not found'
       });
     }
+
+    // Auto-close expired jobs before returning
+    const now = new Date();
+    await Job.updateMany(
+      { company: company._id, status: 'ACTIVE', deadline: { $lt: now } },
+      { $set: { status: 'CLOSED' } }
+    );
 
     const jobs = await Job.find({ company: company._id })
       .sort({ createdAt: -1 })
@@ -172,9 +188,9 @@ export const getCompanyJobs = async (req, res) => {
 
     res.json(jobs);
   } catch (error) {
-    res.status(500).json({ 
-      message: 'Server error', 
-      error: error.message 
+    res.status(500).json({
+      message: 'Server error',
+      error: error.message
     });
   }
 };
@@ -182,16 +198,23 @@ export const getCompanyJobs = async (req, res) => {
 export const getCompanyStats = async (req, res) => {
   try {
     const company = await Company.findOne({ user: req.userId });
-    
+
     if (!company) {
-      return res.status(404).json({ 
-        message: 'Company profile not found' 
+      return res.status(404).json({
+        message: 'Company profile not found'
       });
     }
 
+    // Auto-close expired jobs before calculating stats
+    const now = new Date();
+    await Job.updateMany(
+      { company: company._id, status: 'ACTIVE', deadline: { $lt: now } },
+      { $set: { status: 'CLOSED' } }
+    );
+
     // Get job statistics
     const jobs = await Job.find({ company: company._id });
-    
+
     const stats = {
       totalJobs: jobs.length,
       activeJobs: jobs.filter(job => job.status === 'ACTIVE').length,
@@ -203,17 +226,17 @@ export const getCompanyStats = async (req, res) => {
     for (const job of jobs) {
       const applications = await Application
         .find({ job: job._id });
-      
+
       stats.totalApplications += applications.length;
-      stats.pendingApplications += applications.filter(app => 
+      stats.pendingApplications += applications.filter(app =>
         app.status === 'PENDING').length;
     }
 
     res.json(stats);
   } catch (error) {
-    res.status(500).json({ 
-      message: 'Server error', 
-      error: error.message 
+    res.status(500).json({
+      message: 'Server error',
+      error: error.message
     });
   }
 };

@@ -1,4 +1,7 @@
 import express from 'express';
+import { createServer } from 'http';
+import { initSocket } from './services/socket.service.js';
+import notificationRoutes from './routes/notification.routes.js';
 import 'dotenv/config';
 import cors from 'cors';
 import path from 'path';
@@ -27,6 +30,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const httpServer = createServer(app);
+const io = initSocket(httpServer);
 const port = process.env.PORT || 5000;
 
 // CORS configuration
@@ -85,6 +90,7 @@ app.use('/api/companies', companyRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 
 // Health check route
@@ -131,6 +137,6 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(port, () => {
+httpServer.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

@@ -7,11 +7,13 @@ import {
   CheckCircle, FileText, Users
 } from 'lucide-react';
 import { companyAPI } from '../services/api';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { showToast } from '../services/toast';
+import { getCompanyProfile } from '../../../redux/slices/companySlice';
 
 const CompanyProfile = () => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     companyName: '',
     tagline: '',
@@ -180,10 +182,14 @@ const CompanyProfile = () => {
       const submitData = new FormData();
 
       Object.keys(formData).forEach(key => {
-        if (key === 'logo' && formData.logo) {
-          submitData.append('logo', formData.logo);
-        } else if (key === 'coverImage' && formData.coverImage) {
-          submitData.append('coverImage', formData.coverImage);
+        if (key === 'logo') {
+          if (formData.logo instanceof File) {
+            submitData.append('logo', formData.logo);
+          }
+        } else if (key === 'coverImage') {
+          if (formData.coverImage instanceof File) {
+            submitData.append('coverImage', formData.coverImage);
+          }
         } else if (key === 'socialLinks') {
           submitData.append('socialLinks', JSON.stringify(formData.socialLinks));
         } else if (key === 'benefits') {

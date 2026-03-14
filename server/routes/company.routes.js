@@ -16,6 +16,11 @@ router.post(
   uploadCompanyFiles,
   createOrUpdateProfile
 );
+router.put(
+  '/profile',
+  uploadCompanyFiles,
+  createOrUpdateProfile
+);
 
 // Company job routes
 router.get('/jobs', getCompanyJobs);

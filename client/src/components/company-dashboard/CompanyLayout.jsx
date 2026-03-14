@@ -5,6 +5,7 @@ import { Search, Bell, Settings, LogOut, User, Menu, X, Check, Clock as ClockIco
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/slices/authSlice';
 import { getCompanyProfile } from '../../redux/slices/companySlice';
+import { toggleSidebar } from '../../redux/slices/uiSlice';
 import { Link } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { showToast } from '../Job-portal/services/toast';
@@ -129,7 +130,7 @@ const CompanyLayout = ({ children }) => {
           <div className="flex w-full items-center justify-between md:hidden pb-4 border-b border-gray-200 dark:border-gray-800 mb-2">
             <h1 className="text-xl font-bold text-gray-900 dark:text-white">EMT Jobs</h1>
             <button
-              onClick={() => dispatch({ type: 'ui/toggleSidebar' })}
+              onClick={() => dispatch(toggleSidebar())}
               className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
             >
               <Menu size={24} />

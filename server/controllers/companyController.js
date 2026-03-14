@@ -14,6 +14,9 @@ export const getProfile = async (req, res) => {
       });
     }
 
+    console.log(`[Company] getProfile for user ${req.userId}: found company ${company._id}`);
+    console.log(`[Company] Logo URL in DB: ${company.logo?.url || 'NONE'}`);
+    
     res.json(company);
   } catch (error) {
     res.status(500).json({
@@ -24,6 +27,10 @@ export const getProfile = async (req, res) => {
 };
 
 export const createOrUpdateProfile = async (req, res) => {
+  console.log('[Company] createOrUpdateProfile called');
+  console.log('[Company] req.body:', JSON.stringify(req.body, null, 2));
+  console.log('[Company] req.files:', req.files ? Object.keys(req.files) : 'No files');
+  
   try {
     const {
       companyName,
@@ -81,28 +88,46 @@ export const createOrUpdateProfile = async (req, res) => {
 
       // Handle logo upload to Bunny CDN
       if (req.files?.logo) {
-        const logo = req.files.logo[0];
-        const fileName = `logo-${Date.now()}-${logo.originalname}`;
-        const url = await uploadFileToBunny("logos", logo.buffer, fileName);
-        company.logo = {
-          url,
-          originalName: logo.originalname,
-          size: logo.size,
-          mimetype: logo.mimetype
-        };
+        try {
+          const logo = req.files.logo[0];
+          const fileName = `logo-${logo.originalname}`;
+          console.log(`[Company] Starting logo upload for company ${company._id}: ${fileName}`);
+          
+          const url = await uploadFileToBunny("logos", logo.buffer, fileName);
+          console.log(`[Company] Logo upload successful: ${url}`);
+          
+          company.logo = {
+            url,
+            originalName: logo.originalname,
+            size: logo.size,
+            mimetype: logo.mimetype
+          };
+        } catch (uploadError) {
+          console.error(`[Company] Logo upload failed for company ${company._id}:`, uploadError.message);
+          return res.status(500).json({ message: `Logo upload failed: ${uploadError.message}` });
+        }
       }
 
       // Handle cover image upload to Bunny CDN
       if (req.files?.coverImage) {
-        const coverImage = req.files.coverImage[0];
-        const fileName = `cover-${Date.now()}-${coverImage.originalname}`;
-        const url = await uploadFileToBunny("covers", coverImage.buffer, fileName);
-        company.coverImage = {
-          url,
-          originalName: coverImage.originalname,
-          size: coverImage.size,
-          mimetype: coverImage.mimetype
-        };
+        try {
+          const coverImage = req.files.coverImage[0];
+          const fileName = `cover-${coverImage.originalname}`;
+          console.log(`[Company] Starting cover image upload for company ${company._id}: ${fileName}`);
+          
+          const url = await uploadFileToBunny("covers", coverImage.buffer, fileName);
+          console.log(`[Company] Cover image upload successful: ${url}`);
+          
+          company.coverImage = {
+            url,
+            originalName: coverImage.originalname,
+            size: coverImage.size,
+            mimetype: coverImage.mimetype
+          };
+        } catch (uploadError) {
+          console.error(`[Company] Cover image upload failed for company ${company._id}:`, uploadError.message);
+          return res.status(500).json({ message: `Cover image upload failed: ${uploadError.message}` });
+        }
       }
     } else {
       // Create new profile
@@ -127,27 +152,45 @@ export const createOrUpdateProfile = async (req, res) => {
 
       // Handle file uploads to Bunny CDN for new profile
       if (req.files?.logo) {
-        const logo = req.files.logo[0];
-        const fileName = `logo-${Date.now()}-${logo.originalname}`;
-        const url = await uploadFileToBunny("logos", logo.buffer, fileName);
-        company.logo = {
-          url,
-          originalName: logo.originalname,
-          size: logo.size,
-          mimetype: logo.mimetype
-        };
+        try {
+          const logo = req.files.logo[0];
+          const fileName = `logo-${logo.originalname}`;
+          console.log(`[Company] Starting logo upload for new company: ${fileName}`);
+          
+          const url = await uploadFileToBunny("logos", logo.buffer, fileName);
+          console.log(`[Company] Logo upload successful: ${url}`);
+          
+          company.logo = {
+            url,
+            originalName: logo.originalname,
+            size: logo.size,
+            mimetype: logo.mimetype
+          };
+        } catch (uploadError) {
+          console.error(`[Company] Logo upload failed for new company:`, uploadError.message);
+          return res.status(500).json({ message: `Logo upload failed: ${uploadError.message}` });
+        }
       }
 
       if (req.files?.coverImage) {
-        const coverImage = req.files.coverImage[0];
-        const fileName = `cover-${Date.now()}-${coverImage.originalname}`;
-        const url = await uploadFileToBunny("covers", coverImage.buffer, fileName);
-        company.coverImage = {
-          url,
-          originalName: coverImage.originalname,
-          size: coverImage.size,
-          mimetype: coverImage.mimetype
-        };
+        try {
+          const coverImage = req.files.coverImage[0];
+          const fileName = `cover-${coverImage.originalname}`;
+          console.log(`[Company] Starting cover image upload for new company: ${fileName}`);
+          
+          const url = await uploadFileToBunny("covers", coverImage.buffer, fileName);
+          console.log(`[Company] Cover image upload successful: ${url}`);
+          
+          company.coverImage = {
+            url,
+            originalName: coverImage.originalname,
+            size: coverImage.size,
+            mimetype: coverImage.mimetype
+          };
+        } catch (uploadError) {
+          console.error(`[Company] Cover image upload failed for new company:`, uploadError.message);
+          return res.status(500).json({ message: `Cover image upload failed: ${uploadError.message}` });
+        }
       }
     }
 

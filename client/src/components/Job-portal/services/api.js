@@ -32,9 +32,23 @@ api.interceptors.request.use(
 
 // Company Profile APIs
 export const companyAPI = {
-  createProfile: (data) => api.post('/companies/profile', data),
+  createProfile: (data) => {
+    if (data instanceof FormData) {
+      return api.post('/companies/profile', data, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    }
+    return api.post('/companies/profile', data);
+  },
   getProfile: () => api.get('/companies/profile'),
-  updateProfile: (data) => api.put('/companies/profile', data),
+  updateProfile: (data) => {
+    if (data instanceof FormData) {
+      return api.put('/companies/profile', data, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    }
+    return api.put('/companies/profile', data);
+  },
 };
 
 // Job APIs

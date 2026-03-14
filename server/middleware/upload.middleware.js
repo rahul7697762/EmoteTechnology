@@ -27,51 +27,6 @@ const storage = multer.diskStorage({
   }
 });
 
-// Helper function to upload file to Bunny CDN
-export const uploadToBunny = async (file, bucketPath) => {
-  try {
-    const BUNNY_STORAGE_ZONE = process.env.BUNNY_STORAGE_ZONE;
-    const BUNNY_ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
-    const BUNNY_CDN_HOSTNAME = process.env.BUNNY_PULL_ZONE_URL || process.env.BUNNY_CDN_HOSTNAME || 'your-bunny-hostname.b-cdn.net';
-
-    if (!BUNNY_ACCESS_KEY || !BUNNY_STORAGE_ZONE) {
-      throw new Error('Bunny CDN credentials not configured');
-    }
-
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    const filename = `${bucketPath}/${file.fieldname}-${uniqueSuffix}${ext}`;
-
-    console.log(`Uploading to Bunny: ${BUNNY_STORAGE_ZONE}/${filename}`);
-    const response = await axios.put(
-      `https://storage.bunnycdn.com/${BUNNY_STORAGE_ZONE}/${filename}`,
-      file.buffer,
-      {
-        headers: {
-          'Content-Type': file.mimetype,
-          'AccessKey': BUNNY_ACCESS_KEY
-        },
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity
-      }
-    );
-    console.log(`Bunny response: ${response.status}`);
-
-    if (response.status === 201) {
-      return {
-        url: `https://${BUNNY_CDN_HOSTNAME}/${filename}`,
-        filename: filename,
-        fileSize: file.size
-      };
-    } else {
-      throw new Error('Bunny upload failed');
-    }
-  } catch (error) {
-    console.error('Error uploading to Bunny CDN:', error.message);
-    throw error;
-  }
-};
-
 // Memory storage for processing before Bunny upload
 const memoryStorage = multer.memoryStorage();
 
@@ -83,7 +38,7 @@ export const upload = multer({
   }
 });
 
-// Export upload configurations with Bunny support
+// Export upload configurations with memory storage
 export const uploadResume = multer({
   storage: memoryStorage,
   fileFilter: (req, file, cb) => {

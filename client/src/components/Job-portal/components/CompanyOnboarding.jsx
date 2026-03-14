@@ -7,11 +7,13 @@ import {
   X, Plus, Trash2, ExternalLink
 } from 'lucide-react';
 import { companyAPI } from '../services/api';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { showToast } from '../services/toast';
+import { setProfile } from '../../../redux/slices/companySlice';
 
 const CompanyOnboarding = ({ onComplete }) => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     companyName: '',
     tagline: '',
@@ -82,8 +84,8 @@ const CompanyOnboarding = ({ onComplete }) => {
         setFormData(prev => ({
           ...prev,
           ...data,
-          logoPreview: data.logoUrl || '',
-          coverPreview: data.coverUrl || '',
+          logoPreview: data.logo?.url || '',
+          coverPreview: data.coverImage?.url || '',
           socialLinks: data.socialLinks || prev.socialLinks,
           benefits: data.benefits || [],
           techStack: data.techStack || [],
@@ -278,10 +280,14 @@ const CompanyOnboarding = ({ onComplete }) => {
       
       // Append all form data
       Object.keys(formData).forEach(key => {
-        if (key === 'logo' && formData.logo) {
-          submitData.append('logo', formData.logo);
-        } else if (key === 'coverImage' && formData.coverImage) {
-          submitData.append('coverImage', formData.coverImage);
+        if (key === 'logo') {
+          if (formData.logo instanceof File) {
+            submitData.append('logo', formData.logo);
+          }
+        } else if (key === 'coverImage') {
+          if (formData.coverImage instanceof File) {
+            submitData.append('coverImage', formData.coverImage);
+          }
         } else if (key === 'socialLinks') {
           submitData.append('socialLinks', JSON.stringify(formData.socialLinks));
         } else if (key === 'benefits') {
@@ -296,6 +302,11 @@ const CompanyOnboarding = ({ onComplete }) => {
       });
 
       const response = await companyAPI.createProfile(submitData);
+      
+      // Update global Redux state immediately
+      if (response.data?.company) {
+        dispatch(setProfile(response.data.company));
+      }
       
       setSuccess('Profile saved successfully!');
       showToast.success('Company profile completed!');

@@ -1,19 +1,23 @@
 import axios from 'axios';
 
 export const uploadFileToBunny = async (directoryPath, fileBuffer, fileName) => {
-    // Sanitize filename: replace spaces with hyphens, remove special chars to ensure clean URLs
-    const sanitizedFileName = fileName
-        .replace(/\s+/g, '-')          // Replace spaces with hyphens
-        .replace(/[^a-zA-Z0-9.\-_]/g, ''); // Remove anything that's not alphanumeric, dot, hyphen, or underscore
-
     const STORAGE_ZONE_NAME = process.env.BUNNY_STORAGE_ZONE;
     const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
+    const STORAGE_ENDPOINT = process.env.BUNNY_STORAGE_ENDPOINT || 'storage.bunnycdn.com';
 
     if (!STORAGE_ZONE_NAME || !ACCESS_KEY) {
         throw new Error('BunnyCDN configuration missing (STORAGE_ZONE_NAME or ACCESS_KEY)');
     }
 
-    const url = `https://storage.bunnycdn.com/${STORAGE_ZONE_NAME}/${directoryPath}/${sanitizedFileName}`;
+    // Generate a unique filename: timestamp-random-sanitizedName
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E4)}`;
+    const sanitizedFileName = fileName
+        .replace(/\s+/g, '-')          // Replace spaces with hyphens
+        .replace(/[^a-zA-Z0-9.\-_]/g, ''); // Remove special chars
+    const finalFileName = `${uniqueSuffix}-${sanitizedFileName}`;
+
+    const url = `https://${STORAGE_ENDPOINT}/${STORAGE_ZONE_NAME}/${directoryPath}/${finalFileName}`;
+    console.log(`[BunnyCDN] Uploading to: ${url}`);
 
     try {
         const res = await axios.put(url, fileBuffer, {
@@ -21,32 +25,41 @@ export const uploadFileToBunny = async (directoryPath, fileBuffer, fileName) => 
                 'AccessKey': ACCESS_KEY,
                 'Content-Type': 'application/octet-stream',
             },
-            maxBodyLength: Infinity, // Important for large files
+            maxBodyLength: Infinity,
             maxContentLength: Infinity
         });
 
-        // Construct the public URL
+        console.log(`[BunnyCDN] Upload response status: ${res.status}`);
+
+        // Construct the public URL using the PULL_ZONE_URL
         const pullZoneUrl = process.env.BUNNY_PULL_ZONE_URL;
-        if (pullZoneUrl) {
-            const baseUrl = pullZoneUrl.startsWith('http') ? pullZoneUrl : `https://${pullZoneUrl}`;
-            return `${baseUrl}/${directoryPath}/${sanitizedFileName}`;
+        if (!pullZoneUrl) {
+            throw new Error('BUNNY_PULL_ZONE_URL is not configured');
         }
-        return url;
+
+        // Clean up pullZoneUrl to ensure it's just the hostname without protocol
+        const pullZoneHost = pullZoneUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+        const publicUrl = `https://${pullZoneHost}/${directoryPath}/${finalFileName}`;
+        
+        console.log(`[BunnyCDN] Generated public URL: ${publicUrl}`);
+        return publicUrl;
 
     } catch (error) {
-        throw new Error(`BunnyCDN Upload Failed: ${error.message}`);
+        console.error(`[BunnyCDN] Upload Error:`, error.response?.data || error.message);
+        throw new Error(`BunnyCDN Upload Failed: ${error.response?.data?.Message || error.message}`);
     }
 };
 
 export const deleteFileFromBunny = async (fileUrl) => {
     const STORAGE_ZONE_NAME = process.env.BUNNY_STORAGE_ZONE;
     const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
+    const STORAGE_ENDPOINT = process.env.BUNNY_STORAGE_ENDPOINT || 'storage.bunnycdn.com';
 
     if (!STORAGE_ZONE_NAME || !ACCESS_KEY) {
         throw new Error('BunnyCDN configuration missing (STORAGE_ZONE_NAME or ACCESS_KEY)');
     }
 
-    const url = `https://storage.bunnycdn.com/${STORAGE_ZONE_NAME}/${fileUrl}`;
+    const url = `https://${STORAGE_ENDPOINT}/${STORAGE_ZONE_NAME}/${fileUrl}`;
 
     try {
         await axios.delete(url, {
@@ -88,8 +101,9 @@ export const uploadJobFileToBunny = async (file, folder = "job-portal") => {
 export const deleteJobFileFromBunny = async (filePath) => {
     const STORAGE_ZONE = process.env.BUNNY_STORAGE_ZONE;
     const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
+    const STORAGE_ENDPOINT = process.env.BUNNY_STORAGE_ENDPOINT || 'storage.bunnycdn.com';
 
-    const deleteUrl = `https://storage.bunnycdn.com/${STORAGE_ZONE}/${filePath}`;
+    const deleteUrl = `https://${STORAGE_ENDPOINT}/${STORAGE_ZONE}/${filePath}`;
 
     await axios.delete(deleteUrl, {
         headers: {

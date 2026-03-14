@@ -45,8 +45,7 @@ function App() {
   const { theme } = useSelector((state) => state.ui);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) dispatch(getMe());
+    dispatch(getMe());
   }, [dispatch]);
 
   // Sync theme to DOM on mount and changes

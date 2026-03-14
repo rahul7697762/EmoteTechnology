@@ -243,9 +243,10 @@ export const getCompanyJobs = async (req, res) => {
     }
 
     // Auto-close expired jobs before returning
-    const now = new Date();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     await Job.updateMany(
-      { company: company._id, status: 'ACTIVE', deadline: { $lt: now } },
+      { company: company._id, status: 'ACTIVE', deadline: { $lt: today } },
       { $set: { status: 'CLOSED' } }
     );
 
@@ -273,9 +274,10 @@ export const getCompanyStats = async (req, res) => {
     }
 
     // Auto-close expired jobs before calculating stats
-    const now = new Date();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     await Job.updateMany(
-      { company: company._id, status: 'ACTIVE', deadline: { $lt: now } },
+      { company: company._id, status: 'ACTIVE', deadline: { $lt: today } },
       { $set: { status: 'CLOSED' } }
     );
 

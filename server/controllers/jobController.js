@@ -110,7 +110,7 @@ export const getAllJobs = async (req, res) => {
     }
 
     // Sort options
-    let sortOption = { createdAt: -1 };
+    let sortOption = { updatedAt: -1 };
     if (sort === 'salary-high') sortOption = { salaryMax: -1 };
     if (sort === 'salary-low') sortOption = { salaryMin: 1 };
     if (sort === 'applicants-low') sortOption = { applicationCount: 1 };

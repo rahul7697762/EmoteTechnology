@@ -1,5 +1,5 @@
 import express from 'express';
-import { uploadResume, getMyResumes, getResumeById, deleteResume } from '../controllers/resume.controller.js';
+import { uploadResume, getMyResumes, getResumeById, deleteResume } from '../controllers/resumeController.js';
 import { protect, restrictTo } from '../middleware/auth.middleware.js';
 import { uploadResume as uploadResumeMiddleware } from '../middleware/upload.middleware.js';
 

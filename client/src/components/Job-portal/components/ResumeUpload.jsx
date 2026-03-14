@@ -2,7 +2,7 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, FileText, Check, AlertCircle, Trash2 } from 'lucide-react';
-import { resumeAPI } from '../../../utils/api';
+import { resumeAPI } from '../services/api';
 
 const ResumeUpload = ({ onUploadSuccess, existingResume }) => {
   const [resume, setResume] = useState(existingResume || null);
@@ -74,7 +74,7 @@ const ResumeUpload = ({ onUploadSuccess, existingResume }) => {
     <div className="space-y-4">
       {error && (
         <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center gap-3">
-          <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
+          <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
           <span className="text-red-700 dark:text-red-400 text-sm">{error}</span>
         </div>
       )}
@@ -115,8 +115,8 @@ const ResumeUpload = ({ onUploadSuccess, existingResume }) => {
         <div
           onClick={() => !uploading && fileInputRef.current?.click()}
           className={`relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${uploading
-            ? 'border-teal-300 bg-teal-50 dark:bg-teal-900/10'
-            : 'border-gray-300 dark:border-gray-600 hover:border-teal-500 dark:hover:border-teal-500 hover:bg-teal-50 dark:hover:bg-teal-900/10'
+              ? 'border-teal-300 bg-teal-50 dark:bg-teal-900/10'
+              : 'border-gray-300 dark:border-gray-600 hover:border-teal-500 dark:hover:border-teal-500 hover:bg-teal-50 dark:hover:bg-teal-900/10'
             }`}
         >
           <input

@@ -228,7 +228,6 @@ const courseSlice = createSlice({
                 state.isFetchingCourses = false;
                 state.error = action.payload;
             })
-
             // Get Dashboard Stats (Mock)
             .addCase(getDashboardStats.pending, (state) => {
                 state.isFetchingStats = true;
@@ -242,7 +241,6 @@ const courseSlice = createSlice({
                 state.isFetchingStats = false;
                 state.error = action.payload;
             })
-
             // Create Course
             .addCase(createCourse.pending, (state) => {
                 state.isCreatingCourse = true;
@@ -257,7 +255,6 @@ const courseSlice = createSlice({
                 state.isCreatingCourse = false;
                 state.error = action.payload;
             })
-
             // Get Course Details
             .addCase(getCourseDetails.pending, (state) => {
                 state.isFetchingDetails = true;
@@ -271,7 +268,6 @@ const courseSlice = createSlice({
                 state.isFetchingDetails = false;
                 state.error = action.payload;
             })
-
             // Get Faculty Course Details
             .addCase(getFacultyCourseDetails.pending, (state) => {
                 state.isFetchingDetails = true;
@@ -285,7 +281,6 @@ const courseSlice = createSlice({
                 state.isFetchingDetails = false;
                 state.error = action.payload;
             })
-
             // Update Course
             .addCase(updateCourse.pending, (state) => {
                 state.isUpdatingCourse = true;
@@ -304,7 +299,6 @@ const courseSlice = createSlice({
                 state.isUpdatingCourse = false;
                 state.error = action.payload;
             })
-
             // Update Course Status
             .addCase(updateCourseStatus.pending, (state) => {
                 state.isUpdatingCourse = true;
@@ -323,7 +317,6 @@ const courseSlice = createSlice({
                 state.isUpdatingCourse = false;
                 state.error = action.payload;
             })
-
             // Delete Course
             .addCase(deleteCourse.pending, (state) => {
                 state.isDeletingCourse = true;

@@ -1,5 +1,5 @@
 import express from 'express';
-import { getProfile, createOrUpdateProfile, getCompanyJobs, getCompanyStats } from '../controllers/company.controller.js';
+import { getProfile, createOrUpdateProfile, getCompanyJobs, getCompanyStats } from '../controllers/companyController.js';
 import { protect, restrictTo } from '../middleware/auth.middleware.js';
 import { uploadCompanyFiles } from '../middleware/upload.middleware.js';
 

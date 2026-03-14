@@ -1,20 +1,28 @@
 import axios from 'axios';
 
 export const uploadFileToBunny = async (directoryPath, fileBuffer, fileName) => {
-    // Sanitize filename: replace spaces with hyphens, remove special chars to ensure clean URLs
-    const sanitizedFileName = fileName
-        .replace(/\s+/g, '-')          // Replace spaces with hyphens
-        .replace(/[^a-zA-Z0-9.\-_]/g, ''); // Remove anything that's not alphanumeric, dot, hyphen, or underscore
-
     const STORAGE_ZONE_NAME = process.env.BUNNY_STORAGE_ZONE;
     const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
-
-    if (!STORAGE_ZONE_NAME || !ACCESS_KEY) {
-        f
-        throw new Error('BunnyCDN configuration missing (STORAGE_ZONE_NAME or ACCESS_KEY)');
+    const REGION = process.env.BUNNY_STORAGE_REGION; // e.g., 'sg'
+    
+    let STORAGE_ENDPOINT = process.env.BUNNY_STORAGE_ENDPOINT;
+    if (!STORAGE_ENDPOINT) {
+        STORAGE_ENDPOINT = REGION ? `${REGION}.storage.bunnycdn.com` : 'storage.bunnycdn.com';
     }
 
-    const url = `https://sg.storage.bunnycdn.com/${STORAGE_ZONE_NAME}/${directoryPath}/${sanitizedFileName}`;
+    if (!STORAGE_ZONE_NAME || !ACCESS_KEY) {
+        throw new Error('BunnyCDN configuration missing (BUNNY_STORAGE_ZONE or BUNNY_ACCESS_KEY)');
+    }
+
+    // Generate a unique filename: timestamp-random-sanitizedName
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E4)}`;
+    const sanitizedFileName = fileName
+        .replace(/\s+/g, '-')          // Replace spaces with hyphens
+        .replace(/[^a-zA-Z0-9.\-_]/g, ''); // Remove special chars
+    const finalFileName = `${uniqueSuffix}-${sanitizedFileName}`;
+
+    const url = `https://${STORAGE_ENDPOINT}/${STORAGE_ZONE_NAME}/${directoryPath}/${finalFileName}`;
+    console.log(`[BunnyCDN] Uploading to: ${url}`);
 
     try {
         const res = await axios.put(url, fileBuffer, {
@@ -22,32 +30,49 @@ export const uploadFileToBunny = async (directoryPath, fileBuffer, fileName) => 
                 'AccessKey': ACCESS_KEY,
                 'Content-Type': 'application/octet-stream',
             },
-            maxBodyLength: Infinity, // Important for large files
+            maxBodyLength: Infinity,
             maxContentLength: Infinity
         });
 
-        // Construct the public URL
+        console.log(`[BunnyCDN] Upload response status: ${res.status}`);
+
+        // Construct the public URL using the PULL_ZONE_URL
         const pullZoneUrl = process.env.BUNNY_PULL_ZONE_URL;
-        if (pullZoneUrl) {
-            const baseUrl = pullZoneUrl.startsWith('http') ? pullZoneUrl : `https://${pullZoneUrl}`;
-            return `${baseUrl}/${directoryPath}/${sanitizedFileName}`;
+        if (!pullZoneUrl) {
+            throw new Error('BUNNY_PULL_ZONE_URL is not configured');
         }
-        return url;
+
+        // Clean up pullZoneUrl to ensure it's just the hostname without protocol
+        const pullZoneHost = pullZoneUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+        const publicUrl = `https://${pullZoneHost}/${directoryPath}/${finalFileName}`;
+        
+        console.log(`[BunnyCDN] Generated public URL: ${publicUrl}`);
+        return publicUrl;
 
     } catch (error) {
-        throw new Error(`BunnyCDN Upload Failed: ${error.message}`);
+        if (error.response?.status === 401) {
+            console.error(`[BunnyCDN] 401 Unauthorized: Please verify your BUNNY_ACCESS_KEY. It should be the "Storage API Key" for zone "${STORAGE_ZONE_NAME}".`);
+        }
+        console.error(`[BunnyCDN] Upload Error:`, error.response?.data || error.message);
+        throw new Error(`BunnyCDN Upload Failed: ${error.response?.data?.Message || error.message}`);
     }
 };
 
 export const deleteFileFromBunny = async (fileUrl) => {
     const STORAGE_ZONE_NAME = process.env.BUNNY_STORAGE_ZONE;
     const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
-
-    if (!STORAGE_ZONE_NAME || !ACCESS_KEY) {
-        throw new Error('BunnyCDN configuration missing (STORAGE_ZONE_NAME or ACCESS_KEY)');
+    const REGION = process.env.BUNNY_STORAGE_REGION;
+    
+    let STORAGE_ENDPOINT = process.env.BUNNY_STORAGE_ENDPOINT;
+    if (!STORAGE_ENDPOINT) {
+        STORAGE_ENDPOINT = REGION ? `${REGION}.storage.bunnycdn.com` : 'storage.bunnycdn.com';
     }
 
-    const url = `https://sg.storage.bunnycdn.com/${STORAGE_ZONE_NAME}/${fileUrl}`;
+    if (!STORAGE_ZONE_NAME || !ACCESS_KEY) {
+        throw new Error('BunnyCDN configuration missing (BUNNY_STORAGE_ZONE or BUNNY_ACCESS_KEY)');
+    }
+
+    const url = `https://${STORAGE_ENDPOINT}/${STORAGE_ZONE_NAME}/${fileUrl}`;
 
     try {
         await axios.delete(url, {
@@ -63,7 +88,7 @@ export const deleteFileFromBunny = async (fileUrl) => {
 //Upload Resume / Job Files to Bunny
 export const uploadJobFileToBunny = async (file, folder = "job-portal") => {
     // Reuse the existing uploadFileToBunny function to ensure consistency
-    // It handles the SG endpoint headers and AccessKey correctly
+    // It handles the REGION and ACCESS_KEY correctly
 
     // 1. Prepare filename with timestamp (consistent with previous behavior)
     const sanitizedFileName = file.originalname
@@ -73,7 +98,6 @@ export const uploadJobFileToBunny = async (file, folder = "job-portal") => {
     const finalFileName = `${Date.now()}-${sanitizedFileName}`;
 
     // 2. Upload using the generic function
-    // uploadFileToBunny(directoryPath, fileBuffer, fileName)
     const publicUrl = await uploadFileToBunny(folder, file.buffer, finalFileName);
 
     const filePath = `${folder}/${finalFileName}`;
@@ -87,16 +111,5 @@ export const uploadJobFileToBunny = async (file, folder = "job-portal") => {
 
 //Delete Job File from Bunny
 export const deleteJobFileFromBunny = async (filePath) => {
-    const STORAGE_ZONE = process.env.BUNNY_STORAGE_ZONE;
-    const ACCESS_KEY = process.env.BUNNY_ACCESS_KEY;
-
-    const deleteUrl = `https://sg.storage.bunnycdn.com/${STORAGE_ZONE}/${filePath}`;
-
-    await axios.delete(deleteUrl, {
-        headers: {
-            AccessKey: ACCESS_KEY,
-        },
-    });
-
-    return true;
+    return await deleteFileFromBunny(filePath);
 };

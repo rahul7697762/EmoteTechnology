@@ -1,17 +1,19 @@
 // job-portal/components/CompanyOnboarding.jsx
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Building2, Upload, Save, AlertCircle, CheckCircle,
+import { 
+  Building2, Upload, Save, AlertCircle, CheckCircle, 
   Globe, Users, MapPin, Phone, Mail, FileText, ArrowRight,
   X, Plus, Trash2, ExternalLink
 } from 'lucide-react';
+import { companyAPI } from '../services/api';
 import { useSelector, useDispatch } from 'react-redux';
-import { getCompanyProfile, createOrUpdateProfile } from '../../../redux/slices/companySlice';
 import { useNavigate } from 'react-router-dom';
-import { showToast } from "./Toast";
+import { showToast } from '../services/toast';
+import { setProfile } from '../../../redux/slices/companySlice';
 
 const CompanyOnboarding = ({ onComplete }) => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     companyName: '',
     tagline: '',
@@ -62,7 +64,6 @@ const CompanyOnboarding = ({ onComplete }) => {
 
   const { user: authUser } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const role = authUser?.role || '';
@@ -77,14 +78,14 @@ const CompanyOnboarding = ({ onComplete }) => {
   const loadExistingProfile = async () => {
     try {
       setLoading(true);
-      const response = await dispatch(getCompanyProfile()).unwrap();
-      const data = response.company || response;
-      if (data) {
+      const response = await companyAPI.getProfile();
+      if (response.data) {
+        const data = response.data;
         setFormData(prev => ({
           ...prev,
           ...data,
-          logoPreview: data.logoUrl || '',
-          coverPreview: data.coverUrl || '',
+          logoPreview: data.logo?.url || '',
+          coverPreview: data.coverImage?.url || '',
           socialLinks: data.socialLinks || prev.socialLinks,
           benefits: data.benefits || [],
           techStack: data.techStack || [],
@@ -268,21 +269,25 @@ const CompanyOnboarding = ({ onComplete }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     if (!validateStep()) return;
-
+    
     setSaving(true);
     setError('');
 
     try {
       const submitData = new FormData();
-
+      
       // Append all form data
       Object.keys(formData).forEach(key => {
-        if (key === 'logo' && formData.logo) {
-          submitData.append('logo', formData.logo);
-        } else if (key === 'coverImage' && formData.coverImage) {
-          submitData.append('coverImage', formData.coverImage);
+        if (key === 'logo') {
+          if (formData.logo instanceof File) {
+            submitData.append('logo', formData.logo);
+          }
+        } else if (key === 'coverImage') {
+          if (formData.coverImage instanceof File) {
+            submitData.append('coverImage', formData.coverImage);
+          }
         } else if (key === 'socialLinks') {
           submitData.append('socialLinks', JSON.stringify(formData.socialLinks));
         } else if (key === 'benefits') {
@@ -296,11 +301,16 @@ const CompanyOnboarding = ({ onComplete }) => {
         }
       });
 
-      const response = await dispatch(createOrUpdateProfile(submitData)).unwrap();
-
+      const response = await companyAPI.createProfile(submitData);
+      
+      // Update global Redux state immediately
+      if (response.data?.company) {
+        dispatch(setProfile(response.data.company));
+      }
+      
       setSuccess('Profile saved successfully!');
       showToast.success('Company profile completed!');
-
+      
       // Redirect after delay
       setTimeout(() => {
         onComplete?.();
@@ -340,25 +350,25 @@ const CompanyOnboarding = ({ onComplete }) => {
       <div className="mb-8">
         <div className="relative">
           <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-200 dark:bg-gray-700">
-            <div
+            <div 
               className="absolute top-0 left-0 h-full bg-teal-500 transition-all duration-300"
               style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
             />
           </div>
-
+          
           <div className="relative flex justify-between">
             {steps.map((stepItem) => {
               const Icon = stepItem.icon;
               const isActive = stepItem.number === step;
               const isCompleted = stepItem.number < step;
-
+              
               return (
                 <div key={stepItem.number} className="flex flex-col items-center">
                   <div className={`
                     w-8 h-8 rounded-full flex items-center justify-center mb-2
-                    ${isActive ? 'bg-teal-500 text-white' :
+                    ${isActive ? 'bg-teal-500 text-white' : 
                       isCompleted ? 'bg-teal-100 dark:bg-teal-900/30 text-teal-500 dark:text-teal-400' :
-                        'bg-gray-100 dark:bg-gray-800 text-gray-400'}
+                      'bg-gray-100 dark:bg-gray-800 text-gray-400'}
                     transition-all duration-300
                   `}>
                     {isCompleted ? (
@@ -369,9 +379,9 @@ const CompanyOnboarding = ({ onComplete }) => {
                   </div>
                   <span className={`
                     text-xs font-medium
-                    ${isActive ? 'text-teal-500 dark:text-teal-400' :
+                    ${isActive ? 'text-teal-500 dark:text-teal-400' : 
                       isCompleted ? 'text-teal-600 dark:text-teal-500' :
-                        'text-gray-500 dark:text-gray-400'}
+                      'text-gray-500 dark:text-gray-400'}
                   `}>
                     {stepItem.title}
                   </span>
@@ -1092,7 +1102,7 @@ const CompanyOnboarding = ({ onComplete }) => {
             {/* Submission Info */}
             <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
+                <CheckCircle className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-blue-800 dark:text-blue-300 text-sm">
                     Once submitted, your company profile will be reviewed and activated.
@@ -1132,7 +1142,7 @@ const CompanyOnboarding = ({ onComplete }) => {
               <button
                 type="submit"
                 disabled={saving}
-                className="flex items-center gap-2 px-8 py-3 bg-linear-to-r from-teal-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-teal-600 hover:to-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-teal-600 hover:to-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Save className="w-5 h-5" />
                 {saving ? 'Saving...' : 'Complete Profile'}

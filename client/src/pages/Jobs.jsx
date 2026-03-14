@@ -3,32 +3,33 @@ import { useSelector } from 'react-redux';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import Navbar from '../components/landing/Navbar';
 import Footer from '../components/landing/Footer';
-import JobDetailPage from './job-portal/JobDetailPage';
+import { AuthProvider } from '../components/Job-portal/context/AuthContext';
+import JobDetailPage from '../components/Job-portal/pages/JobDetailPage';
 import JobListing from '../components/Job-portal/components/JobListing';
 import ApplicationForm from '../components/Job-portal/components/ApplicationForm';
 
-const Jobs = () => {
+const JobsContent = () => {
     const { user: authUser } = useSelector((state) => state.auth);
     const { id } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
-    const [isJobDetail, setIsJobDetail] = useState(false);
-    const [isApplyPage, setIsApplyPage] = useState(false);
+    const [selectedJobId, setSelectedJobId] = useState(null);
+    const [isApplying, setIsApplying] = useState(false);
 
     // Sync selectedJobId with URL param
-    useEffect(() => {
+    React.useEffect(() => {
         if (id) {
-            setIsJobDetail(true);
+            setSelectedJobId(id);
             // Check if action is apply
             const queryParams = new URLSearchParams(location.search);
             if (queryParams.get('action') === 'apply') {
-                setIsApplyPage(true);
+                setIsApplying(true);
             } else {
-                setIsApplyPage(false);
+                setIsApplying(false);
             }
         } else {
-            setIsJobDetail(false);
-            setIsApplyPage(false);
+            setSelectedJobId(null);
+            setIsApplying(false);
         }
     }, [id, location.search]);
 
@@ -52,30 +53,47 @@ const Jobs = () => {
         <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] text-gray-900 dark:text-white transition-colors duration-300">
             <Navbar />
 
-            {isJobDetail ? (
-                isApplyPage ? (
-                    <main className="pt-24 pb-16 px-6 lg:px-8 max-w-7xl mx-auto">
-                        <ApplicationForm
-                            jobId={id}
-                            onSuccess={() => {
-                                handleBack();
-                            }}
-                            onCancel={() => {
-                                handleBack();
-                            }}
-                        />
-                    </main>
-                ) : (
-                    <JobDetailPage jobId={id} onApply={openApply} onBack={handleBack} />
-                )
-            ) : (
-                <main className="pt-24 pb-16 px-6 lg:px-8 max-w-7xl mx-auto">
-                    <JobListing onViewJob={openJobDetail} />
-                </main>
-            )}
+            <main className="pt-24 pb-16 px-4 lg:px-8 max-w-7xl mx-auto">
+                <div className="mb-8 text-center sm:text-left">
+                    <h1 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-teal-400 to-cyan-500 bg-clip-text text-transparent">
+                        Browse Jobs
+                    </h1>
+                    <p className="text-gray-600 dark:text-gray-400">
+                        Find your dream job from top companies.
+                    </p>
+                </div>
+
+                <div className="bg-white dark:bg-[#1a1c23] rounded-2xl border border-gray-100 dark:border-gray-800 p-6 min-h-[600px]">
+                    {selectedJobId ? (
+                        isApplying ? (
+                            <ApplicationForm
+                                jobId={selectedJobId}
+                                onSuccess={() => {
+                                    handleBack();
+                                }}
+                                onCancel={() => {
+                                    handleBack();
+                                }}
+                            />
+                        ) : (
+                            <JobDetailPage jobId={selectedJobId} onApply={openApply} onBack={handleBack} />
+                        )
+                    ) : (
+                        <JobListing onViewJob={openJobDetail} />
+                    )}
+                </div>
+            </main>
 
             <Footer />
         </div>
+    );
+};
+
+const Jobs = () => {
+    return (
+        <AuthProvider>
+            <JobsContent />
+        </AuthProvider>
     );
 };
 

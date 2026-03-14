@@ -25,11 +25,12 @@ const JobCard = ({ job, onViewJob }) => {
     return date.toLocaleDateString();
   };
 
-  const companyName = job.company?.name || job.companyName || 'Unknown Company';
+  const companyName = job.company?.companyName || job.companyName || 'Unknown Company';
   const duration = job.duration || job.jobType || 'Full-time';
+  const currencySymbol = job.salaryCurrency === 'INR' ? '₹' : '$';
   const salary = job.salaryMin && job.salaryMax
-    ? `₹ ${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()}`
-    : job.salaryMin ? `₹ ${job.salaryMin.toLocaleString()}` : 'Not Disclosed';
+    ? `${currencySymbol} ${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()}`
+    : job.salaryMin ? `${currencySymbol} ${job.salaryMin.toLocaleString()}` : 'Not Disclosed';
 
   return (
     <motion.div
@@ -60,15 +61,15 @@ const JobCard = ({ job, onViewJob }) => {
             )}
           </div>
         </div>
-        <div className="w-14 h-14 rounded-xl bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 p-1 border border-gray-100 dark:border-gray-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
-          {job.company?.logo ? (
+        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 p-1 border border-gray-100 dark:border-gray-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+          {job.company?.logo?.url ? (
             <img
-              src={job.company.logo}
+              src={job.company.logo.url}
               alt={companyName}
               className="w-full h-full object-contain rounded-lg"
             />
           ) : (
-            <span className="text-xl font-bold bg-linear-to-br from-teal-500 to-cyan-600 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-br from-teal-500 to-cyan-600 bg-clip-text text-transparent">
               {companyName.charAt(0)}
             </span>
           )}
@@ -92,7 +93,7 @@ const JobCard = ({ job, onViewJob }) => {
       </div>
 
       {/* Description Preview */}
-      <div className="mb-6 grow">
+      <div className="mb-6 flex-grow">
         <p className="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 leading-relaxed">
           {job.description}
         </p>

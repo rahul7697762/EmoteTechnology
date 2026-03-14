@@ -1,5 +1,5 @@
 import express from 'express';
-import { createApplication, getMyApplications, withdrawApplication, updateApplicationStatus } from '../controllers/application.controller.js';
+import { createApplication, getMyApplications, withdrawApplication, updateApplicationStatus } from '../controllers/applicationController.js';
 import { protect, restrictTo } from '../middleware/auth.middleware.js';
 
 const router = express.Router();

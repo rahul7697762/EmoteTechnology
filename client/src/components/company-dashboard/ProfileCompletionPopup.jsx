@@ -1,83 +1,75 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight, CheckCircle, AlertCircle } from 'lucide-react';
+import { X, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { getCompanyProfile } from "../../redux/slices/companySlice";
+import { useSelector } from 'react-redux';
 
 const ProfileCompletionPopup = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [completion, setCompletion] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const { profile, isFetchingProfile } = useSelector((state) => state.company);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   useEffect(() => {
-    checkProfileCompletion();
-  }, []);
+    if (!isFetchingProfile) {
+      calculateCompletion();
+    }
+  }, [profile, isFetchingProfile]);
 
-  const checkProfileCompletion = async () => {
-    try {
-      const response = await dispatch(getCompanyProfile()).unwrap();
-      const profile = response.company || response;
-
-      if (!profile) {
-        setCompletion(0);
-        setIsVisible(true);
-        setLoading(false);
-        return;
-      }
-
-      // Calculate completion percentage based on key fields
-      // Total fields to check: 10
-      const fields = [
-        'companyName',
-        'logoUrl',
-        'industry',
-        'location',
-        'description',
-        'website',
-        'contactEmail',
-        'founded',
-        'size',
-        'headquarters'
-      ];
-
-      const completedFields = fields.filter(field => {
-        const value = profile[field];
-        return value && value.toString().trim() !== '';
-      });
-
-      // Bonus points for social links or arrays
-      let bonus = 0;
-      if (profile.socialLinks && Object.values(profile.socialLinks).some(v => v)) bonus += 1;
-      if (profile.benefits && profile.benefits.length > 0) bonus += 1;
-
-      const totalPoints = fields.length + 2; // +2 for bonuses
-      const score = completedFields.length + bonus;
-
-      const percentage = Math.round((score / totalPoints) * 100);
-      setCompletion(Math.min(percentage, 100));
-
-      // Show popup if not 100% complete
-      if (percentage < 100) {
-        setIsVisible(true);
-      }
-    } catch (error) {
-      console.error('Error checking profile completion:', error);
-      // Assume errors (like 404s) mean profile isn't created yet
+  const calculateCompletion = () => {
+    if (!profile) {
       setCompletion(0);
       setIsVisible(true);
-    } finally {
-      setLoading(false);
+      return;
+    }
+
+    // Calculate completion percentage based on key fields
+    const fields = [
+      'companyName',
+      'industry',
+      'location',
+      'description',
+      'website',
+      'contactEmail',
+      'founded',
+      'size',
+      'headquarters'
+    ];
+
+    const completedFields = fields.filter(field => {
+      const value = profile[field];
+      return value && value.toString().trim() !== '';
+    });
+
+    // Bonus points for logo and images (matching the logic used in the app)
+    let extras = 0;
+    if (profile.logo?.url) extras += 1;
+    if (profile.coverImage?.url) extras += 1;
+    if (profile.socialLinks && Object.values(profile.socialLinks).some(v => v)) extras += 1;
+    if (profile.benefits && profile.benefits.length > 0) extras += 1;
+    if (profile.techStack && profile.techStack.length > 0) extras += 1;
+
+    const totalPoints = fields.length + 5; // fields + 5 extras
+    const score = completedFields.length + extras;
+
+    const percentage = Math.round((score / totalPoints) * 100);
+    setCompletion(Math.min(percentage, 100));
+
+    // Always show if not 100% complete OR not marked as completed by backend
+    if (percentage < 100 && !profile.completed) {
+      setIsVisible(true);
+    } else {
+      setIsVisible(false);
     }
   };
 
   const handleDismiss = () => {
     setIsVisible(false);
+    // Note: User requested that it comes back until 100%, 
+    // so we only hide it for the current component's lifecycle/mount
   };
 
-  if (loading || !isVisible) return null;
+  if (!isVisible) return null;
 
   return (
     <AnimatePresence>
@@ -87,7 +79,7 @@ const ProfileCompletionPopup = () => {
         exit={{ opacity: 0, y: 20, scale: 0.9 }}
         className="fixed bottom-6 right-6 z-50 max-w-sm w-full bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden"
       >
-        <div className="p-1 bg-linear-to-r from-teal-500 to-cyan-500" />
+        <div className="p-1 bg-gradient-to-r from-teal-500 to-cyan-500" />
 
         <div className="p-5">
           <div className="flex justify-between items-start mb-4">
@@ -117,7 +109,7 @@ const ProfileCompletionPopup = () => {
                 initial={{ width: 0 }}
                 animate={{ width: `${completion}%` }}
                 transition={{ duration: 1, ease: "easeOut" }}
-                className="h-full bg-linear-to-r from-teal-500 to-cyan-500 rounded-full"
+                className="h-full bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full"
               />
             </div>
           </div>

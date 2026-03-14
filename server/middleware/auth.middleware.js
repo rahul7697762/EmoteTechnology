@@ -9,32 +9,40 @@ export const protect = async (req, res, next) => {
     try {
         let token;
 
-        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-            token = req.headers.authorization.split(' ')[1];
-        } else if (req.cookies && req.cookies.jwt) {
+        // Try to get token from JWT cookie first (primary)
+        if (req.cookies && req.cookies.jwt) {
             token = req.cookies.jwt;
+        }
+        // Fallback to Authorization header if provided
+        else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+            token = req.headers.authorization.split(' ')[1];
         }
 
         if (!token) {
             return res.status(401).json({ message: "Not authorized, no token" });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.userId);
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const user = await User.findById(decoded.userId);
 
-        if (!user) {
-            return res.status(401).json({ message: "Not authorized, token failed" });
+            if (!user) {
+                return res.status(401).json({ message: "Not authorized, user not found" });
+            }
+
+            req.user = user;
+            req.userId = user._id;
+            next();
+        } catch (error) {
+            console.log('Token verification failed:', error.message);
+            if (error.name === 'TokenExpiredError') {
+                return res.status(401).json({ message: "Session expired, please login again" });
+            }
+            return res.status(401).json({ message: "Not authorized, invalid token" });
         }
-
-        req.user = user;
-        req.userId = user._id;
-        next();
     } catch (error) {
-        if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: "Session expired, please login again" });
-        }
-        console.log("Error in protectRoute", error);
-        return res.status(401).json({ message: "Not authorized, token failed" });
+        console.error("Error in protect middleware:", error);
+        return res.status(401).json({ message: "Not authorized" });
     }
 };
 
@@ -43,10 +51,19 @@ export const protect = async (req, res, next) => {
  */
 export const restrictTo = (...roles) => {
     return (req, res, next) => {
+        console.log(`Checking role access: User role=${req.user?.role}, Required roles=${roles}, Allowed=${roles.includes(req.user?.role)}`);
+
+        if (!req.user) {
+            return res.status(401).json({
+                success: false,
+                message: 'User not authenticated'
+            });
+        }
+
         if (!roles.includes(req.user.role)) {
             return res.status(403).json({
                 success: false,
-                message: 'You do not have permission to perform this action.'
+                message: `Access denied. Your role (${req.user.role}) does not have permission. Required roles: ${roles.join(', ')}`
             });
         }
         next();

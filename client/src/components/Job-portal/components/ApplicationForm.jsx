@@ -11,11 +11,8 @@ import {
   ChevronRight,
   ExternalLink
 } from 'lucide-react';
-import { useDispatch } from 'react-redux';
-import { createApplication } from '../../../redux/slices/applicationSlice';
-import { getJobById } from '../../../redux/slices/jobSlice';
-import { getMyResumes } from '../../../redux/slices/resumeSlice';
-import { showToast } from "./Toast";
+import { applicationAPI, jobAPI, resumeAPI } from '../services/api';
+import { showToast } from '../services/toast';
 import ResumeUpload from './ResumeUpload';
 
 const ApplicationForm = ({ jobId, jobTitle, companyName, onSuccess, onCancel }) => {
@@ -34,7 +31,6 @@ const ApplicationForm = ({ jobId, jobTitle, companyName, onSuccess, onCancel }) 
   const [existingResumes, setExistingResumes] = useState([]);
   const [displayJobTitle, setDisplayJobTitle] = useState(jobTitle);
   const [displayCompanyName, setDisplayCompanyName] = useState(companyName);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     fetchUserProfile();
@@ -45,11 +41,11 @@ const ApplicationForm = ({ jobId, jobTitle, companyName, onSuccess, onCancel }) 
   const fetchJobInfo = async () => {
     if (!jobId) return;
     try {
-      const response = await dispatch(getJobById(jobId)).unwrap();
-      const jobData = response.job || response;
+      const response = await jobAPI.getJobById(jobId);
+      const jobData = response.data;
       setJob(jobData);
       if (!jobTitle) setDisplayJobTitle(jobData.title);
-      if (!companyName) setDisplayCompanyName(jobData.company?.name || jobData.companyName);
+      if (!companyName) setDisplayCompanyName(jobData.company?.companyName || jobData.companyName);
 
       // Initialize answers array if job has questions and showQuestions is true
       if (jobData.showQuestions && jobData.applicationQuestions?.length > 0) {
@@ -81,8 +77,9 @@ const ApplicationForm = ({ jobId, jobTitle, companyName, onSuccess, onCancel }) 
 
   const fetchExistingResumes = async () => {
     try {
-      const response = await dispatch(getMyResumes()).unwrap();
-      setExistingResumes(response.resumes || response || []);
+      const response = await resumeAPI.getMyResumes();
+      // Filter for active resumes or just take the list
+      setExistingResumes(response.data || []);
     } catch (err) {
       console.error('Error fetching resumes:', err);
     }
@@ -127,7 +124,7 @@ const ApplicationForm = ({ jobId, jobTitle, companyName, onSuccess, onCancel }) 
         ]
       };
 
-      await dispatch(createApplication(submissionData)).unwrap();
+      await applicationAPI.createApplication(submissionData);
 
       showToast.success('Application submitted successfully!');
       onSuccess?.();
@@ -208,7 +205,7 @@ const ApplicationForm = ({ jobId, jobTitle, companyName, onSuccess, onCancel }) 
         {job?.showQuestions && formData.answers.length > 0 && (
           <section className="space-y-8">
             {formData.answers.map((item, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm">
+              <div key={`answer-${index}`} className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm">
                 <label className="block text-sm font-bold text-gray-900 dark:text-white mb-3">
                   {item.question}
                 </label>

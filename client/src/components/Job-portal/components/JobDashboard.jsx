@@ -3,20 +3,17 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Briefcase, Users, Eye, Clock, CheckCircle, Plus,
-  MoreVertical, Edit, Trash2, BarChart3, ExternalLink
+  MoreVertical, Edit, Trash2, BarChart3, ExternalLink, XCircle
 } from 'lucide-react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
-import { getCompanyJobs, clearCompanyError } from "../../../redux/slices/companySlice";
-import { closeJob as closeJobThunk } from "../../../redux/slices/jobSlice";
-import { showToast } from "./Toast";
+import { jobAPI } from '../services/api';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { showToast } from '../services/toast';
+import { Link } from 'react-router-dom';
 
 const JobDashboard = () => {
-  const { user: authUser } = useSelector((state) => state.auth);
-  const { companyJobs, isFetchingJobs } = useSelector((state) => state.company);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     totalJobs: 0,
     activeJobs: 0,
@@ -24,11 +21,8 @@ const JobDashboard = () => {
     pendingApplications: 0,
   });
 
-  useEffect(() => {
-    return () => {
-      dispatch(clearCompanyError());
-    };
-  }, [dispatch]);
+  const { user: authUser } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Only fetch company jobs for authenticated employer/admin users
@@ -41,17 +35,19 @@ const JobDashboard = () => {
 
   const fetchJobs = async () => {
     try {
-      const response = await dispatch(getCompanyJobs()).unwrap();
-      const jobsData = response.jobs || response;
+      setLoading(true);
+      const response = await jobAPI.getCompanyJobs();
+      setJobs(response.data);
 
       // Calculate stats
-      const totalJobs = jobsData.length;
-      const activeJobs = jobsData.filter(job => job.status === 'ACTIVE').length;
+      const totalJobs = response.data.length;
+      const activeJobs = response.data.filter(job => job.status === 'ACTIVE').length;
       let totalApplications = 0;
       let pendingApplications = 0;
 
-      jobsData.forEach(job => {
+      response.data.forEach(job => {
         totalApplications += job.applicationCount || 0;
+        // Assuming you have pending count in job data
         // pendingApplications += job.pendingApplications || 0;
       });
 
@@ -64,6 +60,8 @@ const JobDashboard = () => {
     } catch (error) {
       showToast.error('Failed to load jobs');
       console.error('Error fetching jobs:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,9 +71,10 @@ const JobDashboard = () => {
     }
 
     try {
-      await dispatch(closeJobThunk(jobId)).unwrap();
-      // Refetch jobs to get updated statuses
-      fetchJobs();
+      await jobAPI.closeJob(jobId);
+      setJobs(prev => prev.map(job =>
+        job._id === jobId ? { ...job, status: 'CLOSED' } : job
+      ));
       showToast.success('Job closed successfully');
     } catch (error) {
       showToast.error('Failed to close job');
@@ -195,7 +194,7 @@ const JobDashboard = () => {
         </div>
         <Link
           to="/company/post-job"
-          className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-teal-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-teal-600 hover:to-cyan-600 transition-all"
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-teal-600 hover:to-cyan-600 transition-all"
         >
           <Plus className="w-5 h-5" />
           Post New Job
@@ -204,13 +203,13 @@ const JobDashboard = () => {
 
       {/* Jobs Table */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-        {isFetchingJobs ? (
+        {loading ? (
           <div className="p-8 space-y-4">
             {[...Array(5)].map((_, i) => (
               <div key={i} className="h-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
             ))}
           </div>
-        ) : (!companyJobs || companyJobs.length === 0) ? (
+        ) : jobs.length === 0 ? (
           <div className="p-12 text-center">
             <Briefcase className="w-16 h-16 mx-auto text-gray-400 mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -250,7 +249,7 @@ const JobDashboard = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {companyJobs.map((job) => (
+                {jobs.map((job) => (
                   <motion.tr
                     key={job._id}
                     initial={{ opacity: 0 }}
@@ -273,7 +272,7 @@ const JobDashboard = () => {
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${job.status === 'ACTIVE'
                         ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                        : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
+                        : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
                         }`}>
                         {job.status === 'ACTIVE' ? (
                           <>
@@ -281,7 +280,10 @@ const JobDashboard = () => {
                             Active
                           </>
                         ) : (
-                          'Closed'
+                          <>
+                            <XCircle className="w-4 h-4 mr-1" />
+                            Closed
+                          </>
                         )}
                       </span>
                     </td>

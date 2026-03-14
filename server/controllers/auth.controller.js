@@ -41,7 +41,7 @@ export const signup = async (req, res) => {
             lastLoginAt: new Date()
         }
         //company object creation if role is company or employer
-        if (user.role === 'COMPANY') {
+        if (user.role === 'EMPLOYER' || user.role === 'COMPANY') {
             user.companyProfile = {
                 companyName: name,
                 contactEmail: email,

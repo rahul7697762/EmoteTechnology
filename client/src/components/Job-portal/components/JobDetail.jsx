@@ -15,14 +15,12 @@ import {
   Zap,
   Star
 } from 'lucide-react';
-import { useDispatch } from 'react-redux';
-import { getJobById } from '../../../redux/slices/jobSlice';
+import { jobAPI } from '../services/api';
 
 const JobDetail = ({ jobId, onApply, applied = false }) => {
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (jobId) {
@@ -33,8 +31,8 @@ const JobDetail = ({ jobId, onApply, applied = false }) => {
   const fetchJobDetails = async () => {
     try {
       setLoading(true);
-      const response = await dispatch(getJobById(jobId)).unwrap();
-      setJob(response.job || response);
+      const response = await jobAPI.getJobById(jobId);
+      setJob(response.data);
       setError('');
     } catch (err) {
       setError('Failed to load job details');

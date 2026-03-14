@@ -1,5 +1,8 @@
 import express from 'express';
-import dotenv from 'dotenv';
+import { createServer } from 'http';
+import { initSocket } from './services/socket.service.js';
+import notificationRoutes from './routes/notification.routes.js';
+import 'dotenv/config';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -17,23 +20,18 @@ import enrollmentRoutes from './routes/enrollment.routes.js';
 import paymentRoutes from './routes/payment.routes.js';
 import progressRoutes from './routes/progress.routes.js';
 import certificateRoutes from './routes/certificate.routes.js';
-import assessmentRoutes from './routes/assessment.routes.js';
-import submissionRoutes from './routes/submission.routes.js';
-import discussionRoutes from './routes/discussion.routes.js';
 import companyRoutes from './routes/company.routes.js';
 import jobRoutes from './routes/job.routes.js';
 import applicationRoutes from './routes/application.routes.js';
 import uploadRoutes from './routes/upload.routes.js';
-
-
-// Load environment variables
-dotenv.config();
 
 // ES Module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const httpServer = createServer(app);
+const io = initSocket(httpServer);
 const port = process.env.PORT || 5000;
 
 // CORS configuration
@@ -84,13 +82,16 @@ app.use('/api/enrollment', enrollmentRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/certificate', certificateRoutes);
-app.use('/api/assessment', assessmentRoutes);
-app.use('/api/submission', submissionRoutes);
-app.use('/api/discussions', discussionRoutes);
+// Serve static files
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// API Routes
 app.use('/api/companies', companyRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/notifications', notificationRoutes);
+
 
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
@@ -138,6 +139,6 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(port, () => {
+httpServer.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

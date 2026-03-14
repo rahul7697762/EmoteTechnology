@@ -38,14 +38,15 @@ import CompanyOnboardingPage from './pages/CompanyOnboardingPage';
 import CompanySettingsPage from './pages/CompanySettingsPage';
 import StudentJobDashboard from './pages/StudentJobDashboard';
 import StudentApplications from './pages/StudentApplications';
-import ProfileCompletionPopup from './components/company-dashboard/ProfileCompletionPopup';
+import { NotificationProvider } from './context/NotificationContext';
 
 function App() {
   const dispatch = useDispatch();
   const { theme } = useSelector((state) => state.ui);
 
   useEffect(() => {
-    dispatch(getMe());
+    const token = localStorage.getItem('token');
+    if (token) dispatch(getMe());
   }, [dispatch]);
 
   // Sync theme to DOM on mount and changes
@@ -57,7 +58,7 @@ function App() {
   }, [theme]);
 
   return (
-    <>
+    <NotificationProvider>
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -189,6 +190,56 @@ function App() {
             </ProtectedRoute>
           } />
 
+
+
+          <Route path="/company/dashboard" element={
+            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
+              <CompanyDashboard />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/company/profile" element={
+            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
+              <CompanyProfilePage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/company/post-job" element={
+            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
+              <CompanyPostJobPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/company/jobs/edit/:id" element={
+            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
+              <CompanyPostJobPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/company/jobs/:id" element={
+            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
+              <CompanyJobDetailPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/company/applicants" element={
+            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
+              <CompanyApplicantsPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/company/onboarding" element={
+            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
+              <CompanyOnboardingPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/company/settings" element={
+            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
+              <CompanySettingsPage />
+            </ProtectedRoute>
+          } />
+
           <Route path="/student-courses" element={
             <ProtectedRoute allowedRoles={['STUDENT', 'FACULTY', 'ADMIN']}>
               <StudentCourses />
@@ -236,7 +287,8 @@ function App() {
         </Routes>
         <Toaster />
       </Router>
-    </>
+      <Toaster />
+    </NotificationProvider>
   );
 }
 

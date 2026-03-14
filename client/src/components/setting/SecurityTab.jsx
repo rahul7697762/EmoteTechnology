@@ -212,7 +212,7 @@ const SecurityTab = () => {
                     <button
                         type="submit"
                         disabled={isChangingPassword || strength < 4}
-                        className="flex items-center space-x-2 px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl transition-all font-bold shadow-lg shadow-teal-600/20 hover:shadow-teal-600/40 hover:-translate-y-0.5 disabled:opacity-70 disabled:transform-none disabled:shadow-none bg-linear-to-r from-teal-500 to-emerald-500"
+                        className="flex items-center space-x-2 px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl transition-all font-bold shadow-lg shadow-teal-600/20 hover:shadow-teal-600/40 hover:-translate-y-0.5 disabled:opacity-70 disabled:transform-none disabled:shadow-none bg-gradient-to-r from-teal-500 to-emerald-500"
                     >
                         {isChangingPassword ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
                         <span>{isChangingPassword ? 'Updating Password...' : 'Update Password'}</span>

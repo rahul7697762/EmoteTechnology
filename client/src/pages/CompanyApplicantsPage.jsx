@@ -1,6 +1,6 @@
 import React from 'react';
 import CompanyLayout from '../components/company-dashboard/CompanyLayout';
-import ManageApplicants from './job-portal/ManageApplicants';
+import ManageApplicants from '../components/Job-portal/pages/ManageApplicants';
 
 const CompanyApplicantsPage = () => {
   return (

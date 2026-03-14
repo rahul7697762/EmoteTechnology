@@ -157,7 +157,7 @@ const ApplicantList = ({ applicants, loading, filters, onFilterChange, onStatusU
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-linear-to-r from-teal-500 to-cyan-500 rounded-xl p-4 text-white"
+          className="bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl p-4 text-white"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

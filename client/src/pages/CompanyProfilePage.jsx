@@ -1,6 +1,6 @@
 import React from 'react';
 import CompanyLayout from '../components/company-dashboard/CompanyLayout';
-import CompanyProfile from './job-portal/CompanyProfile';
+import CompanyProfile from '../components/Job-portal/pages/CompanyProfile';
 
 const CompanyProfilePage = () => {
   return (

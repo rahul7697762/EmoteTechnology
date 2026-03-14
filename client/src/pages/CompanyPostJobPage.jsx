@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import CompanyLayout from '../components/company-dashboard/CompanyLayout';
-import PostJob from './job-portal/PostJob';
+import PostJob from '../components/Job-portal/pages/PostJob';
 
 const CompanyPostJobPage = () => {
   const [searchParams] = useSearchParams();

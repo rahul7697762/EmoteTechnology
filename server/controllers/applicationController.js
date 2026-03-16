@@ -4,6 +4,7 @@ import Resume from '../models/Resume.js';
 import Company from '../models/Company.js';
 import { Notification } from '../models/notification.model.js';
 import { emitNotification } from '../services/socket.service.js';
+import User from '../models/user.model.js';
 
 export const createApplication = async (req, res) => {
   try {
@@ -40,24 +41,34 @@ export const createApplication = async (req, res) => {
       });
     }
 
-    // Create application
-    const application = await Application.create({
+    // Prepare application data with fallbacks from user record
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(401).json({
+        message: 'Authentication required to apply'
+      });
+    }
+
+    const applicationData = {
       job: job._id,
       candidate: req.userId,
       resume: req.body.resumeId,
-      coverLetter: req.body.coverLetter,
-      fullName: req.body.fullName,
-      email: req.body.email,
-      phone: req.body.phone,
-      linkedin: req.body.linkedin,
-      portfolio: req.body.portfolio,
-      answers: req.body.answers,
+      coverLetter: req.body.coverLetter || '',
+      fullName: req.body.fullName || user.name,
+      email: req.body.email || user.email,
+      phone: req.body.phone || user.profile?.phone || '',
+      linkedin: req.body.linkedin || '',
+      portfolio: req.body.portfolio || '',
+      answers: req.body.answers || [],
       metadata: {
         ipAddress: req.ip,
         userAgent: req.get('User-Agent'),
         source: 'web'
       }
-    });
+    };
+
+    // Create application
+    const application = await Application.create(applicationData);
 
     // Update job application count
     job.applicationCount += 1;

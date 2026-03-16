@@ -1,6 +1,6 @@
-// job-portal/components/ApplicationForm.jsx
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useSelector } from 'react-redux';
 import {
   Send,
   FileText,
@@ -16,6 +16,7 @@ import { showToast } from '../services/toast';
 import ResumeUpload from './ResumeUpload';
 
 const ApplicationForm = ({ jobId, jobTitle, companyName, onSuccess, onCancel }) => {
+  const { user: currentUser } = useSelector((state) => state.auth);
   const [job, setJob] = useState(null);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -33,10 +34,10 @@ const ApplicationForm = ({ jobId, jobTitle, companyName, onSuccess, onCancel }) 
   const [displayCompanyName, setDisplayCompanyName] = useState(companyName);
 
   useEffect(() => {
-    fetchUserProfile();
+    populateUserProfile();
     fetchExistingResumes();
     fetchJobInfo();
-  }, [jobId]);
+  }, [jobId, currentUser]);
 
   const fetchJobInfo = async () => {
     if (!jobId) return;
@@ -59,19 +60,13 @@ const ApplicationForm = ({ jobId, jobTitle, companyName, onSuccess, onCancel }) 
     }
   };
 
-  const fetchUserProfile = async () => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      try {
-        const user = JSON.parse(userData);
-        setFormData(prev => ({
-          ...prev,
-          fullName: user.name || '',
-          email: user.email || '',
-        }));
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-      }
+  const populateUserProfile = () => {
+    if (currentUser) {
+      setFormData(prev => ({
+        ...prev,
+        fullName: currentUser.name || '',
+        email: currentUser.email || '',
+      }));
     }
   };
 

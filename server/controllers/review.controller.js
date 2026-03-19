@@ -10,7 +10,7 @@ import { Enrollment } from "../models/enrollment.model.js";
  */
 export const createReview = async (req, res) => {
     try {
-        const { courseId, rating, title, comment } = req.body;
+        const { courseId, rating, comment } = req.body;
         const userId = req.user._id;
 
         // 1. Check if user is enrolled
@@ -41,7 +41,6 @@ export const createReview = async (req, res) => {
             userId,
             courseId,
             rating,
-            title,
             comment
         });
 

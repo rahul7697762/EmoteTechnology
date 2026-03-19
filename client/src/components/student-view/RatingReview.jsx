@@ -11,7 +11,6 @@ const RatingReview = ({ courseId, isOpen, onClose }) => {
 
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
-    const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
 
     useEffect(() => {
@@ -29,7 +28,6 @@ const RatingReview = ({ courseId, isOpen, onClose }) => {
         const result = await dispatch(createReview({
             courseId,
             rating,
-            title,
             comment
         }));
 
@@ -96,18 +94,7 @@ const RatingReview = ({ courseId, isOpen, onClose }) => {
 
                     {/* Inputs */}
                     <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                Title
-                            </label>
-                            <input
-                                type="text"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                placeholder="Summarize your experience"
-                                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-violet-500 focus:border-transparent outline-none transition-all"
-                            />
-                        </div>
+
 
                         <div>
                             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">

@@ -64,13 +64,15 @@ const CourseCard = ({ course }) => {
             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 line-clamp-1">{course.title}</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 italic mb-6">Last accessed: {course.lastAccessed}</p>
 
-            <button className={`w-full py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold transition-colors ${course.active
+            <Link 
+                to={`/course/${course._id}/learn`}
+                className={`w-full py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold transition-colors ${course.active
                 ? 'bg-teal-600 hover:bg-teal-700 text-white'
                 : 'bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                 }`}>
                 {course.active ? <Play size={16} fill="currentColor" /> : <Play size={16} />}
-                {course.actionText}
-            </button>
+                {course.actionText || 'Resume Learning'}
+            </Link>
         </div>
     );
 };

@@ -367,11 +367,7 @@ const CourseDetails = () => {
                                                     {new Date(review.createdAt).toLocaleDateString()}
                                                 </span>
                                             </div>
-                                            {review.title && (
-                                                <h5 className="font-bold text-gray-900 dark:text-white mb-2">
-                                                    {review.title}
-                                                </h5>
-                                            )}
+
                                             <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
                                                 {review.comment}
                                             </p>

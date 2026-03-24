@@ -56,6 +56,7 @@ const corsOptions = {
 
         const isAllowed = allowedOrigins.includes(origin) || 
                          (origin && origin.endsWith('.onrender.com')) ||
+                         (origin && origin.endsWith('.vercel.app')) ||
                          !origin; // Allow server-to-server or tools like Postman
 
         if (isAllowed) {

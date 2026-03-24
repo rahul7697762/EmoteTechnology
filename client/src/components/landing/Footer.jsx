@@ -1,79 +1,144 @@
-import { Zap, MapPin, Mail, Phone, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Zap, MapPin, Mail, Phone, ArrowUpRight, Twitter, Linkedin, Github, Youtube } from 'lucide-react';
+
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
+const links = {
+    Learn: ['All Courses', 'AI Interview Prep', 'Certificates', 'Live Sessions'],
+    Company: ['About Us', 'Careers', 'Blog', 'Press'],
+    Support: ['Help Center', 'Privacy Policy', 'Terms of Use', 'Contact'],
+};
+
+const socials = [
+    { icon: Twitter, href: '#', label: 'Twitter' },
+    { icon: Linkedin, href: '#', label: 'LinkedIn' },
+    { icon: Github, href: '#', label: 'GitHub' },
+    { icon: Youtube, href: '#', label: 'YouTube' },
+];
 
 const Footer = () => {
     return (
-        <motion.footer
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="relative border-t border-gray-200 dark:border-white/10 py-16 px-6 lg:px-8 bg-gray-50 dark:bg-transparent transition-colors duration-300"
-        >
-            <div className="max-w-7xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-                    {/* Brand & Address */}
-                    <div className="space-y-6">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-linear-to-br from-teal-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/20">
-                                <Zap size={22} className="text-white" />
-                            </div>
-                            <span className="text-xl font-bold text-gray-900 dark:text-white">
-                                Emote<span className="text-teal-500 dark:text-teal-400">Technology</span>
-                            </span>
-                        </div>
-                        <div className="space-y-4 text-gray-600 dark:text-gray-400">
-                            <div className="flex items-start gap-3">
-                                <MapPin size={20} className="text-teal-500 shrink-0 mt-1" />
-                                <p>123 Innovation Drive, Tech Valley, CA 94043, United States</p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <Mail size={20} className="text-teal-500 shrink-0" />
-                                <p>contact@emotetechnology.com</p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <Phone size={20} className="text-teal-500 shrink-0" />
-                                <p>+1 (555) 123-4567</p>
-                            </div>
-                        </div>
-                    </div>
+        <footer className="bg-[#1A1D2E] dark:bg-[#0F1120] border-t border-[#3B4FD8]/20 dark:border-[#6C7EF5]/15 transition-colors duration-300">
 
-                    {/* Secondary Menu */}
+            {/* ── Top CTA strip ── */}
+            <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
+                className="border-b border-[#3B4FD8]/20 dark:border-[#6C7EF5]/10"
+            >
+                <div className="max-w-7xl mx-auto px-6 lg:px-8 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
                     <div>
-                        <h4 className="font-semibold mb-6 text-gray-900 dark:text-white text-lg">Quick Links</h4>
+                        <p className="text-[10px] tracking-[0.28em] uppercase text-[#6C7EF5] mb-2" style={{ fontFamily: MONO }}>
+                            Stay in the loop
+                        </p>
+                        <h3 className="text-2xl font-semibold text-[#E8EAF2]" style={{ fontFamily: SERIF }}>
+                            Get updates on new courses &amp; jobs.
+                        </h3>
+                    </div>
+                    <div className="flex w-full md:w-auto gap-0 min-w-[320px]">
+                        <input
+                            type="email"
+                            placeholder="your@email.com"
+                            className="flex-1 px-4 py-3 bg-[#252A41] text-[#E8EAF2] placeholder-[#8B90B8] border border-[#3B4FD8]/25 focus:outline-none focus:border-[#6C7EF5] text-sm transition-colors"
+                        />
+                        <button className="px-5 py-3 bg-[#F5A623] text-white text-sm font-medium tracking-wide hover:bg-[#d9911a] transition-colors whitespace-nowrap flex items-center gap-2">
+                            Subscribe <ArrowUpRight size={14} />
+                        </button>
+                    </div>
+                </div>
+            </motion.div>
+
+            {/* ── Main grid ── */}
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr_1fr] gap-12">
+
+                {/* Brand column */}
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                >
+                    {/* Logo */}
+                    <div className="flex items-baseline gap-0.5 mb-6">
+                        <span className="text-[1.5rem] font-semibold text-[#6C7EF5]" style={{ fontFamily: SERIF }}>Emote</span>
+                        <span className="text-base font-light text-[#E8EAF2] tracking-[0.04em]">Technology</span>
+                    </div>
+                    <p className="text-[#8B90B8] text-sm leading-relaxed mb-8 max-w-xs">
+                        AI-powered education platform bridging the gap between learners and industry — built for the institutions of tomorrow.
+                    </p>
+
+                    {/* Contact */}
+                    <div className="space-y-3">
+                        {[
+                            { icon: MapPin, text: 'Tech Valley, CA 94043, US' },
+                            { icon: Mail, text: 'contact@emotetechnology.com' },
+                            { icon: Phone, text: '+1 (555) 123-4567' },
+                        ].map(({ icon: Icon, text }) => (
+                            <div key={text} className="flex items-center gap-3 text-[#8B90B8] text-xs">
+                                <Icon size={13} className="text-[#6C7EF5] shrink-0" />
+                                <span>{text}</span>
+                            </div>
+                        ))}
+                    </div>
+                </motion.div>
+
+                {/* Link columns */}
+                {Object.entries(links).map(([category, items], ci) => (
+                    <motion.div
+                        key={category}
+                        initial={{ opacity: 0, y: 16 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: 0.08 * (ci + 1) }}
+                    >
+                        <h4
+                            className="text-[10px] tracking-[0.22em] uppercase text-[#6C7EF5] mb-6"
+                            style={{ fontFamily: MONO }}
+                        >
+                            {category}
+                        </h4>
                         <ul className="space-y-4">
-                            {['Courses', 'Jobs', 'Interview Prep', 'Policies', 'Career'].map((item) => (
+                            {items.map((item) => (
                                 <li key={item}>
-                                    <a href="#" className="text-gray-600 dark:text-gray-500 hover:text-teal-600 dark:hover:text-teal-400 transition-colors flex items-center gap-2 group">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-teal-500 group-hover:scale-150 transition-transform"></span>
+                                    <a
+                                        href="#"
+                                        className="text-[#8B90B8] text-sm hover:text-[#E8EAF2] transition-colors group flex items-center gap-1.5"
+                                    >
+                                        <span className="w-0 h-px bg-[#6C7EF5] group-hover:w-3 transition-all duration-200" />
                                         {item}
                                     </a>
                                 </li>
                             ))}
                         </ul>
-                    </div>
+                    </motion.div>
+                ))}
+            </div>
 
-                    {/* Social Icons */}
-                    <div>
-                        <h4 className="font-semibold mb-6 text-gray-900 dark:text-white text-lg">Connect With Us</h4>
-                        <p className="text-gray-600 dark:text-gray-400 mb-6">Follow us on social media for updates, tips and more.</p>
-                        <div className="flex gap-4">
-                            {[Facebook, Twitter, Linkedin, Instagram].map((Icon, i) => (
-                                <a key={i} href="#" className="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-teal-500 hover:text-white dark:hover:bg-teal-500 transition-all duration-300 hover:scale-110 hover:-translate-y-1">
-                                    <Icon size={20} />
-                                </a>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                <div className="pt-8 border-t border-gray-200 dark:border-white/10 text-center">
-                    <p className="text-gray-600 dark:text-gray-500 text-sm">
-                        © {new Date().getFullYear()} EmoteTechnology. All rights reserved.
+            {/* ── Bottom bar ── */}
+            <div className="border-t border-[#3B4FD8]/15 dark:border-[#6C7EF5]/10">
+                <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <p className="text-[#8B90B8] text-xs" style={{ fontFamily: MONO }}>
+                        © {new Date().getFullYear()} EmoteTechnology · All rights reserved.
                     </p>
+                    {/* Socials */}
+                    <div className="flex items-center gap-3">
+                        {socials.map(({ icon: Icon, href, label }) => (
+                            <a
+                                key={label}
+                                href={href}
+                                aria-label={label}
+                                className="w-8 h-8 flex items-center justify-center border border-[#3B4FD8]/25 text-[#8B90B8] hover:border-[#6C7EF5] hover:text-[#6C7EF5] hover:bg-[#6C7EF5]/8 transition-all duration-200"
+                            >
+                                <Icon size={14} />
+                            </a>
+                        ))}
+                    </div>
                 </div>
             </div>
-        </motion.footer>
+        </footer>
     );
 };
 

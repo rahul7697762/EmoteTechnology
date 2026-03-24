@@ -7,10 +7,10 @@ const PublicRoute = ({ children }) => {
 
     if (isLoadingUser) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#0a0a0f]">
+            <div className="min-h-screen flex items-center justify-center bg-[#F7F8FF] dark:bg-[#1A1D2E]">
                 <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+                    <div className="w-14 h-14 border-4 border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 border-t-[#3B4FD8] dark:border-t-[#6C7EF5] rounded-full animate-spin mx-auto mb-6"></div>
+                    <p className="text-[#6B7194] dark:text-[#8B90B8] text-sm uppercase tracking-[0.2em] font-bold" style={{ fontFamily: "'Space Mono', 'Courier New', monospace" }}>Loading...</p>
                 </div>
             </div>
         );

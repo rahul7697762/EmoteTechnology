@@ -1,11 +1,14 @@
 import React from 'react';
 import { MessageSquare, X, Send } from 'lucide-react';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const AIChat = ({ isOpen, onClose, width, isMobile }) => {
     return (
         <aside
             className={`
-                fixed inset-y-0 right-0 z-30 bg-slate-50 dark:bg-[#111827] border-l border-slate-200 dark:border-slate-800 shadow-xl
+                fixed inset-y-0 right-0 z-30 bg-[#F7F8FF] dark:bg-[#0A0B10] border-l border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-2xl
                 transform transition-transform duration-300 ease-in-out flex flex-col
                 ${isOpen ? 'translate-x-0' : 'translate-x-full'}
                 lg:relative lg:shadow-none lg:z-0 lg:transition-none
@@ -14,52 +17,52 @@ const AIChat = ({ isOpen, onClose, width, isMobile }) => {
             style={{ width: isMobile ? '100%' : width }} // Full width on mobile if needed, or fixed. Usually sidebar/chat overlays on mobile.
         >
             {/* Header */}
-            <div className="h-16 px-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50/50 dark:bg-slate-800/50">
-                <div className="flex items-center gap-2">
-                    <MessageSquare size={18} className="text-violet-600 dark:text-violet-400" />
-                    <h2 className="font-bold text-slate-800 dark:text-white">AI Assistant</h2>
+            <div className="h-16 px-6 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 flex items-center justify-between shrink-0 bg-white dark:bg-[#1A1D2E]">
+                <div className="flex items-center gap-3">
+                    <MessageSquare size={20} className="text-[#3B4FD8] dark:text-[#6C7EF5]" />
+                    <h2 className="text-xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>AI Assistant</h2>
                 </div>
                 <button
                     onClick={onClose}
-                    className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                    className="p-2 text-[#6B7194] hover:text-[#1A1D2E] dark:text-[#8B90B8] dark:hover:text-[#E8EAF2] hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 transition-colors"
                 >
-                    <X size={18} />
+                    <X size={20} />
                 </button>
             </div>
 
             {/* Content / Messages Area */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4 bg-slate-50 dark:bg-[#0F172A]">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 bg-[#F7F8FF] dark:bg-[#0A0B10]">
                 {/* Demo Messages */}
                 <div className="flex flex-col gap-1">
-                    <div className="flex items-end gap-2">
-                        <div className="w-6 h-6 rounded-full bg-violet-600 flex items-center justify-center shrink-0">
-                            <MessageSquare size={12} className="text-white" />
+                    <div className="flex items-end gap-3">
+                        <div className="w-8 h-8 bg-[#3B4FD8] flex items-center justify-center shrink-0 border border-[#3B4FD8]/20">
+                            <MessageSquare size={16} className="text-white" />
                         </div>
-                        <div className="bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-700 rounded-2xl rounded-bl-none px-4 py-2 text-sm text-slate-700 dark:text-slate-300 shadow-sm">
-                            <p>Hello! I'm your AI learning assistant. How can I help you with this lesson today?</p>
+                        <div className="bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 px-5 py-4 text-[#1A1D2E] dark:text-[#E8EAF2] shadow-sm max-w-[85%]">
+                            <p className="leading-relaxed">Hello! I'm your AI learning assistant. How can I help you with this lesson today?</p>
                         </div>
                     </div>
                 </div>
 
                 <div className="flex flex-col gap-1 items-end">
-                    <div className="flex items-end gap-2 flex-row-reverse">
-                        <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0">
-                            <span className="text-xs font-bold text-slate-600 dark:text-slate-300">ME</span>
+                    <div className="flex items-end gap-3 flex-row-reverse">
+                        <div className="w-8 h-8 bg-[#1A1D2E] dark:bg-[#E8EAF2] flex items-center justify-center shrink-0">
+                            <span className="text-[10px] font-bold text-white dark:text-[#1A1D2E]" style={{ fontFamily: MONO }}>ME</span>
                         </div>
-                        <div className="bg-violet-600 text-white rounded-2xl rounded-br-none px-4 py-2 text-sm shadow-sm">
-                            <p>Can you summarize the main points of this video?</p>
+                        <div className="bg-[#3B4FD8] text-white px-5 py-4 shadow-sm max-w-[85%]">
+                            <p className="leading-relaxed">Can you summarize the main points of this video?</p>
                         </div>
                     </div>
                 </div>
 
                 <div className="flex flex-col gap-1">
-                    <div className="flex items-end gap-2">
-                        <div className="w-6 h-6 rounded-full bg-violet-600 flex items-center justify-center shrink-0">
-                            <MessageSquare size={12} className="text-white" />
+                    <div className="flex items-end gap-3">
+                        <div className="w-8 h-8 bg-[#3B4FD8] flex items-center justify-center shrink-0 border border-[#3B4FD8]/20">
+                            <MessageSquare size={16} className="text-white" />
                         </div>
-                        <div className="bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-700 rounded-2xl rounded-bl-none px-4 py-2 text-sm text-slate-700 dark:text-slate-300 shadow-sm">
-                            <p>Sure! Here are the key takeaways:</p>
-                            <ul className="list-disc ml-4 mt-2 space-y-1">
+                        <div className="bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 px-5 py-4 text-[#1A1D2E] dark:text-[#E8EAF2] shadow-sm max-w-[85%]">
+                            <p className="leading-relaxed font-bold mb-2">Sure! Here are the key takeaways:</p>
+                            <ul className="list-disc ml-5 space-y-2 opacity-90">
                                 <li>The importance of efficient state management.</li>
                                 <li>How to optimize React performance using memoization.</li>
                                 <li>Best practices for structuring your components.</li>
@@ -68,25 +71,25 @@ const AIChat = ({ isOpen, onClose, width, isMobile }) => {
                     </div>
                 </div>
 
-                <div className="flex justify-center my-4">
-                    <span className="text-xs text-slate-400 font-medium px-2 bg-slate-50 dark:bg-[#0F172A]">Today</span>
+                <div className="flex justify-center my-6">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-[#6B7194] dark:text-[#8B90B8] px-4 bg-[#F7F8FF] dark:bg-[#0A0B10]" style={{ fontFamily: MONO }}>TODAY</span>
                 </div>
             </div>
 
             {/* Input Area */}
-            <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0F172A]/50">
+            <div className="p-6 border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 bg-white dark:bg-[#1A1D2E]">
                 <div className="relative">
                     <input
                         type="text"
                         placeholder="Ask a question..."
-                        className="w-full pl-4 pr-10 py-2.5 bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/50 dark:text-slate-200"
+                        className="w-full pl-4 pr-12 py-3 bg-[#F7F8FF] dark:bg-[#0A0B10] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 text-[#1A1D2E] dark:text-[#E8EAF2] focus:outline-none focus:ring-0 focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] placeholder:text-[#6B7194]/50 dark:placeholder:text-[#8B90B8]/50"
                         disabled
                     />
                     <button
-                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-[#6B7194] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors"
                         disabled
                     >
-                        <Send size={16} />
+                        <Send size={18} />
                     </button>
                 </div>
             </div>

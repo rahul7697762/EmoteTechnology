@@ -1,36 +1,39 @@
 import React from 'react';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const RecommendedCard = ({ course }) => {
     return (
-        <div className="bg-white dark:bg-[#1a1c23] rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden shadow-sm hover:shadow-md transition-all group">
+        <div className="bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
             {/* Card Header / Image Area */}
             <div className={`h-48 ${course.gradient} relative p-6 flex flex-col items-center justify-center text-center`}>
                 <div className="text-white transform group-hover:scale-110 transition-transform duration-300">
                     {course.icon}
                 </div>
 
-                <div className="absolute bottom-3 left-3 bg-black/40 backdrop-blur-md px-2 py-1 rounded-md flex items-center gap-1 text-white text-xs font-semibold">
-                    <Star size={12} className="fill-amber-400 text-amber-400" />
+                <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1.5 flex items-center gap-1.5 text-white text-[10px] font-bold tracking-widest uppercase border border-white/20" style={{ fontFamily: MONO }}>
+                    <Star size={12} className="fill-[#F5A623] text-[#F5A623]" />
                     <span>{course.rating}</span>
-                    <span className="text-white/70 font-normal">({course.reviews})</span>
+                    <span className="text-white/60">({course.reviews})</span>
                 </div>
             </div>
 
             {/* Content */}
-            <div className="p-5">
-                <div className="flex items-center gap-2 mb-3 text-[10px] font-bold tracking-wider uppercase">
-                    <span className={`px-2 py-1 rounded text-teal-600 bg-teal-50 dark:bg-teal-900/30 dark:text-teal-400`}>
+            <div className="p-6 flex flex-col flex-1">
+                <div className="flex items-center gap-3 mb-4 text-[10px] font-bold tracking-[0.2em] uppercase" style={{ fontFamily: MONO }}>
+                    <span className="px-2 py-1 text-[#3B4FD8] bg-[#3B4FD8]/10 dark:text-[#6C7EF5] dark:bg-[#6C7EF5]/10 border border-transparent">
                         {course.category}
                     </span>
-                    <span className="text-gray-400">{course.duration}</span>
+                    <span className="text-[#6B7194] dark:text-[#8B90B8]">{course.duration}</span>
                 </div>
 
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 min-h-[56px]">
+                <h3 className="text-xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-6 line-clamp-2 min-h-[56px]" style={{ fontFamily: SERIF }}>
                     {course.title}
                 </h3>
 
-                <button className="w-full py-2.5 rounded-lg border-2 border-teal-500 text-teal-600 dark:text-teal-400 font-semibold text-sm hover:bg-teal-50 dark:hover:bg-teal-900/20 transition-colors">
+                <button className="mt-auto w-full py-3.5 border border-[#3B4FD8] dark:border-[#6C7EF5] text-[#3B4FD8] dark:text-[#6C7EF5] text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#3B4FD8] hover:text-white dark:hover:bg-[#6C7EF5] dark:hover:text-[#1A1D2E] transition-colors" style={{ fontFamily: MONO }}>
                     Enroll Now
                 </button>
             </div>
@@ -48,9 +51,9 @@ const RecommendedCourses = () => {
             reviews: "1.2k reviews",
             category: "Development",
             duration: "12h 45m",
-            gradient: "bg-linear-to-br from-[#1d4e4e] to-[#0f2e2e]",
+            gradient: "bg-[#1A1D2E]",
             icon: (
-                <div className="text-6xl font-bold opacity-80 select-none">🐍</div>
+                <div className="text-6xl font-bold opacity-100 select-none">🐍</div>
             )
         },
         {
@@ -60,23 +63,23 @@ const RecommendedCourses = () => {
             reviews: "850 reviews",
             category: "Business",
             duration: "6h 20m",
-            gradient: "bg-linear-to-br from-[#c28e2b] to-[#8a6217]",
+            gradient: "bg-[#F5A623]",
             icon: (
-                <div className="text-6xl font-bold opacity-80 select-none text-white font-serif">A+</div>
+                <div className="text-6xl font-bold opacity-100 select-none text-white font-serif" style={{ fontFamily: SERIF }}>L+</div>
             )
         }
     ];
 
     return (
         <section>
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Recommended For You</h2>
-                <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                        <ChevronLeft size={16} />
+            <div className="flex items-center justify-between mb-8 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 pb-4">
+                <h2 className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>Recommended For You</h2>
+                <div className="flex gap-3">
+                    <button className="w-10 h-10 border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 flex items-center justify-center text-[#3B4FD8] dark:text-[#6C7EF5] hover:bg-[#3B4FD8]/10 dark:hover:bg-[#6C7EF5]/10 transition-colors shadow-sm bg-white dark:bg-[#252A41]">
+                        <ChevronLeft size={16} strokeWidth={2.5} />
                     </button>
-                    <button className="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                        <ChevronRight size={16} />
+                    <button className="w-10 h-10 border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 flex items-center justify-center text-[#3B4FD8] dark:text-[#6C7EF5] hover:bg-[#3B4FD8]/10 dark:hover:bg-[#6C7EF5]/10 transition-colors shadow-sm bg-white dark:bg-[#252A41]">
+                        <ChevronRight size={16} strokeWidth={2.5} />
                     </button>
                 </div>
             </div>

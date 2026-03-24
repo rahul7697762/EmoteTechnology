@@ -3,25 +3,30 @@ import { fetchMyCertificates } from '../../redux/slices/certificateSlice';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
-import { Download } from 'lucide-react';
+import { Download, Award } from 'lucide-react';
+
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
 
 const CertificateItem = ({ cert }) => (
-    <div className="flex items-center gap-3 p-3 bg-white dark:bg-[#1a1c23] rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm mb-3 group hover:border-teal-200 dark:hover:border-teal-900 transition-colors cursor-pointer">
-        <div className="w-10 h-10 rounded-lg bg-red-50 dark:bg-red-900/20 flex items-center justify-center text-red-500 dark:text-red-400 font-bold text-xs">
+    <div className="flex items-center gap-4 p-4 bg-[#F7F8FF] dark:bg-[#1A1D2E] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm mb-4 group hover:border-[#3B4FD8]/30 dark:hover:border-[#6C7EF5]/30 transition-colors cursor-pointer rounded-none">
+        <div className="w-12 h-12 bg-[#E25C5C]/10 flex items-center justify-center text-[#E25C5C] font-bold text-[10px] uppercase tracking-widest rounded-none border border-[#E25C5C]/20 shrink-0" style={{ fontFamily: MONO }}>
             PDF
         </div>
         <div className="flex-1 min-w-0">
-            <h4 className="font-bold text-gray-900 dark:text-white text-xs truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+            <h4 className="font-bold text-[#1A1D2E] dark:text-[#E8EAF2] text-base truncate group-hover:text-[#3B4FD8] dark:group-hover:text-[#6C7EF5] transition-colors" style={{ fontFamily: SERIF }}>
                 {cert.courseId?.title || 'Unknown Course'}
             </h4>
-            <p className="text-[10px] text-gray-500 dark:text-gray-400">Issued {new Date(cert.issuedAt).toLocaleDateString()}</p>
+            <p className="text-[10px] text-[#6B7194] dark:text-[#8B90B8] font-bold uppercase tracking-widest mt-1" style={{ fontFamily: MONO }}>
+                ISSUED {new Date(cert.issuedAt).toLocaleDateString()}
+            </p>
         </div>
         <button
-            onClick={() => window.open(cert.certificateUrl, '_blank')}
-            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+            onClick={(e) => { e.stopPropagation(); window.open(cert.certificateUrl, '_blank'); }}
+            className="p-3 text-[#6B7194] hover:text-[#3B4FD8] dark:text-[#8B90B8] dark:hover:text-[#6C7EF5] hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 transition-colors border border-transparent"
             title="Download Certificate"
         >
-            <Download size={16} />
+            <Download size={18} />
         </button>
     </div>
 );
@@ -37,22 +42,18 @@ const RecentCertificates = () => {
 
     if (loading) {
         return (
-            <div className="mb-8 p-6 bg-gray-50 dark:bg-gray-800/20 rounded-2xl animate-pulse">
-                <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
-                <div className="space-y-3">
-                    <div className="h-14 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
-                    <div className="h-14 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
-                </div>
+            <div className="mb-8 p-6 flex justify-center">
+                 <div className="w-6 h-6 border-[3px] border-[#3B4FD8]/20 border-t-[#3B4FD8] dark:border-[#6C7EF5]/20 dark:border-t-[#6C7EF5] rounded-full animate-spin"></div>
             </div>
         );
     }
 
     return (
-        <div className="mb-8 p-6 bg-gray-50 dark:bg-gray-800/20 rounded-2xl">
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Recent Certificates</h3>
-                <span className="bg-teal-100 text-teal-600 dark:bg-teal-900/40 dark:text-teal-400 p-1 rounded-full">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-award"><circle cx="12" cy="8" r="7" /><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" /></svg>
+        <div className="mb-8 p-6 lg:p-8 bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm rounded-none">
+            <div className="flex items-center justify-between mb-6 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 pb-4">
+                <h3 className="text-xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>Recent Certificates</h3>
+                <span className="bg-[#F5A623]/10 text-[#F5A623] p-2 rounded-none">
+                    <Award size={20} strokeWidth={2} />
                 </span>
             </div>
 
@@ -61,12 +62,15 @@ const RecentCertificates = () => {
                     <CertificateItem key={cert._id} cert={cert} />
                 ))
             ) : (
-                <p className="text-xs text-center text-gray-500 py-4">No certificates earned yet.</p>
+                <div className="p-6 bg-[#F7F8FF] dark:bg-[#1A1D2E] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 text-center mb-6">
+                    <p className="text-[10px] text-[#6B7194] dark:text-[#8B90B8] uppercase tracking-widest font-bold" style={{ fontFamily: MONO }}>No certificates earned yet.</p>
+                </div>
             )}
 
             <button
                 onClick={() => navigate('/student-certificates')}
-                className="w-full mt-2 py-2 bg-white dark:bg-[#1a1c23] border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-xs font-bold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                className="w-full py-4 bg-[#F7F8FF] dark:bg-[#1A1D2E] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 text-[#1A1D2E] dark:text-[#E8EAF2] text-[10px] uppercase tracking-widest font-bold hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 transition-colors rounded-none"
+                style={{ fontFamily: MONO }}
             >
                 View All
             </button>

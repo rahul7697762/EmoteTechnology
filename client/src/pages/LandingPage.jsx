@@ -11,7 +11,7 @@ import Footer from '../components/landing/Footer';
 
 const LandingPage = () => {
     return (
-        <div className="min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-white overflow-x-hidden transition-colors duration-300">
+        <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] overflow-x-hidden transition-colors duration-300">
             <Background />
             <Navbar />
             <Hero />

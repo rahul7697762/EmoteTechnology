@@ -1,4 +1,4 @@
-// job-portal/components/JobDetail.jsx
+// job-portal/components/JobDetail.jsx — Tech-Brutalism Design
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -7,15 +7,14 @@ import {
   IndianRupee,
   Calendar,
   Clock,
-  Users,
   RotateCcw,
   PlayCircle,
-  Award,
   CircleCheck,
-  Zap,
-  Star
+  Zap
 } from 'lucide-react';
 import { jobAPI } from '../services/api';
+
+const MONO = "'Space Mono', 'IBM Plex Mono', monospace";
 
 const JobDetail = ({ jobId, onApply, applied = false }) => {
   const [job, setJob] = useState(null);
@@ -43,7 +42,7 @@ const JobDetail = ({ jobId, onApply, applied = false }) => {
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'Not specified';
+    if (!dateString) return 'NOT_SPECIFIED';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-GB', {
       day: 'numeric',
@@ -54,120 +53,141 @@ const JobDetail = ({ jobId, onApply, applied = false }) => {
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 animate-pulse">
-        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
-        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-8"></div>
+      <div className="bg-[#F7F8FF] border-[3px] border-[#1A1D2E] p-8 shadow-[6px_6px_0px_#3B4FD8] animate-pulse" style={{ fontFamily: MONO }}>
+        <div className="h-8 bg-gray-300 w-3/4 mb-4 border-[2px] border-[#1A1D2E]"></div>
+        <div className="h-4 bg-gray-300 w-1/4 mb-8 border-[2px] border-[#1A1D2E]"></div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-          {[1, 2, 3, 4].map(i => <div key={i} className="h-16 bg-gray-200 dark:bg-gray-700 rounded"></div>)}
+          {[1, 2, 3, 4].map(i => <div key={i} className="h-16 bg-gray-300 border-[2px] border-[#1A1D2E]"></div>)}
         </div>
         <div className="space-y-4">
-          {[1, 2, 3].map(i => <div key={i} className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>)}
+          {[1, 2, 3].map(i => <div key={i} className="h-4 bg-gray-300 border-[2px] border-[#1A1D2E]"></div>)}
         </div>
       </div>
     );
   }
 
   if (error || !job) {
-    return <div className="p-8 text-center text-red-500">{error || 'Job not found'}</div>;
+    return (
+      <div className="bg-red-500 border-[3px] border-[#1A1D2E] p-8 text-center text-white shadow-[6px_6px_0px_#1A1D2E]" style={{ fontFamily: MONO }}>
+        <p className="font-black uppercase tracking-widest">{error || 'JOB_NOT_FOUND'}</p>
+      </div>
+    );
   }
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+      className="bg-[#F7F8FF] border-[3px] border-[#1A1D2E] shadow-[8px_8px_0px_#3B4FD8] overflow-hidden relative"
+      style={{ fontFamily: MONO }}
     >
-      <div className="p-8">
+      {/* Subtle grid bg inside card */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
+        backgroundImage: 'linear-gradient(#1A1D2E 1px, transparent 1px), linear-gradient(90deg, #1A1D2E 1px, transparent 1px)',
+        backgroundSize: '20px 20px'
+      }} />
+
+      <div className="p-8 relative">
         <div className="flex justify-between items-start mb-6">
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <div className="flex-1 pr-6">
+            <h1 className="text-3xl md:text-4xl font-black uppercase text-[#1A1D2E] leading-none mb-3">
               {job.title}
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 font-medium">
-              {job.company?.name || job.companyName}
+            <p className="text-[#3B4FD8] font-black uppercase tracking-widest text-sm">
+              // {job.company?.name || job.companyName}
             </p>
           </div>
-          <div className="w-16 h-16 rounded-xl bg-gray-50 dark:bg-gray-700 p-2 border border-gray-100 dark:border-gray-600 flex items-center justify-center shrink-0">
+          <div className="w-20 h-20 bg-white border-[3px] border-[#1A1D2E] flex items-center justify-center shrink-0 shadow-[4px_4px_0px_#1A1D2E]">
             {job.company?.logo ? (
-              <img src={job.company.logo} alt="Company logo" className="w-full h-full object-contain" />
+              <img src={job.company.logo} alt="Company logo" className="w-full h-full object-contain p-2" />
             ) : (
-              <span className="text-blue-600 dark:text-blue-400 font-bold text-xl uppercase">
+              <span className="text-[#3B4FD8] font-black text-3xl uppercase">
                 {(job.company?.name || job.companyName || 'CO').substring(0, 1)}
               </span>
             )}
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-4">
-          <MapPin size={18} className="text-gray-400" />
-          <span className="text-sm">{job.remote ? 'Work from home' : job.location}</span>
+        <div className="flex items-center gap-2 text-[#1A1D2E] font-bold text-sm uppercase mb-4">
+          <MapPin size={16} className="text-[#00E5FF]" />
+          <span>{job.remote ? 'REMOTE_POSITION' : job.location}</span>
         </div>
 
-        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-8 pb-8 border-b border-gray-100 dark:border-gray-700">
-          <Briefcase size={18} className="text-gray-400" />
-          <span className="text-sm">{job.jobType}</span>
+        <div className="flex items-center gap-2 text-[#1A1D2E] font-bold text-sm uppercase mb-8 pb-8 border-b-[3px] border-[#1A1D2E]">
+          <Briefcase size={16} className="text-[#00E5FF]" />
+          <span>{job.jobType}</span>
         </div>
 
         {/* Details Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-4 mb-10">
           <div>
-            <div className="flex items-center gap-2 text-gray-400 mb-1">
+            <div className="flex items-center gap-2 text-[#3B4FD8] mb-2">
               <PlayCircle size={16} />
-              <span className="text-xs font-semibold uppercase tracking-wider">Start Date</span>
+              <span className="text-[10px] font-black uppercase tracking-widest">START_DATE</span>
             </div>
-            <p className="text-gray-900 dark:text-white font-medium">Immediately</p>
+            <p className="text-[#1A1D2E] font-bold uppercase text-sm">IMMEDIATELY</p>
           </div>
           <div>
-            <div className="flex items-center gap-2 text-gray-400 mb-1">
+            <div className="flex items-center gap-2 text-[#3B4FD8] mb-2">
               <Calendar size={16} />
-              <span className="text-xs font-semibold uppercase tracking-wider">Duration</span>
+              <span className="text-[10px] font-black uppercase tracking-widest">DURATION</span>
             </div>
-            <p className="text-gray-900 dark:text-white font-medium">{job.jobType === 'Internship' ? '6 Months' : 'Permanent'}</p>
+            <p className="text-[#1A1D2E] font-bold uppercase text-sm">{job.jobType === 'Internship' ? '6_MONTHS' : 'PERMANENT'}</p>
           </div>
           <div>
-            <div className="flex items-center gap-2 text-gray-400 mb-1">
+            <div className="flex items-center gap-2 text-[#3B4FD8] mb-2">
               <IndianRupee size={16} />
-              <span className="text-xs font-semibold uppercase tracking-wider">Stipend</span>
+              <span className="text-[10px] font-black uppercase tracking-widest">STIPEND</span>
             </div>
-            <p className="text-gray-900 dark:text-white font-medium">
-              {job.salaryMin && job.salaryMax ? `₹ ${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()} /month` : '₹ 3,001 - 4,500 /month'}
+            <p className="text-[#1A1D2E] font-bold uppercase text-sm">
+              {job.salaryMin && job.salaryMax ? `₹${job.salaryMin.toLocaleString()}–${job.salaryMax.toLocaleString()}/MO` : 'NEGOTIABLE'}
             </p>
           </div>
           <div>
-            <div className="flex items-center gap-2 text-gray-400 mb-1">
-              <Calendar size={16} />
-              <span className="text-xs font-semibold uppercase tracking-wider">Apply By</span>
+            <div className="flex items-center gap-2 text-[#3B4FD8] mb-2">
+              <Clock size={16} />
+              <span className="text-[10px] font-black uppercase tracking-widest">APPLY_BY</span>
             </div>
-            <p className="text-gray-900 dark:text-white font-medium">{formatDate(job.deadline || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000))}</p>
+            <p className="text-[#1A1D2E] font-bold uppercase text-sm">{formatDate(job.deadline || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000))}</p>
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-10">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-green-50 text-green-700 text-[11px] font-bold">
+        <div className="flex flex-wrap gap-3 mb-10">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-400 text-[#1A1D2E] text-xs font-black uppercase tracking-widest border-[2px] border-[#1A1D2E]">
             <RotateCcw size={12} className="rotate-180" />
-            Just now
+            JUST_POSTED
           </span>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-[11px] font-bold">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#1A1D2E] text-[#00E5FF] text-xs font-black uppercase tracking-widest border-[2px] border-[#1A1D2E]">
             <Briefcase size={12} />
             {job.jobType}
           </span>
+          {job.urgent && (
+             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-500 text-white text-xs font-black uppercase tracking-widest border-[2px] border-[#1A1D2E]">
+               <Zap size={12} />
+               URGENT
+             </span>
+          )}
         </div>
 
         {/* Sections */}
         <div className="space-y-10">
           <section>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">About the job</h3>
-            <div className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-line">
+            <h3 className="text-xl font-black uppercase text-[#1A1D2E] mb-4 flex items-center gap-2">
+              <span className="text-[#3B4FD8]">/01</span> ABOUT_THE_JOB
+            </h3>
+            <div className="bg-white border-[3px] border-[#1A1D2E] p-6 text-[#1A1D2E] font-medium leading-relaxed whitespace-pre-line shadow-[4px_4px_0px_#1A1D2E]">
               {job.description}
             </div>
           </section>
 
           {job.tags && job.tags.length > 0 && (
             <section>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Skill(s) required</h3>
+              <h3 className="text-xl font-black uppercase text-[#1A1D2E] mb-4 flex items-center gap-2">
+                <span className="text-[#3B4FD8]">/02</span> SKILLS_REQUIRED
+              </h3>
               <div className="flex flex-wrap gap-3">
                 {job.tags.map((tag, index) => (
-                  <span key={index} className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-full font-medium">
+                  <span key={index} className="px-4 py-2 bg-white border-[2px] border-[#1A1D2E] text-[#1A1D2E] text-sm font-black uppercase tracking-wider shadow-[2px_2px_0px_#1A1D2E]">
                     {tag}
                   </span>
                 ))}
@@ -176,42 +196,38 @@ const JobDetail = ({ jobId, onApply, applied = false }) => {
           )}
 
           <section>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Who can apply</h3>
-            <ul className="space-y-3">
-              {[
-                "are available for full time (in-office) internship",
-                `can start the internship between ${new Date().toLocaleDateString('en-GB', { day: 'j', month: 'M' }).replace('j', '1st')} Feb'25 and ${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB', { day: 'j', month: 'M' }).replace('j', '8th')} Mar'25`,
-                "are available for duration of 6 months",
-                "have relevant skills and interests"
-              ].map((text, i) => (
-                <li key={i} className="flex gap-3 text-sm text-gray-700 dark:text-gray-300">
-                  <span className="text-gray-400 mt-1">•</span>
-                  <span>Only those candidates can apply who:</span>
-                </li>
-              ))}
-              <div className="pl-6 space-y-2">
+            <h3 className="text-xl font-black uppercase text-[#1A1D2E] mb-4 flex items-center gap-2">
+              <span className="text-[#3B4FD8]">/03</span> WHO_CAN_APPLY
+            </h3>
+            <div className="bg-[#1A1D2E] p-6 border-[3px] border-[#1A1D2E]">
+              <p className="text-[#00E5FF] font-black text-sm uppercase tracking-widest mb-4">
+                ONLY_CANDIDATES_WHO:
+              </p>
+              <ul className="space-y-3">
                 {[
-                  "are available for full time (in-office) internship",
-                  `can start the internship between 1st Feb'25 and 8th Mar'25`,
-                  "are available for duration of 6 months",
-                  "have relevant skills and interests"
+                  "Are available for full time (in-office) role",
+                  `Can start between ${new Date().toLocaleDateString('en-GB', { day: 'j', month: 'M' }).replace('j', '1st')} Feb'25 and ${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB', { day: 'j', month: 'M' }).replace('j', '8th')} Mar'25`,
+                  "Are available for duration of 6 months",
+                  "Have relevant skills and interests"
                 ].map((text, i) => (
-                  <li key={i} className="flex gap-3 text-sm text-gray-700 dark:text-gray-300">
-                    <span className="text-gray-400 text-xs mt-1.5">{i + 1}.</span>
+                  <li key={i} className="flex gap-3 text-sm text-white font-medium">
+                    <span className="text-[#3B4FD8] font-black mt-0.5">[{i + 1}]</span>
                     <span>{text}</span>
                   </li>
                 ))}
-              </div>
-            </ul>
+              </ul>
+            </div>
           </section>
 
           {job.benefits && (
             <section>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Perks</h3>
-              <div className="flex flex-wrap gap-4">
+              <h3 className="text-xl font-black uppercase text-[#1A1D2E] mb-4 flex items-center gap-2">
+                <span className="text-[#3B4FD8]">/04</span> PERKS_&_BENEFITS
+              </h3>
+              <div className="flex flex-wrap gap-3">
                 {job.benefits.split('\n').map((perk, index) => (
                   perk.trim() && (
-                    <span key={index} className="px-4 py-2 bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 text-sm rounded-full border border-gray-100 dark:border-gray-600 font-medium">
+                    <span key={index} className="px-4 py-2 bg-[#00E5FF] border-[2px] border-[#1A1D2E] text-[#1A1D2E] text-sm font-black uppercase tracking-wider shadow-[2px_2px_0px_#1A1D2E]">
                       {perk}
                     </span>
                   )
@@ -221,25 +237,29 @@ const JobDetail = ({ jobId, onApply, applied = false }) => {
           )}
 
           <section>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Number of openings</h3>
-            <p className="text-sm text-gray-700 dark:text-gray-300">1</p>
+            <h3 className="text-xl font-black uppercase text-[#1A1D2E] mb-2 flex items-center gap-2">
+              <span className="text-[#3B4FD8]">/05</span> OPENINGS
+            </h3>
+            <p className="text-3xl font-black text-[#1A1D2E]">
+              {job.openings || '01'}
+            </p>
           </section>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-100 dark:border-gray-700 flex justify-center">
+        <div className="mt-12 pt-8 border-t-[3px] border-[#1A1D2E] flex justify-center">
           {applied ? (
-            <div className="px-10 py-3 bg-green-500 text-white font-bold rounded-lg shadow-lg flex items-center gap-2">
-              <CircleCheck size={20} />
-              Applied
-            </div>
-          ) : (
-            <button
-              onClick={onApply}
-              className="px-12 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg shadow-blue-500/20 transition-all transform hover:-translate-y-0.5"
-            >
-              Apply now
-            </button>
-          )}
+             <div className="px-10 py-4 bg-[#1A1D2E] text-[#00E5FF] font-black text-lg uppercase tracking-widest border-[3px] border-[#1A1D2E] shadow-[6px_6px_0px_#00E5FF] flex items-center gap-3">
+             <CircleCheck size={24} />
+             ALREADY_APPLIED
+           </div>
+         ) : (
+           <button
+             onClick={onApply}
+             className="px-12 py-4 bg-[#3B4FD8] text-white font-black text-lg uppercase tracking-widest border-[3px] border-[#1A1D2E] shadow-[6px_6px_0px_#1A1D2E] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all flex items-center gap-3"
+           >
+             APPLY_HERE <Zap size={20} />
+           </button>
+         )}
         </div>
       </div>
     </motion.div>

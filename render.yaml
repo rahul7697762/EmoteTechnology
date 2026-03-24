@@ -3,7 +3,7 @@ services:
     name: emote-technology
     env: node
     rootDir: server
-    buildCommand: npm install && npm run build
+    buildCommand: npm install
     startCommand: npm start
     envVars:
       - key: NODE_VERSION

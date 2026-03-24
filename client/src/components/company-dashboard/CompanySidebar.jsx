@@ -5,121 +5,123 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/slices/authSlice';
 import { toggleTheme, toggleSidebar } from '../../redux/slices/uiSlice';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const CompanySidebar = () => {
-  const dispatch = useDispatch();
-  const { theme } = useSelector((state) => state.ui);
-  const { isLoggingOut } = useSelector((state) => state.auth);
-  const { isSidebarCollapsed: isCollapsed } = useSelector((state) => state.ui);
+    const dispatch = useDispatch();
+    const { theme, isSidebarCollapsed: isCollapsed } = useSelector((state) => state.ui);
+    const { isLoggingOut } = useSelector((state) => state.auth);
 
-  const navItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/company/dashboard' },
-    { icon: Building, label: 'Company Profile', path: '/company/profile' },
-    { icon: PlusCircle, label: 'Post a Job', path: '/company/post-job' },
-    { icon: Users, label: 'Manage Applicants', path: '/company/applicants' },
-  ];
+    const navItems = [
+        { icon: LayoutDashboard, label: 'Dashboard', path: '/company/dashboard' },
+        { icon: Building, label: 'Company Profile', path: '/company/profile' },
+        { icon: PlusCircle, label: 'Post a Job', path: '/company/post-job' },
+        { icon: Users, label: 'Applicants', path: '/company/applicants' },
+    ];
 
-  return (
-    <aside className={`${isCollapsed ? 'w-20' : 'w-64'} bg-white dark:bg-[#1a1c23] border-r border-gray-200 dark:border-gray-800 h-screen fixed left-0 top-0 overflow-y-auto z-20 hidden md:flex flex-col transition-all duration-300`}>
-      {/* Header */}
-      <div className={`p-6 flex-shrink-0 flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
-        {isCollapsed ? (
-          <div className="flex flex-col gap-4 items-center">
-            <button onClick={() => dispatch(toggleSidebar())} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-              <Menu size={24} />
-            </button>
-            <NavLink to="/" className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-teal-600 dark:text-teal-400">
-              <Home size={24} />
-            </NavLink>
-          </div>
-        ) : (
-          <>
-            <button onClick={() => dispatch(toggleSidebar())} className="p-2 -ml-2 mr-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-600 dark:text-gray-300">
-              <Menu size={20} />
-            </button>
+    return (
+        <>
+            {/* Mobile Overlay */}
+            {!isCollapsed && (
+                <div 
+                    className="fixed inset-0 bg-black/50 z-20 md:hidden transition-opacity"
+                    onClick={() => dispatch(toggleSidebar())}
+                />
+            )}
+            <aside className={`${isCollapsed ? '-translate-x-full md:translate-x-0 md:w-20' : 'translate-x-0 w-64'} bg-[#F7F8FF] dark:bg-[#1A1D2E] border-r border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 h-screen fixed left-0 top-0 overflow-y-auto z-30 flex flex-col transition-all duration-300`}>
+                {/* Header */}
+                <div className={`p-6 flex items-center border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 mb-6 flex-shrink-0 ${isCollapsed ? 'justify-center' : 'gap-4'}`}>
+                    {isCollapsed ? (
+                        <div className="flex flex-col gap-6 items-center">
+                            <button onClick={() => dispatch(toggleSidebar())} className="text-[#6B7194] dark:text-[#8B90B8] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors">
+                                <Menu size={24} />
+                            </button>
+                            <NavLink to="/" className="p-3 bg-[#3B4FD8]/10 text-[#3B4FD8] dark:bg-[#6C7EF5]/10 dark:text-[#6C7EF5] transition-colors">
+                                <Home size={20} />
+                            </NavLink>
+                        </div>
+                    ) : (
+                        <>
+                            <button onClick={() => dispatch(toggleSidebar())} className="p-2 -ml-2 hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 transition-colors text-[#6B7194] dark:text-[#8B90B8]">
+                                <Menu size={20} />
+                            </button>
 
-            <NavLink to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center text-white font-bold">
-                <Briefcase size={20} />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-gray-900 dark:text-white leading-tight">
-                  EMT Jobs
-                </h1>
-                <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium tracking-wider">EMPLOYER PORTAL</p>
-              </div>
-            </NavLink>
-          </>
-        )}
-      </div>
+                            <NavLink to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                                <div className="w-10 h-10 bg-[#3B4FD8] flex items-center justify-center text-white font-bold shadow-sm">
+                                    <Briefcase size={20} strokeWidth={2} />
+                                </div>
+                                <div>
+                                    <h1 className="text-xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] leading-tight" style={{ fontFamily: SERIF }}>
+                                        EMT Jobs
+                                    </h1>
+                                    <p className="text-[10px] text-[#F5A623] font-bold tracking-[0.2em]" style={{ fontFamily: MONO }}>EMPLOYER PORTAL</p>
+                                </div>
+                            </NavLink>
+                        </>
+                    )}
+                </div>
 
-      {!isCollapsed && (
-        <div className="px-6 mb-2 flex-shrink-0">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Menu</p>
-        </div>
-      )}
+                {!isCollapsed && (
+                    <div className="px-6 mb-4 mt-2 flex-shrink-0">
+                        <p className="text-[10px] font-bold text-[#6B7194] dark:text-[#8B90B8] uppercase tracking-[0.2em]" style={{ fontFamily: MONO }}>Menu</p>
+                    </div>
+                )}
 
-      <nav className={`px-4 space-y-1 mb-6 flex-shrink-0 ${isCollapsed ? 'mt-4' : ''}`}>
-        {navItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) =>
-              `flex items-center ${isCollapsed ? 'justify-center px-2' : 'space-x-3 px-4'} py-3 rounded-xl transition-all duration-200 group ${isActive
-                ? 'bg-teal-500/10 text-teal-600 dark:text-teal-400 font-bold'
-                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200'
-              }`
-            }
-            title={isCollapsed ? item.label : ''}
-          >
-            <item.icon size={20} className="group-hover:scale-110 transition-transform" />
-            {!isCollapsed && <span>{item.label}</span>}
-          </NavLink>
-        ))}
-      </nav>
+                <nav className={`px-4 space-y-2 mb-8 flex-shrink-0 ${isCollapsed ? 'mt-4' : ''}`}>
+                    {navItems.map((item) => (
+                        <NavLink
+                            key={item.path}
+                            to={item.path}
+                            className={({ isActive }) =>
+                                `flex items-center ${isCollapsed ? 'justify-center p-3' : 'space-x-4 px-5 py-3'} transition-all duration-200 group border border-transparent ${isActive
+                                    ? 'bg-[#3B4FD8]/10 text-[#3B4FD8] dark:bg-[#6C7EF5]/10 dark:text-[#6C7EF5] font-bold border-l-2 !border-l-[#3B4FD8] dark:!border-l-[#6C7EF5]'
+                                    : 'text-[#6B7194] dark:text-[#8B90B8] hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 hover:text-[#1A1D2E] dark:hover:text-[#E8EAF2]'
+                                }`
+                            }
+                            title={isCollapsed ? item.label : ''}
+                        >
+                            <item.icon size={18} className="group-hover:scale-110 transition-transform" />
+                            {!isCollapsed && <span className="text-[11px] uppercase tracking-widest font-bold" style={{ fontFamily: MONO }}>{item.label}</span>}
+                        </NavLink>
+                    ))}
+                </nav>
 
-      {!isCollapsed && (
-        <div className="px-6 mb-2 flex-shrink-0">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Personal</p>
-        </div>
-      )}
-
-      <nav className="px-4 space-y-1 flex-shrink-0 mb-8">
-        <NavLink
-          to="/company/settings"
-          className={({ isActive }) =>
-            `flex items-center ${isCollapsed ? 'justify-center px-2' : 'space-x-3 px-4'} py-3 rounded-xl transition-all duration-200 group ${isActive
-              ? 'bg-teal-500/10 text-teal-600 dark:text-teal-400 font-bold'
-              : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200'
-            }`
-          }
-          title={isCollapsed ? 'Settings' : ''}
-        >
-          <Settings size={20} className="group-hover:scale-110 transition-transform" />
-          {!isCollapsed && <span>Settings</span>}
-        </NavLink>
-      </nav>
-
-      <div className={`mt-auto p-4 space-y-2 flex-shrink-0 border-t border-gray-100 dark:border-gray-800/50 ${isCollapsed ? 'items-center flex flex-col' : 'px-4 mb-4'}`}>
-        <button
-          onClick={() => dispatch(toggleTheme())}
-          className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3 w-full text-left'} text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200 rounded-xl transition-colors`}
-          title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-        >
-          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-          {!isCollapsed && <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>}
-        </button>
-        <button
-          onClick={() => dispatch(logout())}
-          disabled={isLoggingOut}
-          className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3 w-full text-left'} text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-colors font-medium disabled:opacity-50`}
-          title="Logout"
-        >
-          <LogOut size={20} />
-          {!isCollapsed && <span>{isLoggingOut ? 'Logging...' : 'Logout'}</span>}
-        </button>
-      </div>
-    </aside>
-  );
+                <div className={`p-4 mt-auto flex-shrink-0 space-y-2 border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 ${isCollapsed ? 'items-center flex flex-col pt-6' : 'px-4 mb-4 pt-6'}`}>
+                    <NavLink
+                        to="/company/settings"
+                        className={({ isActive }) =>
+                            `flex items-center ${isCollapsed ? 'justify-center p-3 w-full' : 'space-x-4 px-5 py-3 w-full text-left'} transition-colors group border border-transparent ${isActive
+                                ? 'bg-[#3B4FD8]/10 text-[#3B4FD8] dark:bg-[#6C7EF5]/10 dark:text-[#6C7EF5] font-bold border-l-2 !border-l-[#3B4FD8] dark:!border-l-[#6C7EF5]'
+                                : 'text-[#6B7194] dark:text-[#8B90B8] hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 hover:text-[#1A1D2E] dark:hover:text-[#E8EAF2]'
+                            }`
+                        }
+                        title={isCollapsed ? 'Settings' : ''}
+                    >
+                        <Settings size={18} className="group-hover:scale-110 transition-transform" />
+                        {!isCollapsed && <span className="text-[10px] uppercase tracking-widest font-bold" style={{ fontFamily: MONO }}>Settings</span>}
+                    </NavLink>
+                    <button
+                        onClick={() => dispatch(toggleTheme())}
+                        className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'space-x-4 px-5 py-3 w-full text-left'} text-[#6B7194] dark:text-[#8B90B8] hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 hover:text-[#1A1D2E] dark:hover:text-[#E8EAF2] transition-colors`}
+                        title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                    >
+                        {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+                        {!isCollapsed && <span className="text-[10px] uppercase tracking-widest font-bold" style={{ fontFamily: MONO }}>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>}
+                    </button>
+                    <button
+                        onClick={() => dispatch(logout())}
+                        disabled={isLoggingOut}
+                        className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'space-x-4 px-5 py-3 w-full text-left'} text-[#E25C5C] hover:bg-[#E25C5C]/10 transition-colors disabled:opacity-50`}
+                        title="Logout"
+                    >
+                        <LogOut size={18} />
+                        {!isCollapsed && <span className="text-[10px] uppercase tracking-widest font-bold" style={{ fontFamily: MONO }}>{isLoggingOut ? 'Logging...' : 'Logout'}</span>}
+                    </button>
+                </div>
+            </aside>
+        </>
+    );
 };
 
 export default CompanySidebar;

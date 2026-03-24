@@ -4,6 +4,9 @@ import { useSelector } from 'react-redux';
 import api from '../utils/api';
 import { Clock, CheckCircle, AlertCircle } from 'lucide-react';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const StudentQuizzes = () => {
     const { user } = useSelector((state) => state.auth);
     const { isSidebarCollapsed } = useSelector((state) => state.ui);
@@ -33,104 +36,111 @@ const StudentQuizzes = () => {
 
     // Helper to render quiz card
     const QuizCard = ({ quiz }) => (
-        <div className="bg-white dark:bg-[#1a1c23] rounded-2xl border border-gray-100 dark:border-gray-800 p-6 hover:shadow-lg transition-shadow flex flex-col md:flex-row gap-6 items-start md:items-center">
+        <div className="bg-white dark:bg-[#1A1D2E] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 p-6 hover:shadow-md hover:border-[#3B4FD8]/30 dark:hover:border-[#6C7EF5]/30 transition-all flex flex-col md:flex-row gap-6 items-start md:items-center rounded-none relative group">
+            
+            {/* Hover Accent Line */}
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#3B4FD8] dark:bg-[#6C7EF5] opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
             {/* Date Badge */}
-            <div className="shrink-0 w-20 h-20 bg-teal-50 dark:bg-teal-900/10 rounded-2xl flex flex-col items-center justify-center text-teal-600 dark:text-teal-400 border border-teal-100 dark:border-teal-900/20">
-                <span className="text-xs font-bold uppercase tracking-wider">{quiz.month}</span>
-                <span className="text-3xl font-bold">{quiz.day}</span>
+            <div className="shrink-0 w-20 h-20 bg-[#F7F8FF] dark:bg-[#0A0B10] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 flex flex-col items-center justify-center text-[#3B4FD8] dark:text-[#6C7EF5] rounded-none">
+                <span className="text-[10px] font-bold uppercase tracking-widest" style={{ fontFamily: MONO }}>{quiz.month}</span>
+                <span className="text-3xl font-bold font-sans">{quiz.day}</span>
             </div>
 
             <div className="flex-1">
-                <div className="flex flex-wrap gap-2 mb-2">
-                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-bold rounded-md uppercase tracking-wide">
+                <div className="flex flex-wrap gap-2 mb-3">
+                    <span className="px-2 py-1 bg-[#F7F8FF] dark:bg-[#0A0B10] border border-[#3B4FD8]/10 text-[#6B7194] dark:text-[#8B90B8] text-[9px] font-bold uppercase tracking-widest rounded-none" style={{ fontFamily: MONO }}>
                         {quiz.courseName || 'General'}
                     </span>
                     {quiz.active && (
-                        <span className="px-2 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-bold rounded-md uppercase tracking-wide flex items-center gap-1">
-                            <Clock size={12} /> Live Now
+                        <span className="px-2 py-1 bg-[#F5A623]/10 border border-[#F5A623]/30 text-[#F5A623] text-[9px] font-bold uppercase tracking-widest flex items-center gap-1 rounded-none" style={{ fontFamily: MONO }}>
+                            <Clock size={10} /> LIVE NOW
                         </span>
                     )}
                 </div>
 
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">{quiz.title}</h3>
+                <h3 className="text-xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-3" style={{ fontFamily: SERIF }}>{quiz.title}</h3>
 
-                <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                    <div className="flex items-center gap-1.5">
-                        <Clock size={16} />
+                <div className="flex items-center gap-6 text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>
+                    <div className="flex items-center gap-2">
+                        <Clock size={14} className="text-[#3B4FD8] dark:text-[#6C7EF5]" />
                         <span>{quiz.time}</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                        <AlertCircle size={16} />
-                        <span>30 Mins Duration</span>
+                    <div className="flex items-center gap-2">
+                        <AlertCircle size={14} className="text-[#F5A623]" />
+                        <span>30 MINS DURATION</span>
                     </div>
                 </div>
             </div>
 
-            <div className="w-full md:w-auto">
-                <button className={`w-full md:w-auto px-6 py-3 rounded-xl font-bold text-sm transition-all ${quiz.active
-                    ? 'bg-teal-500 hover:bg-teal-600 text-white shadow-lg shadow-teal-500/20'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                    }`}>
-                    {quiz.active ? 'Start Quiz' : 'Not Started'}
+            <div className="w-full md:w-auto mt-4 md:mt-0">
+                <button className={`w-full md:w-auto px-8 py-4 font-bold text-[10px] uppercase tracking-widest transition-all rounded-none shadow-sm ${quiz.active
+                    ? 'bg-[#3B4FD8] hover:bg-[#2f3fab] text-white'
+                    : 'bg-[#F7F8FF] dark:bg-[#0A0B10] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 text-[#6B7194] dark:text-[#8B90B8] cursor-not-allowed hidden md:block'
+                    }`}
+                    style={{ fontFamily: MONO }}
+                >
+                    {quiz.active ? 'START QUIZ' : 'NOT STARTED'}
                 </button>
             </div>
         </div>
     );
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] text-gray-900 dark:text-white font-sans flex transition-colors duration-300">
+        <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#0A0B10] text-[#1A1D2E] dark:text-[#E8EAF2] flex transition-colors duration-300">
             <StudentSidebar />
 
-            <main className={`flex-1 p-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
-                <header className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Quizzes & Assessments</h1>
-                    <p className="text-gray-500 dark:text-gray-400">Track your upcoming tests and review past results</p>
+            <main className={`flex-1 p-8 lg:p-12 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
+                <header className="mb-10 animate-in fade-in slide-in-from-top-4">
+                    <h1 className="text-4xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-3" style={{ fontFamily: SERIF }}>Quizzes & Assessments</h1>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>Track your upcoming tests and review past results</p>
                 </header>
 
                 {/* Tabs */}
-                <div className="flex border-b border-gray-200 dark:border-gray-800 mb-8">
+                <div className="flex border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 mb-8 overflow-x-auto custom-scrollbar animate-in fade-in">
                     <button
                         onClick={() => setActiveTab('upcoming')}
-                        className={`pb-4 px-6 text-sm font-bold border-b-2 transition-colors ${activeTab === 'upcoming'
-                            ? 'border-teal-500 text-teal-600 dark:text-teal-400'
-                            : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                        className={`pb-4 px-8 text-[10px] font-bold uppercase tracking-widest border-b-2 transition-colors whitespace-nowrap ${activeTab === 'upcoming'
+                            ? 'border-[#3B4FD8] text-[#3B4FD8] dark:border-[#6C7EF5] dark:text-[#6C7EF5]'
+                            : 'border-transparent text-[#6B7194] dark:text-[#8B90B8] hover:text-[#1A1D2E] dark:hover:text-[#E8EAF2]'}`}
+                        style={{ fontFamily: MONO }}
                     >
-                        Upcoming
+                        UPCOMING
                     </button>
                     <button
                         onClick={() => setActiveTab('past')}
-                        className={`pb-4 px-6 text-sm font-bold border-b-2 transition-colors ${activeTab === 'past'
-                            ? 'border-teal-500 text-teal-600 dark:text-teal-400'
-                            : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                        className={`pb-4 px-8 text-[10px] font-bold uppercase tracking-widest border-b-2 transition-colors whitespace-nowrap ${activeTab === 'past'
+                            ? 'border-[#3B4FD8] text-[#3B4FD8] dark:border-[#6C7EF5] dark:text-[#6C7EF5]'
+                            : 'border-transparent text-[#6B7194] dark:text-[#8B90B8] hover:text-[#1A1D2E] dark:hover:text-[#E8EAF2]'}`}
+                        style={{ fontFamily: MONO }}
                     >
-                        Past Results
+                        PAST RESULTS
                     </button>
                 </div>
 
                 {loading ? (
                     <div className="min-h-[400px] flex items-center justify-center">
-                        <div className="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-12 h-12 border-[3px] border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 border-t-[#3B4FD8] dark:border-t-[#6C7EF5] rounded-none animate-spin"></div>
                     </div>
                 ) : activeTab === 'upcoming' ? (
-                    <div className="space-y-4">
+                    <div className="space-y-6 max-w-5xl animate-in slide-in-from-bottom-4">
                         {quizzes.length > 0 ? (
                             quizzes.map(quiz => (
                                 <QuizCard key={quiz.id} quiz={quiz} />
                             ))
                         ) : (
-                            <div className="text-center py-20 bg-white dark:bg-[#1a1c23] rounded-3xl border border-dashed border-gray-200 dark:border-gray-800">
-                                <div className="w-20 h-20 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-400">
-                                    <CheckCircle size={40} />
+                            <div className="text-center py-20 bg-white dark:bg-[#1A1D2E] border border-dashed border-[#3B4FD8]/30 dark:border-[#6C7EF5]/30 rounded-none">
+                                <div className="w-20 h-20 bg-[#F7F8FF] dark:bg-[#0A0B10] border border-[#3B4FD8]/10 flex items-center justify-center mx-auto mb-6 text-[#6B7194] dark:text-[#8B90B8]">
+                                    <CheckCircle size={40} className="text-[#10B981]" />
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No upcoming quizzes</h3>
-                                <p className="text-gray-500 dark:text-gray-400">You're all caught up! Great job.</p>
+                                <h3 className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-3" style={{ fontFamily: SERIF }}>No upcoming quizzes</h3>
+                                <p className="text-[10px] uppercase font-bold tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>You're all caught up! Great job.</p>
                             </div>
                         )}
                     </div>
                 ) : (
-                    <div className="text-center py-20 bg-white dark:bg-[#1a1c23] rounded-3xl border border-dashed border-gray-200 dark:border-gray-800">
-                        <p className="text-gray-500 dark:text-gray-400">Past results history coming soon.</p>
+                    <div className="text-center py-20 bg-white dark:bg-[#1A1D2E] border border-dashed border-[#3B4FD8]/30 dark:border-[#6C7EF5]/30 rounded-none animate-in slide-in-from-bottom-4">
+                        <p className="text-[10px] uppercase font-bold tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>Past results history coming soon.</p>
                     </div>
                 )}
             </main>

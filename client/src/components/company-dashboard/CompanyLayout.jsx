@@ -11,6 +11,9 @@ import { io } from 'socket.io-client';
 import { showToast } from '../Job-portal/services/toast';
 import { notificationAPI } from '../Job-portal/services/api';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const CompanyLayout = ({ children }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
@@ -122,30 +125,24 @@ const CompanyLayout = ({ children }) => {
   }, [user?._id]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] text-gray-900 dark:text-white font-sans">
+    <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] font-sans selection:bg-[#3B4FD8]/20 dark:selection:bg-[#6C7EF5]/20">
       <CompanySidebar />
 
-      <main className={`p-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
+      <main className={`p-4 md:p-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
         {/* Top Header Row: Search & Profile */}
         <header className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
-          <div className="flex w-full items-center justify-between md:hidden pb-4 border-b border-gray-200 dark:border-gray-800 mb-2">
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">EMT Jobs</h1>
+          <div className="flex w-full items-center justify-between md:hidden pb-4 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 mb-2">
+            <h1 className="text-xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] leading-tight" style={{ fontFamily: SERIF }}>EMT Jobs</h1>
             <button
               onClick={() => dispatch(toggleSidebar())}
-              className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+              className="p-2 text-[#6B7194] dark:text-[#8B90B8] hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 transition-colors"
             >
               <Menu size={24} />
             </button>
           </div>
 
-          {/* Search Bar - Optional, maybe search within company context */}
-          <div className="relative w-full md:max-w-xl hidden md:block opacity-0 pointer-events-none">
-            {/* Hidden placeholder to keep alignment matching Student Dashboard */}
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              type="text"
-              className="w-full pl-12 pr-4 py-3 bg-white dark:bg-[#1a1c23] border border-gray-200 dark:border-gray-800 rounded-xl"
-            />
+          <div className="hidden md:block">
+            {/* Empty block to keep alignment consistent */}
           </div>
 
           {/* Right Side: Notification & Profile */}
@@ -153,12 +150,12 @@ const CompanyLayout = ({ children }) => {
             <div className="relative" ref={notificationsRef}>
               <button
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                className="relative text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+                className="relative p-2 text-[#6B7194] dark:text-[#8B90B8] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors rounded-none outline-none focus:outline-none"
                 aria-label="Notifications"
               >
                 <Bell size={24} />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white dark:border-[#0a0a0f]">
+                  <span className="absolute top-0 right-0 w-4 h-4 bg-[#E25C5C] text-white text-[9px] font-bold flex items-center justify-center border border-white dark:border-[#1A1D2E] font-mono leading-none">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 )}
@@ -166,13 +163,14 @@ const CompanyLayout = ({ children }) => {
 
               {/* Notification Dropdown */}
               {isNotificationsOpen && (
-                <div className="absolute right-0 top-full mt-4 w-80 sm:w-96 bg-white dark:bg-[#1a1c23] rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden z-[60] animate-in fade-in zoom-in-95 duration-100">
-                  <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/30">
-                    <h3 className="font-bold text-gray-900 dark:text-white">Notifications</h3>
+                <div className="absolute right-0 top-full mt-4 w-80 sm:w-96 bg-white dark:bg-[#252A41] rounded-none shadow-sm border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 z-[60]">
+                  <div className="p-4 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 flex items-center justify-between bg-[#F7F8FF] dark:bg-[#1A1D2E]">
+                    <h3 className="text-[10px] uppercase tracking-widest font-bold text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: MONO }}>Notifications</h3>
                     {unreadCount > 0 && (
                       <button
                         onClick={markAllAsRead}
-                        className="text-xs font-semibold text-teal-600 dark:text-teal-400 hover:underline"
+                        className="text-[10px] font-bold text-[#3B4FD8] dark:text-[#6C7EF5] hover:underline uppercase tracking-wider"
+                        style={{ fontFamily: MONO }}
                       >
                         Mark all as read
                       </button>
@@ -182,37 +180,36 @@ const CompanyLayout = ({ children }) => {
                   <div className="max-h-[380px] overflow-y-auto">
                     {notifications.length === 0 ? (
                       <div className="p-10 text-center">
-                        <Bell className="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto mb-3 opacity-50" />
-                        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">No notifications yet</p>
+                        <Bell className="w-10 h-10 text-[#6B7194]/30 dark:text-[#8B90B8]/30 mx-auto mb-3" />
+                        <p className="text-[10px] text-[#6B7194] dark:text-[#8B90B8] uppercase tracking-widest font-bold" style={{ fontFamily: MONO }}>No notifications yet</p>
                       </div>
                     ) : (
-                      <div className="divide-y divide-gray-100 dark:divide-gray-800">
+                      <div className="divide-y divide-[#3B4FD8]/10 dark:divide-[#6C7EF5]/10">
                         {notifications.map((notification) => (
                           <div
                             key={notification._id}
-                            className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group relative ${!notification.isRead ? 'bg-teal-50/10 dark:bg-teal-500/5' : ''}`}
+                            className={`p-4 hover:bg-[#F7F8FF] dark:hover:bg-[#1A1D2E] transition-colors group relative ${!notification.isRead ? 'bg-[#3B4FD8]/5 dark:bg-[#6C7EF5]/5' : ''}`}
                           >
                             <div className="flex gap-4">
-                              <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${notification.type === 'NEW_APPLICATION' ? 'bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
-                                }`}>
-                                {notification.type === 'NEW_APPLICATION' ? <Users size={20} /> : <Bell size={20} />}
+                              <div className="flex-shrink-0 w-10 h-10 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 flex items-center justify-center bg-white dark:bg-[#252A41] text-[#3B4FD8] dark:text-[#6C7EF5] rounded-none">
+                                {notification.type === 'NEW_APPLICATION' ? <Users size={18} /> : <Bell size={18} />}
                               </div>
                               <div className="flex-1 min-w-0 pr-6">
-                                <p className={`text-sm font-bold text-gray-900 dark:text-white mb-0.5 truncate ${!notification.isRead ? '' : 'opacity-70'}`}>
+                                <p className={`text-sm font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-0.5 truncate ${!notification.isRead ? '' : 'opacity-70'}`} style={{ fontFamily: SERIF }}>
                                   {notification.title}
                                 </p>
-                                <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
+                                <p className="text-[11px] leading-relaxed text-[#6B7194] dark:text-[#8B90B8] line-clamp-2">
                                   {notification.message}
                                 </p>
-                                <div className="flex items-center gap-1.5 mt-2 text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                                  <ClockIcon size={12} />
+                                <div className="flex items-center gap-1.5 mt-2 text-[9px] text-[#6B7194] dark:text-[#8B90B8] font-bold uppercase tracking-widest" style={{ fontFamily: MONO }}>
+                                  <ClockIcon size={10} />
                                   <span>{new Date(notification.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                                 </div>
                               </div>
                               {!notification.isRead && (
                                 <button
                                   onClick={() => markAsRead(notification._id)}
-                                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/20 opacity-0 group-hover:opacity-100 transition-all shadow-sm border border-teal-100 dark:border-teal-900/30 bg-white dark:bg-gray-800"
+                                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-none text-[#3B4FD8] dark:text-[#6C7EF5] hover:bg-[#3B4FD8]/10 dark:hover:bg-[#6C7EF5]/10 opacity-0 group-hover:opacity-100 transition-all shadow-sm border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 bg-white dark:bg-[#252A41]"
                                   title="Mark as read"
                                 >
                                   <Check size={14} />
@@ -225,8 +222,8 @@ const CompanyLayout = ({ children }) => {
                     )}
                   </div>
 
-                  <div className="p-3 border-t border-gray-100 dark:border-gray-800 text-center bg-gray-50/30 dark:bg-gray-800/10">
-                    <button className="text-[10px] font-bold text-gray-400 dark:text-gray-500 hover:text-teal-500 transition-colors uppercase tracking-widest">
+                  <div className="p-3 border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 text-center bg-[#F7F8FF] dark:bg-[#1A1D2E]">
+                    <button className="text-[9px] font-bold text-[#6B7194] dark:text-[#8B90B8] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors uppercase tracking-[0.2em]" style={{ fontFamily: MONO }}>
                       View all activities
                     </button>
                   </div>
@@ -237,15 +234,15 @@ const CompanyLayout = ({ children }) => {
             <div className="relative" ref={profileRef}>
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center gap-3 pl-6 border-l border-gray-200 dark:border-gray-800 focus:outline-none"
+                className="flex items-center gap-4 pl-6 border-l border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 focus:outline-none"
                 aria-expanded={isProfileOpen}
                 aria-haspopup="true"
               >
                 <div className="text-right hidden sm:block">
-                  <h4 className="text-sm font-bold text-gray-900 dark:text-white leading-tight">
+                  <h4 className="text-[13px] font-bold text-[#1A1D2E] dark:text-[#E8EAF2] leading-none mb-1">
                     {profile?.companyName || user?.name || 'Company User'}
                   </h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-[9px] uppercase font-bold tracking-[0.2em] text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>
                     {user?.role || 'Employer'}
                   </p>
                 </div>
@@ -253,27 +250,30 @@ const CompanyLayout = ({ children }) => {
                   <img
                     src={displayImage}
                     alt="Profile"
-                    className={`w-10 h-10 rounded-full object-cover border-2 shadow-sm transition-colors ${isProfileOpen ? 'border-teal-500' : 'border-white dark:border-gray-800'
-                      }`}
+                    className="w-10 h-10 object-cover rounded-none border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 shadow-sm"
                   />
                 ) : (
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 border-2 shadow-sm transition-colors ${isProfileOpen ? 'border-teal-500 text-teal-600' : 'border-white dark:border-gray-800 text-gray-400'}`}>
-                    <User size={20} />
+                  <div className="w-10 h-10 flex items-center justify-center bg-[#F7F8FF] dark:bg-[#1A1D2E] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 text-[#3B4FD8] dark:text-[#6C7EF5] rounded-none shadow-sm">
+                    <User size={18} />
                   </div>
                 )}
               </button>
 
               {/* Dropdown Menu */}
               {isProfileOpen && (
-                <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-[#1a1c23] rounded-xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-100">
-                  <div className="p-2">
-                    <Link to="/company/settings" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors">
-                      <Settings size={18} />
+                <div className="absolute right-0 top-full mt-3 w-56 bg-white dark:bg-[#252A41] rounded-none shadow-sm border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 overflow-hidden z-50">
+                  <div className="p-2 space-y-1 relative">
+                    {/* The Triangle Pointer */}
+                    <div className="absolute -top-[5px] right-[20px] w-2 h-2 bg-white dark:bg-[#252A41] border-l border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 rotate-45"></div>
+                    
+                    <Link to="/company/settings" className="flex items-center gap-3 px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] hover:bg-[#F7F8FF] dark:hover:bg-[#1A1D2E] hover:text-[#1A1D2E] dark:hover:text-[#E8EAF2] rounded-none transition-colors" style={{ fontFamily: MONO }}>
+                      <Settings size={16} />
                       <span>Settings</span>
                     </Link>
                     <button
-                      onClick={handleLogout}
-                      className="w-full flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors text-left"
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-[#E25C5C] hover:bg-[#E25C5C]/10 rounded-none transition-colors text-left"
+                        style={{ fontFamily: MONO }}
                     >
                       <LogOut size={16} /> Logout
                     </button>

@@ -1,132 +1,107 @@
 // job-portal/components/JobCard.jsx
 import { motion } from 'framer-motion';
-import {
-  MapPin,
-  Banknote,
-  Calendar,
-  Clock,
-  Zap,
-  Briefcase,
-  Layers,
-  ArrowRight
-} from 'lucide-react';
+import { MapPin, Banknote, Calendar, Clock, ArrowUpRight } from 'lucide-react';
+
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
 
 const JobCard = ({ job, onViewJob }) => {
-  const formatDate = (dateString) => {
-    if (!dateString) return 'Just now';
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now - date);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const formatDate = (dateString) => {
+        if (!dateString) return 'Just now';
+        const diffDays = Math.ceil(Math.abs(new Date() - new Date(dateString)) / (1000 * 60 * 60 * 24));
+        if (diffDays === 0) return 'Just now';
+        if (diffDays === 1) return 'Yesterday';
+        if (diffDays < 7) return `${diffDays}d ago`;
+        return new Date(dateString).toLocaleDateString();
+    };
 
-    if (diffDays === 0) return 'Just now';
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
-    return date.toLocaleDateString();
-  };
+    const companyName = job.company?.companyName || job.companyName || 'Unknown Company';
+    const duration = job.duration || job.jobType || 'Full-time';
+    const symbol = job.salaryCurrency === 'INR' ? '₹' : '$';
+    const salary = job.salaryMin && job.salaryMax
+        ? `${symbol}${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()}`
+        : job.salaryMin ? `${symbol}${job.salaryMin.toLocaleString()}` : 'Not Disclosed';
 
-  const companyName = job.company?.companyName || job.companyName || 'Unknown Company';
-  const duration = job.duration || job.jobType || 'Full-time';
-  const currencySymbol = job.salaryCurrency === 'INR' ? '₹' : '$';
-  const salary = job.salaryMin && job.salaryMax
-    ? `${currencySymbol} ${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()}`
-    : job.salaryMin ? `${currencySymbol} ${job.salaryMin.toLocaleString()}` : 'Not Disclosed';
+    return (
+        <motion.div
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+            onClick={() => onViewJob?.(job._id)}
+            className="group bg-[#F7F8FF] dark:bg-[#1A1D2E] p-6 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 hover:bg-[#EDEEFF] dark:hover:bg-[#252A41] transition-colors duration-300 cursor-pointer flex flex-col h-full"
+        >
+            {/* Header */}
+            <div className="flex justify-between items-start mb-6">
+                <div className="flex-1 pr-4">
+                    <h3
+                        className="text-xl font-semibold text-[#1A1D2E] dark:text-[#E8EAF2] mb-2 group-hover:text-[#3B4FD8] dark:group-hover:text-[#6C7EF5] transition-colors line-clamp-1"
+                        style={{ fontFamily: SERIF }}
+                        title={job.title}
+                    >
+                        {job.title}
+                    </h3>
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-[#6B7194] dark:text-[#8B90B8] text-sm">{companyName}</span>
+                        {job.isHiring && (
+                            <span
+                                className="px-2 py-0.5 bg-[#F5A623] text-white text-[9px] font-bold uppercase tracking-wider"
+                                style={{ fontFamily: MONO }}
+                            >
+                                Hiring
+                            </span>
+                        )}
+                    </div>
+                </div>
+                {/* Logo Box */}
+                <div className="w-12 h-12 bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 flex items-center justify-center shrink-0">
+                    {job.company?.logo?.url ? (
+                        <img src={job.company.logo.url} alt={companyName} className="w-8 h-8 object-contain mix-blend-multiply dark:mix-blend-normal" />
+                    ) : (
+                        <span className="text-lg font-bold text-[#3B4FD8] dark:text-[#6C7EF5]" style={{ fontFamily: SERIF }}>
+                            {companyName.charAt(0)}
+                        </span>
+                    )}
+                </div>
+            </div>
 
-  return (
-    <motion.div
-      variants={{
-        hidden: { opacity: 0, y: 20 },
-        show: { opacity: 1, y: 0 }
-      }}
-      whileHover={{ y: -5 }}
-      transition={{ duration: 0.2 }}
-      onClick={() => onViewJob?.(job._id)}
-      className="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 hover:border-teal-500/30 hover:shadow-xl hover:shadow-teal-500/10 transition-all duration-300 cursor-pointer relative flex flex-col h-full"
-    >
-      {/* Header */}
-      <div className="flex justify-between items-start mb-5">
-        <div className="flex-1 pr-4">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-teal-600 transition-colors line-clamp-1" title={job.title}>
-            {job.title}
-          </h3>
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-gray-600 dark:text-gray-400 font-medium text-sm flex items-center gap-1.5">
-              <Briefcase size={14} className="text-teal-500" />
-              {companyName}
-            </span>
-            {job.isHiring && (
-              <span className="px-2.5 py-0.5 rounded-full border border-blue-200/60 bg-blue-50/80 text-blue-600 text-[10px] font-bold uppercase tracking-wide">
-                Hiring
-              </span>
-            )}
-          </div>
-        </div>
-        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 p-1 border border-gray-100 dark:border-gray-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
-          {job.company?.logo?.url ? (
-            <img
-              src={job.company.logo.url}
-              alt={companyName}
-              className="w-full h-full object-contain rounded-lg"
-            />
-          ) : (
-            <span className="text-xl font-bold bg-gradient-to-br from-teal-500 to-cyan-600 bg-clip-text text-transparent">
-              {companyName.charAt(0)}
-            </span>
-          )}
-        </div>
-      </div>
+            {/* Meta Tags */}
+            <div className="flex flex-wrap gap-2 mb-5">
+                {[
+                    { icon: MapPin, text: job.location || 'Remote' },
+                    { icon: Banknote, text: salary },
+                    { icon: Calendar, text: duration }
+                ].map((item, i) => (
+                    <div key={i} className="flex items-center gap-1.5 px-2.5 py-1 bg-[#3B4FD8]/5 dark:bg-[#6C7EF5]/5 text-[11px] text-[#6B7194] dark:text-[#8B90B8] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10">
+                        <item.icon size={13} className="text-[#3B4FD8] dark:text-[#6C7EF5]" />
+                        <span>{item.text}</span>
+                    </div>
+                ))}
+            </div>
 
-      {/* Meta Info */}
-      <div className="flex flex-wrap gap-3 mb-5">
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-xs font-medium text-gray-600 dark:text-gray-300 border border-gray-100 dark:border-gray-700/50">
-          <MapPin size={14} className="text-rose-500" />
-          <span>{job.location || 'Remote'}</span>
-        </div>
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-xs font-medium text-gray-600 dark:text-gray-300 border border-gray-100 dark:border-gray-700/50">
-          <Banknote size={14} className="text-emerald-500" />
-          <span>{salary}</span>
-        </div>
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-xs font-medium text-gray-600 dark:text-gray-300 border border-gray-100 dark:border-gray-700/50">
-          <Calendar size={14} className="text-indigo-500" />
-          <span>{duration}</span>
-        </div>
-      </div>
+            {/* Description Preview */}
+            <p className="text-[#6B7194] dark:text-[#8B90B8] text-sm line-clamp-2 leading-relaxed mb-6 flex-grow">
+                {job.description}
+            </p>
 
-      {/* Description Preview */}
-      <div className="mb-6 flex-grow">
-        <p className="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 leading-relaxed">
-          {job.description}
-        </p>
-      </div>
-
-      {/* Footer Actions */}
-      <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700/50 mt-auto">
-        <div className="flex items-center gap-2">
-          <span className="flex items-center gap-1 text-[11px] font-medium text-gray-400 bg-gray-50 dark:bg-gray-800 px-2 py-1 rounded">
-            <Clock size={12} />
-            {formatDate(job.createdAt)}
-          </span>
-          {/* Dynamic Badge Example */}
-          {job.applicantsCount < 20 ? (
-            <span className="flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-100">
-              <Zap size={12} fill="currentColor" />
-              Fast Apply
-            </span>
-          ) : (
-            <span className="flex items-center gap-1 text-[11px] font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded border border-purple-100">
-              <Layers size={12} />
-              Popular
-            </span>
-          )}
-        </div>
-
-        <button className="flex items-center gap-1.5 px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-bold rounded-lg group-hover:bg-teal-500 dark:group-hover:bg-teal-400 group-hover:text-white transition-all shadow-sm group-hover:shadow-teal-500/25">
-          View Details
-          <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-        </button>
-      </div>
-    </motion.div>
-  );
+            {/* Footer */}
+            <div className="flex items-center justify-between pt-4 border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 mt-auto">
+                <div className="flex items-center gap-3">
+                    <span className="flex items-center gap-1 text-[11px] text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>
+                        <Clock size={11} /> {formatDate(job.createdAt)}
+                    </span>
+                    {/* Status Badge */}
+                    {job.applicantsCount < 20 ? (
+                        <span className="text-[10px] text-[#3B4FD8] dark:text-[#6C7EF5] uppercase tracking-wider font-semibold">New</span>
+                    ) : (
+                        <span className="text-[10px] text-[#F5A623] uppercase tracking-wider font-semibold">Hot</span>
+                    )}
+                </div>
+                
+                <ArrowUpRight
+                    size={18}
+                    className="text-[#3B4FD8] dark:text-[#6C7EF5] opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all"
+                />
+            </div>
+        </motion.div>
+    );
 };
 
 export default JobCard;

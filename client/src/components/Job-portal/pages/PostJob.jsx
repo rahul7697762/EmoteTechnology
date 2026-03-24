@@ -1,20 +1,21 @@
-// job-portal/pages/PostJob.jsx
+// job-portal/pages/PostJob.jsx — Tech-Brutalism Design
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  ArrowLeft, Briefcase, Save, Upload, Plus, Trash2, Building2,
-  DollarSign, MapPin, Calendar, FileText, Tag, Users,
-  Globe, Clock, CheckCircle, AlertCircle, Eye, Zap
+  ArrowLeft, Briefcase, Save, Plus, Trash2, Building2,
+  DollarSign, MapPin, Calendar, FileText, Users,
+  Clock, CheckCircle, AlertCircle, Eye, Zap
 } from 'lucide-react';
 import { jobAPI, companyAPI } from '../services/api';
 import { showToast } from '../services/toast';
 import { useSelector } from 'react-redux';
 
+const MONO = "'Space Mono', 'IBM Plex Mono', monospace";
+
 const PostJob = ({ editMode, jobId }) => {
   const { user: _user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  // Guard: ensure only employer/admin users can access post job
   const role = _user?.role || '';
   const isEmployer = ['COMPANY', 'EMPLOYER', 'ADMIN'].includes(role.toUpperCase());
   const [loading, setLoading] = useState(false);
@@ -63,8 +64,6 @@ const PostJob = ({ editMode, jobId }) => {
     try {
       const response = await companyAPI.getProfile();
       setCompanyProfile(response.data);
-
-      // Pre-fill location if company has one
       if (response.data.location && !formData.location) {
         setFormData(prev => ({ ...prev, location: response.data.location }));
       }
@@ -80,7 +79,6 @@ const PostJob = ({ editMode, jobId }) => {
       setLoading(true);
       const response = await jobAPI.getJobById(jobId);
       const job = response.data;
-
       setFormData({
         title: job.title || '',
         description: job.description || '',
@@ -114,95 +112,56 @@ const PostJob = ({ editMode, jobId }) => {
   }, [jobId]);
 
   useEffect(() => {
-    if (!isEmployer) {
-      navigate('/login');
-      return;
-    }
- 
+    if (!isEmployer) { navigate('/login'); return; }
     fetchCompanyProfile();
-    if (editMode && jobId) {
-      fetchJobDetails();
-    }
+    if (editMode && jobId) fetchJobDetails();
   }, [editMode, jobId, fetchCompanyProfile, fetchJobDetails, isEmployer, navigate]);
-
-
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
   const handleAddTag = () => {
     if (newTag.trim() && formData.tags.length < 10) {
-      setFormData(prev => ({
-        ...prev,
-        tags: [...prev.tags, newTag.trim()],
-      }));
+      setFormData(prev => ({ ...prev, tags: [...prev.tags, newTag.trim()] }));
       setNewTag('');
     }
   };
 
   const handleRemoveTag = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      tags: prev.tags.filter((_, i) => i !== index),
-    }));
+    setFormData(prev => ({ ...prev, tags: prev.tags.filter((_, i) => i !== index) }));
   };
 
   const handleAddQuestion = () => {
     if (newQuestion.trim() && formData.applicationQuestions.length < 5) {
-      setFormData(prev => ({
-        ...prev,
-        applicationQuestions: [...prev.applicationQuestions, newQuestion.trim()],
-      }));
+      setFormData(prev => ({ ...prev, applicationQuestions: [...prev.applicationQuestions, newQuestion.trim()] }));
       setNewQuestion('');
     }
   };
 
   const handleRemoveQuestion = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      applicationQuestions: prev.applicationQuestions.filter((_, i) => i !== index),
-    }));
+    setFormData(prev => ({ ...prev, applicationQuestions: prev.applicationQuestions.filter((_, i) => i !== index) }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!companyProfile) {
       setError('Please complete your company profile first');
       showToast.error('Complete company profile required');
       return;
     }
- 
     if (!companyProfile.completed) {
-      setError('Your company profile is incomplete. Please add all required information (Logo, Description, Industry, etc.)');
+      setError('Your company profile is incomplete.');
       showToast.error('Incomplete company profile');
       navigate('/company/onboarding');
       return;
     }
-
-    if (!formData.title.trim()) {
-      setError('Job title is required');
-      return;
-    }
-
-    if (!formData.description.trim()) {
-      setError('Job description is required');
-      return;
-    }
-
-    if (!formData.requirements.trim()) {
-      setError('Requirements are required');
-      return;
-    }
-
+    if (!formData.title.trim()) { setError('Job title is required'); return; }
+    if (!formData.description.trim()) { setError('Job description is required'); return; }
+    if (!formData.requirements.trim()) { setError('Requirements are required'); return; }
     setSaving(true);
     setError('');
-
     try {
       let createdJobId = null;
       if (editMode) {
@@ -214,16 +173,9 @@ const PostJob = ({ editMode, jobId }) => {
         createdJobId = res.data?.job?._id;
         showToast.success('Job posted successfully!');
       }
-
-      // Redirect to job dashboard and open created job after a short delay.
-      // We include both location `state.openJobId` and a fallback query param `open=` so
-      // the Jobs page can open the job card even if `location.state` is lost (page reloads, navigation)
       setTimeout(() => {
-        if (createdJobId) {
-          navigate(`/company/jobs/${createdJobId}`);
-        } else {
-          navigate('/company/dashboard');
-        }
+        if (createdJobId) navigate(`/company/jobs/${createdJobId}`);
+        else navigate('/company/dashboard');
       }, 1500);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to save job');
@@ -235,43 +187,60 @@ const PostJob = ({ editMode, jobId }) => {
 
   const handleSaveDraft = async () => {
     try {
-      // Save as draft logic
       showToast.success('Draft saved successfully');
     } catch (err) {
       showToast.error('Failed to save draft');
     }
   };
 
+  /* ── Brutalism helpers ── */
+  const inputCls = `w-full px-4 py-3 bg-white border-[2px] border-[#1A1D2E] text-[#1A1D2E] focus:outline-none focus:border-[#3B4FD8] focus:shadow-[inset_2px_2px_0px_rgba(59,79,216,0.12)] transition-all placeholder:text-gray-400 font-medium`;
+  const selectCls = `w-full px-4 py-3 bg-white border-[2px] border-[#1A1D2E] text-[#1A1D2E] focus:outline-none focus:border-[#3B4FD8] transition-all font-medium`;
+  const textareaCls = `w-full px-4 py-3 bg-white border-[2px] border-[#1A1D2E] text-[#1A1D2E] focus:outline-none focus:border-[#3B4FD8] transition-all resize-none placeholder:text-gray-400 font-medium`;
+  const labelCls = `block text-xs font-black uppercase tracking-widest text-[#1A1D2E] mb-2`;
+  const sectionCls = `bg-[#F7F8FF] border-[3px] border-[#1A1D2E] p-8 shadow-[6px_6px_0px_#3B4FD8]`;
+  const sectionHeaderCls = `flex items-center gap-3 mb-8 pb-4 border-b-[3px] border-[#1A1D2E]`;
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-[#0a0a0f] dark:to-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500"></div>
+      <div className="min-h-screen bg-[#F7F8FF] flex items-center justify-center" style={{ fontFamily: MONO }}>
+        <div className="text-center">
+          <div className="w-16 h-16 border-[4px] border-[#1A1D2E] border-t-[#3B4FD8] animate-spin mb-4 mx-auto" />
+          <p className="font-black uppercase tracking-widest text-[#1A1D2E]">LOADING_DATA...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-[#0a0a0f] dark:to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-[#F7F8FF] py-12 px-4 sm:px-6 lg:px-8" style={{ fontFamily: MONO }}>
+      {/* Grid background */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03]" style={{
+        backgroundImage: 'linear-gradient(#1A1D2E 1px, transparent 1px), linear-gradient(90deg, #1A1D2E 1px, transparent 1px)',
+        backgroundSize: '40px 40px'
+      }} />
+
+      <div className="max-w-5xl mx-auto relative">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-10">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-teal-500 dark:hover:text-teal-400 mb-6 transition-colors"
+            className="flex items-center gap-2 text-[#1A1D2E] font-bold uppercase text-xs tracking-widest mb-8 hover:text-[#3B4FD8] transition-colors group"
           >
-            <ArrowLeft className="w-5 h-5" />
-            Back
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            ← BACK
           </button>
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b-[4px] border-[#1A1D2E] pb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                {editMode ? 'Edit Job Posting' : 'Post a New Job'}
+              <div className="inline-block bg-[#3B4FD8] text-white px-3 py-1 text-xs font-black uppercase tracking-widest mb-3">
+                {editMode ? 'EDIT_MODE' : 'NEW_POSTING'}
+              </div>
+              <h1 className="text-5xl font-black uppercase text-[#1A1D2E] leading-none">
+                {editMode ? 'EDIT JOB' : 'POST JOB'}
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-2">
-                {editMode
-                  ? 'Update your job posting details'
-                  : 'Fill in the details to attract the best candidates'}
+              <p className="text-[#1A1D2E] mt-3 font-medium text-sm opacity-60">
+                {editMode ? '// UPDATE_JOB_POSTING_DETAILS' : '// FILL_DETAILS_TO_ATTRACT_BEST_CANDIDATES'}
               </p>
             </div>
 
@@ -279,193 +248,152 @@ const PostJob = ({ editMode, jobId }) => {
               <button
                 type="button"
                 onClick={handleSaveDraft}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                className="px-5 py-3 border-[2px] border-[#1A1D2E] text-[#1A1D2E] font-black uppercase text-xs tracking-widest hover:bg-[#1A1D2E] hover:text-white transition-colors"
+                style={{ fontFamily: MONO }}
               >
-                Save Draft
+                SAVE_DRAFT
               </button>
               <button
                 type="button"
                 onClick={() => setPreviewMode(!previewMode)}
-                className="px-4 py-2 border border-teal-500 text-teal-500 dark:text-teal-400 font-medium rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/20 transition-colors flex items-center gap-2"
+                className="px-5 py-3 bg-[#1A1D2E] text-[#00E5FF] font-black uppercase text-xs tracking-widest hover:bg-[#3B4FD8] transition-colors flex items-center gap-2 border-[2px] border-[#1A1D2E]"
+                style={{ fontFamily: MONO }}
               >
                 <Eye className="w-4 h-4" />
-                {previewMode ? 'Edit Mode' : 'Preview'}
+                {previewMode ? 'EDIT_MODE' : 'PREVIEW'}
               </button>
             </div>
           </div>
         </div>
 
+        {/* Error Banner */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-red-500" />
-            <span className="text-red-700 dark:text-red-400">{error}</span>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="mb-6 flex items-center gap-3 bg-red-500 border-[3px] border-[#1A1D2E] p-4 shadow-[4px_4px_0px_#1A1D2E]"
+          >
+            <AlertCircle className="w-5 h-5 text-white flex-shrink-0" />
+            <span className="text-white font-bold text-sm uppercase tracking-wider">{error}</span>
+          </motion.div>
         )}
 
+        {/* Incomplete profile warning */}
         {companyProfile && !companyProfile.completed && (
-          <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-yellow-500" />
-              <div>
-                <p className="text-yellow-700 dark:text-yellow-400">
-                  Complete your company profile to post jobs. Some features may be limited.
-                </p>
-                <button
-                  onClick={() => navigate('/company/profile')}
-                  className="mt-2 text-sm font-medium text-yellow-600 dark:text-yellow-500 hover:text-yellow-700 dark:hover:text-yellow-400"
-                >
-                  Complete Profile →
-                </button>
-              </div>
+          <div className="mb-6 flex items-start gap-3 bg-yellow-300 border-[3px] border-[#1A1D2E] p-4 shadow-[4px_4px_0px_#1A1D2E]">
+            <AlertCircle className="w-5 h-5 text-[#1A1D2E] flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-[#1A1D2E] font-bold text-sm uppercase tracking-wide">
+                INCOMPLETE_PROFILE // Complete your company profile to post jobs.
+              </p>
+              <button
+                onClick={() => navigate('/company/profile')}
+                className="mt-2 text-xs font-black uppercase tracking-widest text-[#1A1D2E] underline underline-offset-4 hover:text-[#3B4FD8]"
+              >
+                COMPLETE_PROFILE →
+              </button>
             </div>
           </div>
         )}
 
-        {/* Form */}
         {!previewMode ? (
           <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Basic Information */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg"
-            >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-teal-100 dark:bg-teal-900/30 rounded-lg">
-                  <Briefcase className="w-6 h-6 text-teal-500" />
+
+            {/* ── SECTION 01: Basic Information ── */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className={sectionCls}>
+              <div className={sectionHeaderCls}>
+                <div className="p-2 bg-[#1A1D2E] border-[2px] border-[#1A1D2E]">
+                  <Briefcase className="w-5 h-5 text-[#00E5FF]" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                    Basic Information
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    Start with the job title and basic details
-                  </p>
+                  <div className="text-xs text-[#3B4FD8] font-black uppercase tracking-widest">SECTION_01</div>
+                  <h3 className="text-xl font-black uppercase text-[#1A1D2E]">BASIC_INFORMATION</h3>
                 </div>
               </div>
 
               <div className="space-y-6">
-                {/* Job Title */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Job Title *
-                  </label>
+                  <label className={labelCls}>JOB_TITLE *</label>
                   <input
                     type="text"
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                    className={inputCls}
                     placeholder="e.g., Senior Frontend Developer"
+                    style={{ fontFamily: MONO }}
                   />
                 </div>
 
-                {/* Category & Type */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Job Category *
-                    </label>
-                    <select
-                      name="category"
-                      value={formData.category}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                    >
-                      <option value="">Select Category</option>
-                      {categories.map(category => (
-                        <option key={category} value={category}>{category}</option>
-                      ))}
+                    <label className={labelCls}>JOB_CATEGORY *</label>
+                    <select name="category" value={formData.category} onChange={handleChange} required className={selectCls} style={{ fontFamily: MONO }}>
+                      <option value="">-- SELECT --</option>
+                      {categories.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Job Type *
-                    </label>
-                    <select
-                      name="jobType"
-                      value={formData.jobType}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                    >
-                      {jobTypes.map(type => (
-                        <option key={type} value={type}>{type}</option>
-                      ))}
+                    <label className={labelCls}>JOB_TYPE *</label>
+                    <select name="jobType" value={formData.jobType} onChange={handleChange} required className={selectCls} style={{ fontFamily: MONO }}>
+                      {jobTypes.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
                   </div>
                 </div>
 
-                {/* Experience & Location */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Experience Level *
-                    </label>
-                    <select
-                      name="experienceLevel"
-                      value={formData.experienceLevel}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                    >
-                      {experienceLevels.map(level => (
-                        <option key={level} value={level}>{level}</option>
-                      ))}
+                    <label className={labelCls}>EXPERIENCE_LEVEL *</label>
+                    <select name="experienceLevel" value={formData.experienceLevel} onChange={handleChange} required className={selectCls} style={{ fontFamily: MONO }}>
+                      {experienceLevels.map(l => <option key={l} value={l}>{l}</option>)}
                     </select>
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Location *
-                    </label>
+                    <label className={labelCls}>LOCATION *</label>
                     <input
                       type="text"
                       name="location"
                       value={formData.location}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                      placeholder="e.g., San Francisco, CA or Remote"
+                      className={inputCls}
+                      placeholder="e.g., San Francisco, CA"
+                      style={{ fontFamily: MONO }}
                     />
-                    <div className="flex items-center mt-2">
+                    <label className="flex items-center gap-2 mt-3 cursor-pointer group">
                       <input
                         type="checkbox"
                         name="remote"
                         id="remote"
                         checked={formData.remote}
                         onChange={handleChange}
-                        className="w-4 h-4 text-teal-500 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        className="w-4 h-4 border-[2px] border-[#1A1D2E] accent-[#3B4FD8]"
                       />
-                      <label htmlFor="remote" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                        This is a remote position
-                      </label>
-                    </div>
+                      <span className="text-xs font-black uppercase tracking-widest text-[#1A1D2E] group-hover:text-[#3B4FD8] transition-colors">
+                        REMOTE_POSITION
+                      </span>
+                    </label>
                   </div>
                 </div>
 
-                {/* Tags */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Skills & Technologies (Max 10)
-                  </label>
+                  <label className={labelCls}>SKILLS_TAGS (MAX 10)</label>
                   <div className="flex gap-2">
                     <input
                       type="text"
                       value={newTag}
                       onChange={(e) => setNewTag(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
-                      className="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                      className={inputCls}
                       placeholder="e.g., React, Node.js, AWS"
+                      style={{ fontFamily: MONO }}
                     />
                     <button
                       type="button"
                       onClick={handleAddTag}
                       disabled={!newTag.trim() || formData.tags.length >= 10}
-                      className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-4 py-2 bg-[#3B4FD8] text-white border-[2px] border-[#1A1D2E] hover:bg-[#1A1D2E] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-[2px_2px_0px_#1A1D2E]"
                     >
                       <Plus className="w-5 h-5" />
                     </button>
@@ -475,14 +403,11 @@ const PostJob = ({ editMode, jobId }) => {
                       {formData.tags.map((tag, index) => (
                         <span
                           key={index}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400 rounded-lg text-sm"
+                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#1A1D2E] text-[#00E5FF] text-xs font-black uppercase tracking-widest border-[2px] border-[#1A1D2E] shadow-[2px_2px_0px_#3B4FD8]"
+                          style={{ fontFamily: MONO }}
                         >
                           {tag}
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveTag(index)}
-                            className="hover:text-teal-900 dark:hover:text-teal-300"
-                          >
+                          <button type="button" onClick={() => handleRemoveTag(index)} className="hover:text-red-400 transition-colors">
                             <Trash2 className="w-3 h-3" />
                           </button>
                         </span>
@@ -493,254 +418,159 @@ const PostJob = ({ editMode, jobId }) => {
               </div>
             </motion.div>
 
-            {/* Salary & Compensation */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg"
-            >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                  <DollarSign className="w-6 h-6 text-green-500" />
+            {/* ── SECTION 02: Salary & Compensation ── */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className={sectionCls}>
+              <div className={sectionHeaderCls}>
+                <div className="p-2 bg-[#1A1D2E] border-[2px] border-[#1A1D2E]">
+                  <DollarSign className="w-5 h-5 text-[#00E5FF]" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                    Salary & Compensation
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    Salary range and benefits (optional but recommended)
-                  </p>
+                  <div className="text-xs text-[#3B4FD8] font-black uppercase tracking-widest">SECTION_02</div>
+                  <h3 className="text-xl font-black uppercase text-[#1A1D2E]">SALARY_COMPENSATION</h3>
                 </div>
               </div>
 
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Minimum Salary
-                    </label>
+                  <div>
+                    <label className={labelCls}>MIN_SALARY</label>
                     <div className="flex">
                       <select
                         name="salaryCurrency"
                         value={formData.salaryCurrency}
                         onChange={handleChange}
-                        className="w-20 md:w-24 px-2 py-2 rounded-l-lg border border-r-0 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-teal-500 outline-none"
+                        className="px-2 py-3 bg-[#1A1D2E] text-[#00E5FF] border-[2px] border-[#1A1D2E] font-black text-xs focus:outline-none"
+                        style={{ fontFamily: MONO }}
                       >
-                        {currencies.map(currency => (
-                          <option key={currency} value={currency}>{currency}</option>
-                        ))}
+                        {currencies.map(c => <option key={c} value={c}>{c}</option>)}
                       </select>
                       <input
                         type="number"
                         name="salaryMin"
                         value={formData.salaryMin}
                         onChange={handleChange}
-                        className="flex-1 min-w-0 px-4 py-2 rounded-r-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none"
-                        placeholder="e.g. 8000"
+                        className="flex-1 min-w-0 px-4 py-3 bg-white border-[2px] border-l-0 border-[#1A1D2E] text-[#1A1D2E] focus:outline-none focus:border-[#3B4FD8] font-medium"
+                        placeholder="e.g. 80000"
+                        style={{ fontFamily: MONO }}
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Maximum Salary
-                    </label>
+                  <div>
+                    <label className={labelCls}>MAX_SALARY</label>
                     <input
                       type="number"
                       name="salaryMax"
                       value={formData.salaryMax}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none"
+                      className={inputCls}
                       placeholder="e.g. 150000"
+                      style={{ fontFamily: MONO }}
                     />
                   </div>
 
-                  <div className="sm:col-span-2 lg:col-span-1 space-y-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Application Deadline
-                    </label>
+                  <div className="sm:col-span-2 lg:col-span-1">
+                    <label className={labelCls}>DEADLINE</label>
                     <div className="relative">
-                      <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
+                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[#3B4FD8] w-4 h-4 pointer-events-none" />
                       <input
                         type="date"
                         name="deadline"
                         value={formData.deadline}
                         onChange={handleChange}
                         min={new Date().toLocaleDateString('en-CA')}
-                        className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all outline-none"
+                        className={`${inputCls} pl-10`}
+                        style={{ fontFamily: MONO }}
                       />
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Benefits (Optional)
-                  </label>
+                  <label className={labelCls}>BENEFITS (OPTIONAL)</label>
                   <textarea
                     name="benefits"
                     value={formData.benefits}
                     onChange={handleChange}
                     rows={3}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                    className={textareaCls}
                     placeholder="List the benefits offered (health insurance, remote work, flexible hours, etc.)"
+                    style={{ fontFamily: MONO }}
                   />
                 </div>
               </div>
             </motion.div>
 
-            {/* Job Description */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg"
-            >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                  <FileText className="w-6 h-6 text-blue-500" />
+            {/* ── SECTION 03: Job Description ── */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className={sectionCls}>
+              <div className={sectionHeaderCls}>
+                <div className="p-2 bg-[#1A1D2E] border-[2px] border-[#1A1D2E]">
+                  <FileText className="w-5 h-5 text-[#00E5FF]" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                    Job Description
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    Describe the role and what you're looking for
-                  </p>
+                  <div className="text-xs text-[#3B4FD8] font-black uppercase tracking-widest">SECTION_03</div>
+                  <h3 className="text-xl font-black uppercase text-[#1A1D2E]">JOB_DESCRIPTION</h3>
                 </div>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Job Description *
-                  </label>
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    required
-                    rows={8}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                    placeholder="Describe the role, team, projects, and impact..."
-                  />
+                  <label className={labelCls}>DESCRIPTION *</label>
+                  <textarea name="description" value={formData.description} onChange={handleChange} required rows={8} className={textareaCls} placeholder="Describe the role, team, projects, and impact..." style={{ fontFamily: MONO }} />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Requirements & Qualifications *
-                  </label>
-                  <textarea
-                    name="requirements"
-                    value={formData.requirements}
-                    onChange={handleChange}
-                    required
-                    rows={6}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                    placeholder="List required skills, education, experience, and qualifications..."
-                  />
+                  <label className={labelCls}>REQUIREMENTS_QUALIFICATIONS *</label>
+                  <textarea name="requirements" value={formData.requirements} onChange={handleChange} required rows={6} className={textareaCls} placeholder="List required skills, education, experience, and qualifications..." style={{ fontFamily: MONO }} />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Responsibilities (Optional)
-                  </label>
-                  <textarea
-                    name="responsibilities"
-                    value={formData.responsibilities}
-                    onChange={handleChange}
-                    rows={6}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                    placeholder="List day-to-day responsibilities and tasks..."
-                  />
+                  <label className={labelCls}>RESPONSIBILITIES (OPTIONAL)</label>
+                  <textarea name="responsibilities" value={formData.responsibilities} onChange={handleChange} rows={6} className={textareaCls} placeholder="List day-to-day responsibilities and tasks..." style={{ fontFamily: MONO }} />
                 </div>
               </div>
             </motion.div>
 
-            {/* Application Process */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg"
-            >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                  <Users className="w-6 h-6 text-purple-500" />
+            {/* ── SECTION 04: Application Process ── */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className={sectionCls}>
+              <div className={sectionHeaderCls}>
+                <div className="p-2 bg-[#1A1D2E] border-[2px] border-[#1A1D2E]">
+                  <Users className="w-5 h-5 text-[#00E5FF]" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                    Application Process
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    How candidates should apply and what to expect
-                  </p>
+                  <div className="text-xs text-[#3B4FD8] font-black uppercase tracking-widest">SECTION_04</div>
+                  <h3 className="text-xl font-black uppercase text-[#1A1D2E]">APPLICATION_PROCESS</h3>
                 </div>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Application Instructions
-                  </label>
-                  <textarea
-                    name="applicationInstructions"
-                    value={formData.applicationInstructions}
-                    onChange={handleChange}
-                    rows={4}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                    placeholder="Any special instructions for applicants..."
-                  />
+                  <label className={labelCls}>APPLICATION_INSTRUCTIONS</label>
+                  <textarea name="applicationInstructions" value={formData.applicationInstructions} onChange={handleChange} rows={4} className={textareaCls} placeholder="Any special instructions for applicants..." style={{ fontFamily: MONO }} />
+                </div>
+                <div>
+                  <label className={labelCls}>HIRING_PROCESS (OPTIONAL)</label>
+                  <textarea name="hiringProcess" value={formData.hiringProcess} onChange={handleChange} rows={4} className={textareaCls} placeholder="Describe your hiring process (interviews, tests, timeline)..." style={{ fontFamily: MONO }} />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Hiring Process (Optional)
-                  </label>
-                  <textarea
-                    name="hiringProcess"
-                    value={formData.hiringProcess}
-                    onChange={handleChange}
-                    rows={4}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                    placeholder="Describe your hiring process (interviews, tests, timeline)..."
-                  />
-                </div>
-
-                {/* Additional Questions */}
-                <div>
-                  <label className="flex items-center gap-3 p-3 border border-gray-100 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer mb-4">
+                  <label className="flex items-center gap-3 p-4 bg-white border-[2px] border-[#1A1D2E] hover:border-[#3B4FD8] cursor-pointer transition-colors group mb-4 shadow-[2px_2px_0px_#1A1D2E]">
                     <input
                       type="checkbox"
                       name="showQuestions"
                       checked={formData.showQuestions}
                       onChange={handleChange}
-                      className="w-4 h-4 text-teal-500 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                      className="w-4 h-4 border-[2px] border-[#1A1D2E] accent-[#3B4FD8]"
                     />
                     <div>
-                      <div className="font-bold text-gray-900 dark:text-white">
-                        Include Custom Application Questions
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        Ask candidates specific questions to filter the best talent
-                      </div>
+                      <div className="font-black text-[#1A1D2E] uppercase text-sm tracking-wider group-hover:text-[#3B4FD8] transition-colors">INCLUDE_CUSTOM_QUESTIONS</div>
+                      <div className="text-xs text-gray-500 mt-0.5">Ask candidates specific questions to filter the best talent</div>
                     </div>
                   </label>
 
                   {formData.showQuestions && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      className="space-y-4"
-                    >
+                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-4">
                       <div className="flex items-center justify-between mb-2">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                          Custom Questions
-                        </label>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {formData.applicationQuestions.length}/5
-                        </span>
+                        <span className={labelCls}>CUSTOM_QUESTIONS</span>
+                        <span className="text-xs font-black text-[#3B4FD8]">{formData.applicationQuestions.length}/5</span>
                       </div>
                       <div className="flex gap-2">
                         <input
@@ -748,14 +578,15 @@ const PostJob = ({ editMode, jobId }) => {
                           value={newQuestion}
                           onChange={(e) => setNewQuestion(e.target.value)}
                           onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddQuestion())}
-                          className="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                          className={inputCls}
                           placeholder="e.g., Why do you want to join our team?"
+                          style={{ fontFamily: MONO }}
                         />
                         <button
                           type="button"
                           onClick={handleAddQuestion}
                           disabled={!newQuestion.trim() || formData.applicationQuestions.length >= 5}
-                          className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-4 py-2 bg-[#3B4FD8] text-white border-[2px] border-[#1A1D2E] hover:bg-[#1A1D2E] transition-colors disabled:opacity-40 shadow-[2px_2px_0px_#1A1D2E]"
                         >
                           <Plus className="w-5 h-5" />
                         </button>
@@ -763,19 +594,12 @@ const PostJob = ({ editMode, jobId }) => {
                       {formData.applicationQuestions.length > 0 && (
                         <div className="space-y-2">
                           {formData.applicationQuestions.map((question, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg group"
-                            >
+                            <div key={index} className="flex items-center justify-between p-3 bg-white border-[2px] border-[#1A1D2E] hover:border-[#3B4FD8] transition-colors group">
                               <div className="flex items-center gap-3">
-                                <span className="text-sm text-gray-400">{index + 1}.</span>
-                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{question}</span>
+                                <span className="text-xs font-black text-[#3B4FD8]">Q{index + 1}.</span>
+                                <span className="text-sm font-medium text-[#1A1D2E]">{question}</span>
                               </div>
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveQuestion(index)}
-                                className="text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
-                              >
+                              <button type="button" onClick={() => handleRemoveQuestion(index)} className="text-gray-400 hover:text-red-500 transition-colors ml-3 flex-shrink-0">
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             </div>
@@ -788,208 +612,148 @@ const PostJob = ({ editMode, jobId }) => {
               </div>
             </motion.div>
 
-            {/* Visibility & Options */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg"
-            >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
-                  <Eye className="w-6 h-6 text-yellow-500" />
+            {/* ── SECTION 05: Visibility & Options ── */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className={sectionCls}>
+              <div className={sectionHeaderCls}>
+                <div className="p-2 bg-[#1A1D2E] border-[2px] border-[#1A1D2E]">
+                  <Eye className="w-5 h-5 text-[#00E5FF]" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                    Visibility & Options
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    Control how your job is displayed
-                  </p>
+                  <div className="text-xs text-[#3B4FD8] font-black uppercase tracking-widest">SECTION_05</div>
+                  <h3 className="text-xl font-black uppercase text-[#1A1D2E]">VISIBILITY_OPTIONS</h3>
                 </div>
               </div>
 
-              <div className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Visibility
-                    </label>
-                    <select
-                      name="visibility"
-                      value={formData.visibility}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                    >
-                      <option value="PUBLIC">Public - Listed on job board</option>
-                      <option value="UNLISTED">Unlisted - Only accessible via link</option>
-                      <option value="DRAFT">Draft - Only visible to you</option>
-                    </select>
-                  </div>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className={labelCls}>VISIBILITY</label>
+                  <select name="visibility" value={formData.visibility} onChange={handleChange} className={selectCls} style={{ fontFamily: MONO }}>
+                    <option value="PUBLIC">PUBLIC — Listed on job board</option>
+                    <option value="UNLISTED">UNLISTED — Only via link</option>
+                    <option value="DRAFT">DRAFT — Only visible to you</option>
+                  </select>
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Priority Options
+                <div>
+                  <label className={labelCls}>PRIORITY_FLAGS</label>
+                  <div className="space-y-3">
+                    <label className="flex items-center gap-3 p-3 bg-white border-[2px] border-[#1A1D2E] hover:border-[#3B4FD8] cursor-pointer transition-colors group shadow-[2px_2px_0px_#1A1D2E]">
+                      <input type="checkbox" name="featured" checked={formData.featured} onChange={handleChange} className="w-4 h-4 accent-[#3B4FD8]" />
+                      <div>
+                        <div className="font-black text-[#1A1D2E] text-xs uppercase tracking-widest group-hover:text-[#3B4FD8] transition-colors">FEATURED_LISTING</div>
+                        <div className="text-xs text-gray-500">Highlight at top of search results</div>
+                      </div>
                     </label>
-                    <div className="space-y-3">
-                      <label className="flex items-center gap-3 p-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          name="featured"
-                          checked={formData.featured}
-                          onChange={handleChange}
-                          className="w-4 h-4 text-teal-500 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 dark:focus:ring-teal-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                        />
-                        <div>
-                          <div className="font-medium text-gray-900 dark:text-white">
-                            Featured Listing
-                          </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            Highlight your job at the top of search results
-                          </div>
+                    <label className="flex items-center gap-3 p-3 bg-white border-[2px] border-[#1A1D2E] hover:border-red-500 cursor-pointer transition-colors group shadow-[2px_2px_0px_#1A1D2E]">
+                      <input type="checkbox" name="urgent" checked={formData.urgent} onChange={handleChange} className="w-4 h-4 accent-red-500" />
+                      <div>
+                        <div className="font-black text-[#1A1D2E] text-xs uppercase tracking-widest flex items-center gap-2 group-hover:text-red-500 transition-colors">
+                          <Zap className="w-3 h-3 text-red-500" />URGENT_HIRING
                         </div>
-                      </label>
-
-                      <label className="flex items-center gap-3 p-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          name="urgent"
-                          checked={formData.urgent}
-                          onChange={handleChange}
-                          className="w-4 h-4 text-red-500 bg-gray-100 border-gray-300 rounded focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                        />
-                        <div>
-                          <div className="font-medium text-gray-900 dark:text-white flex items-center gap-2">
-                            <Zap className="w-4 h-4 text-red-500" />
-                            Urgent Hiring
-                          </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            Mark as urgent to attract more applicants quickly
-                          </div>
-                        </div>
-                      </label>
-                    </div>
+                        <div className="text-xs text-gray-500">Mark as urgent to attract applicants quickly</div>
+                      </div>
+                    </label>
                   </div>
                 </div>
               </div>
             </motion.div>
 
-            {/* Submit Button */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="flex justify-end gap-4 pt-6"
-            >
+            {/* ── Submit ── */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="flex justify-end gap-4 pt-4">
               <button
                 type="button"
                 onClick={() => navigate(-1)}
-                className="px-8 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                className="px-8 py-4 border-[2px] border-[#1A1D2E] text-[#1A1D2E] font-black uppercase text-sm tracking-widest hover:bg-[#1A1D2E] hover:text-white transition-colors"
+                style={{ fontFamily: MONO }}
               >
-                Cancel
+                CANCEL
               </button>
               <button
                 type="submit"
                 disabled={saving}
-                className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-teal-600 hover:to-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-3 px-8 py-4 bg-[#3B4FD8] text-white font-black uppercase text-sm tracking-widest hover:bg-[#1A1D2E] transition-colors disabled:opacity-50 border-[2px] border-[#1A1D2E] shadow-[4px_4px_0px_#1A1D2E] hover:shadow-none hover:translate-x-1 hover:translate-y-1"
+                style={{ fontFamily: MONO }}
               >
                 <Save className="w-5 h-5" />
-                {saving ? (editMode ? 'Updating...' : 'Posting...') : (editMode ? 'Update Job' : 'Post Job')}
+                {saving ? (editMode ? 'UPDATING...' : 'POSTING...') : (editMode ? 'UPDATE_JOB' : 'POST_JOB')}
               </button>
             </motion.div>
           </form>
         ) : (
-          /* Preview Mode */
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg"
-          >
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                {formData.title || 'Job Title Preview'}
+          /* ── Preview Mode ── */
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className={`${sectionCls} space-y-8`}>
+            <div className="border-b-[3px] border-[#1A1D2E] pb-8">
+              {formData.urgent && (
+                <div className="inline-flex items-center gap-2 bg-red-500 text-white px-3 py-1 text-xs font-black uppercase tracking-widest mb-4 border-[2px] border-[#1A1D2E] mr-2">
+                  <Zap className="w-3 h-3" /> URGENT
+                </div>
+              )}
+              {formData.featured && (
+                <div className="inline-flex items-center gap-2 bg-yellow-400 text-[#1A1D2E] px-3 py-1 text-xs font-black uppercase tracking-widest mb-4 border-[2px] border-[#1A1D2E]">
+                  FEATURED
+                </div>
+              )}
+              <h2 className="text-4xl font-black uppercase text-[#1A1D2E] leading-none mb-4">
+                {formData.title || 'JOB_TITLE_PREVIEW'}
               </h2>
-              <div className="flex flex-wrap items-center gap-4 text-gray-600 dark:text-gray-400">
-                <span className="flex items-center gap-1">
-                  <Building2 className="w-4 h-4" />
-                  {companyProfile?.companyName || 'Your Company'}
-                </span>
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
-                  {formData.remote ? 'Remote' : formData.location || 'Location'}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Briefcase className="w-4 h-4" />
-                  {formData.jobType}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Users className="w-4 h-4" />
-                  {formData.experienceLevel}
-                </span>
+              <div className="flex flex-wrap items-center gap-3">
+                {[
+                  { icon: Building2, val: companyProfile?.companyName || 'YOUR_COMPANY' },
+                  { icon: MapPin, val: formData.remote ? 'REMOTE' : formData.location || 'LOCATION' },
+                  { icon: Briefcase, val: formData.jobType },
+                  { icon: Users, val: formData.experienceLevel },
+                ].map(({ icon: Icon, val }, i) => (
+                  <span key={i} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1A1D2E] text-[#F7F8FF] text-xs font-black uppercase tracking-wider border-[2px] border-[#1A1D2E]" style={{ fontFamily: MONO }}>
+                    <Icon className="w-3.5 h-3.5 text-[#00E5FF]" />{val}
+                  </span>
+                ))}
                 {(formData.salaryMin || formData.salaryMax) && (
-                  <span className="flex items-center gap-1">
-                    <DollarSign className="w-4 h-4" />
+                  <span className="flex items-center gap-1.5 px-3 py-1.5 bg-green-400 text-[#1A1D2E] text-xs font-black uppercase tracking-wider border-[2px] border-[#1A1D2E]" style={{ fontFamily: MONO }}>
+                    <DollarSign className="w-3.5 h-3.5" />
                     {formData.salaryMin && formData.salaryMax
-                      ? `${formData.salaryCurrency} ${formData.salaryMin} - ${formData.salaryMax}`
-                      : 'Salary negotiable'}
+                      ? `${formData.salaryCurrency} ${formData.salaryMin}–${formData.salaryMax}`
+                      : 'NEGOTIABLE'}
                   </span>
                 )}
               </div>
             </div>
 
-            {/* Job Description Preview */}
             {formData.description && (
-              <div className="mb-8">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                  Job Description
-                </h3>
-                <div className="prose prose-lg dark:prose-invert max-w-none">
-                  <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                    {formData.description}
-                  </p>
+              <div>
+                <h3 className="text-sm font-black uppercase tracking-widest text-[#3B4FD8] mb-3">// JOB_DESCRIPTION</h3>
+                <div className="bg-white border-[2px] border-[#1A1D2E] p-6">
+                  <p className="text-[#1A1D2E] whitespace-pre-line leading-relaxed">{formData.description}</p>
                 </div>
               </div>
             )}
 
-            {/* Requirements Preview */}
             {formData.requirements && (
-              <div className="mb-8">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                  Requirements
-                </h3>
-                <div className="prose prose-lg dark:prose-invert max-w-none">
-                  <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                    {formData.requirements}
-                  </p>
+              <div>
+                <h3 className="text-sm font-black uppercase tracking-widest text-[#3B4FD8] mb-3">// REQUIREMENTS</h3>
+                <div className="bg-white border-[2px] border-[#1A1D2E] p-6">
+                  <p className="text-[#1A1D2E] whitespace-pre-line leading-relaxed">{formData.requirements}</p>
                 </div>
               </div>
             )}
 
-            {/* Tags Preview */}
             {formData.tags.length > 0 && (
-              <div className="mb-8">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                  Required Skills
-                </h3>
+              <div>
+                <h3 className="text-sm font-black uppercase tracking-widest text-[#3B4FD8] mb-3">// SKILLS_REQUIRED</h3>
                 <div className="flex flex-wrap gap-2">
-                  {formData.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1.5 bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400 rounded-lg"
-                    >
-                      {tag}
-                    </span>
+                  {formData.tags.map((tag, i) => (
+                    <span key={i} className="px-3 py-1.5 bg-[#1A1D2E] text-[#00E5FF] text-xs font-black uppercase tracking-wider border-[2px] border-[#1A1D2E]" style={{ fontFamily: MONO }}>{tag}</span>
                   ))}
                 </div>
               </div>
             )}
 
-            <div className="pt-8 border-t border-gray-200 dark:border-gray-700">
+            <div className="pt-6 border-t-[3px] border-[#1A1D2E]">
               <button
                 onClick={() => setPreviewMode(false)}
-                className="px-6 py-3 bg-teal-500 text-white font-semibold rounded-lg hover:bg-teal-600 transition-colors"
+                className="px-8 py-4 bg-[#1A1D2E] text-white font-black uppercase text-sm tracking-widest hover:bg-[#3B4FD8] transition-colors border-[2px] border-[#1A1D2E] shadow-[4px_4px_0px_#3B4FD8]"
+                style={{ fontFamily: MONO }}
               >
-                Back to Editing
+                ← BACK_TO_EDITOR
               </button>
             </div>
           </motion.div>

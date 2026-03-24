@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Bell, Mail, MessageSquare, Briefcase } from 'lucide-react';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const CompanyNotificationsTab = () => {
   // Notification State - Mocked
   const [notifications, setNotifications] = useState({
@@ -15,7 +18,16 @@ const CompanyNotificationsTab = () => {
   const handleNotificationChange = (key) => {
     setNotifications(prev => ({ ...prev, [key]: !prev[key] }));
     // In a real app, dispatch update here
-    toast.success("Preference updated");
+    toast.success("Preference updated", {
+        style: {
+            borderRadius: '0px',
+            fontFamily: MONO,
+            fontSize: '12px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            fontWeight: 'bold'
+        }
+    });
   };
 
   const notificationItems = [
@@ -52,32 +64,32 @@ const CompanyNotificationsTab = () => {
   ];
 
   return (
-    <div className="bg-white dark:bg-[#1a1c23] rounded-3xl border border-gray-100 dark:border-gray-800 shadow-xl shadow-gray-200/50 dark:shadow-none overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-500">
-      <div className="p-8 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-teal-100 dark:bg-teal-900/30 rounded-lg text-teal-600 dark:text-teal-400">
+    <div className="bg-white dark:bg-[#252A41] rounded-none border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-500">
+      <div className="p-6 md:p-8 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 bg-[#F7F8FF] dark:bg-[#1A1D2E]">
+        <div className="flex items-center gap-5">
+          <div className="p-3 bg-white dark:bg-[#252A41] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 text-[#3B4FD8] dark:text-[#6C7EF5]">
             <Bell size={24} />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Notification Preferences</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Manage your email alert settings.</p>
+            <h2 className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>NOTIFICATION PREFERENCES</h2>
+            <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#6B7194] dark:text-[#8B90B8] mt-1" style={{ fontFamily: MONO }}>Manage your email alert settings.</p>
           </div>
         </div>
       </div>
       <div className="p-6 md:p-8 space-y-4">
         {notificationItems.map(item => (
-          <div key={item.id} className="flex items-start md:items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors gap-4">
+          <div key={item.id} className="flex items-start md:items-center justify-between p-5 rounded-none border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 hover:border-[#3B4FD8] dark:hover:border-[#6C7EF5] hover:bg-[#F7F8FF] dark:hover:bg-[#1A1D2E] transition-all hover:shadow-md gap-4 group">
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <h3 className="font-bold text-lg text-[#1A1D2E] dark:text-[#E8EAF2] flex items-center gap-2" style={{ fontFamily: SERIF }}>
                 {item.title}
               </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{item.desc}</p>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mt-1" style={{ fontFamily: MONO }}>{item.desc}</p>
             </div>
             <button
               onClick={() => handleNotificationChange(item.id)}
-              className={`shrink-0 w-12 h-6 rounded-full transition-colors relative ${notifications[item.id] ? 'bg-teal-500' : 'bg-gray-200 dark:bg-gray-700'}`}
+              className={`shrink-0 w-12 h-6 border transition-colors relative flex items-center ${notifications[item.id] ? 'bg-[#3B4FD8] dark:bg-[#6C7EF5] border-[#3B4FD8] dark:border-[#6C7EF5]' : 'bg-[#F7F8FF] dark:bg-[#1A1D2E] border-[#3B4FD8]/30 dark:border-[#6C7EF5]/30 group-hover:border-[#3B4FD8] dark:group-hover:border-[#6C7EF5]'}`}
             >
-              <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform transform ${notifications[item.id] ? 'translate-x-6' : 'translate-x-0'}`}></span>
+              <span className={`absolute h-4 w-4 transition-all duration-300 ${notifications[item.id] ? 'right-1 bg-white' : 'left-1 bg-[#6B7194] dark:bg-[#8B90B8]'}`}></span>
             </button>
           </div>
         ))}

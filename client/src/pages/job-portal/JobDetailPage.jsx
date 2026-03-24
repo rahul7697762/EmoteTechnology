@@ -198,7 +198,7 @@ const JobDetailPage = ({ jobId: propJobId, onApply, onBack }) => {
                           <span className="font-semibold">Salary Range</span>
                         </div>
                         <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                          ${job.salaryMin?.toLocaleString() || 'Negotiable'} - ${job.salaryMax?.toLocaleString() || 'Negotiable'}
+                          ₹{job.salaryMin?.toLocaleString() || 'Negotiable'} - ₹{job.salaryMax?.toLocaleString() || 'Negotiable'}
                         </p>
                       </div>
                     )}

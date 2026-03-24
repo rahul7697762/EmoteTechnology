@@ -12,6 +12,9 @@ import { useNavigate } from 'react-router-dom';
 import { showToast } from '../services/toast';
 import { getCompanyProfile } from '../../../redux/slices/companySlice';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const CompanyProfile = () => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
@@ -209,11 +212,11 @@ const CompanyProfile = () => {
       await dispatch(getCompanyProfile());
       
       setSuccess(true);
-      showToast.success('Profile updated successfully!');
+      showToast.success('Profile updated successfully!', { style: { borderRadius: 0, fontFamily: MONO, fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold' }});
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to save profile');
-      showToast.error('Failed to update profile');
+      showToast.error('Failed to update profile', { style: { borderRadius: 0, fontFamily: MONO, fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold' }});
     } finally {
       setLoading(false);
     }
@@ -227,89 +230,89 @@ const CompanyProfile = () => {
   ];
 
   return (
-    <div className="bg-white dark:bg-[#1a1c23] rounded-3xl border border-gray-100 dark:border-gray-800 shadow-xl shadow-gray-200/50 dark:shadow-none overflow-hidden">
+    <div className="bg-white dark:bg-[#252A41] rounded-none border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm overflow-hidden">
 
       {/* Header with Cover Image */}
-      <div className="relative h-48 bg-gray-100 dark:bg-gray-800">
+      <div className="relative h-48 bg-[#F7F8FF] dark:bg-[#1A1D2E] border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10">
         {formData.coverPreview ? (
           <img src={formData.coverPreview} alt="Cover" className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400">
-            <Building2 className="w-16 h-16 opacity-20" />
-            <span className="ml-2 opacity-50 font-medium">Add a cover image to showcase your brand</span>
+          <div className="w-full h-full flex flex-col items-center justify-center text-[#6B7194] dark:text-[#8B90B8]">
+            <Building2 className="w-16 h-16 opacity-30 mb-2" strokeWidth={1} />
+            <span className="text-[10px] uppercase font-bold tracking-widest" style={{ fontFamily: MONO }}>Add a cover image to showcase your brand</span>
           </div>
         )}
-        <label className="absolute top-4 right-4 cursor-pointer bg-black/50 hover:bg-black/70 text-white px-4 py-2 rounded-lg backdrop-blur-sm transition-colors flex items-center gap-2 text-sm font-medium">
+        <label className="absolute top-4 right-4 cursor-pointer bg-white/90 dark:bg-[#1A1D2E]/90 hover:bg-[#F5A623] dark:hover:bg-[#F9C74F] hover:text-white dark:hover:text-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] px-4 py-2 rounded-none border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 backdrop-blur-sm transition-colors flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold" style={{ fontFamily: MONO }}>
           <Upload className="w-4 h-4" /> Change Cover
           <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'coverImage')} className="hidden" />
         </label>
       </div>
 
       <div className="px-4 md:px-8 pb-8">
-        <div className="relative -mt-16 mb-8 flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left">
+        <div className="relative -mt-16 mb-10 flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left">
           <div className="relative group">
-            <div className="w-32 h-32 rounded-2xl border-4 border-white dark:border-[#1a1c23] bg-white dark:bg-gray-800 shadow-lg overflow-hidden flex items-center justify-center">
+            <div className="w-32 h-32 rounded-none border-[6px] border-[#F7F8FF] dark:border-[#1A1D2E] bg-white dark:bg-[#252A41] shadow-sm flex items-center justify-center">
               {formData.logoPreview ? (
                 <img src={formData.logoPreview} alt="Logo" className="w-full h-full object-cover" />
               ) : (
-                <Building2 className="w-12 h-12 text-gray-400" />
+                <Building2 className="w-12 h-12 text-[#6B7194] dark:text-[#8B90B8]" strokeWidth={1} />
               )}
             </div>
-            <label className="absolute bottom-2 right-2 p-2 bg-teal-500 text-white rounded-full cursor-pointer shadow-lg hover:bg-teal-600 transition-transform hover:scale-105">
+            <label className="absolute -bottom-2 -right-2 p-2 bg-[#F5A623] dark:bg-[#F9C74F] text-white dark:text-[#1A1D2E] rounded-none cursor-pointer border border-[#F7F8FF] dark:border-[#1A1D2E] hover:bg-[#d9911a] transition-transform hover:-translate-y-1">
               <Upload className="w-4 h-4" />
               <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'logo')} className="hidden" />
             </label>
           </div>
 
           <div className="flex-1 pb-2">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-4xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] uppercase leading-none" style={{ fontFamily: SERIF }}>
               {formData.companyName || 'Company Name'}
             </h1>
-            <p className="text-gray-500 dark:text-gray-400 font-medium">
-              {formData.industry || 'Industry'} • {formData.location || 'Location'}
+            <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mt-2" style={{ fontFamily: MONO }}>
+              {formData.industry || 'Industry'} <span className="text-[#3B4FD8]/50 mx-1">•</span> {formData.location || 'Location'}
             </p>
           </div>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-center gap-3 text-red-700 dark:text-red-400 animate-in slide-in-from-top-2">
+          <div className="mb-8 p-4 bg-[#E25C5C]/10 border border-[#E25C5C]/30 flex items-center gap-3 text-[#E25C5C] animate-in slide-in-from-top-2">
             <AlertCircle className="w-5 h-5 flex-shrink-0" />
-            {error}
+            <span className="text-[11px] font-bold uppercase tracking-widest" style={{ fontFamily: MONO }}>{error}</span>
           </div>
         )}
 
         {success && (
-          <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl flex items-center gap-3 text-green-700 dark:text-green-400 animate-in slide-in-from-top-2">
+          <div className="mb-8 p-4 bg-[#10B981]/10 border border-[#10B981]/30 flex items-center gap-3 text-[#10B981] animate-in slide-in-from-top-2">
             <CheckCircle className="w-5 h-5 flex-shrink-0" />
-            Profile updated successfully!
+            <span className="text-[11px] font-bold uppercase tracking-widest" style={{ fontFamily: MONO }}>Profile updated successfully!</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-8 md:space-y-12">
+        <form onSubmit={handleSubmit} className="space-y-12">
 
           {/* Basic Info Section */}
           <section>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2 pb-2 border-b border-gray-100 dark:border-gray-800">
-              <FileText className="w-5 h-5 text-teal-500" /> Basic Information
+            <h3 className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] uppercase mb-6 flex items-center gap-3 pb-3 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10" style={{ fontFamily: SERIF }}>
+              <FileText className="w-6 h-6 text-[#3B4FD8] dark:text-[#6C7EF5]" /> Basic Information
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 md:mb-2">Company Name *</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Company Name *</label>
                 <input type="text" name="companyName" value={formData.companyName} onChange={handleChange} required className="input-field" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 md:mb-2">Tagline</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Tagline</label>
                 <input type="text" name="tagline" value={formData.tagline} onChange={handleChange} className="input-field" placeholder="e.g. Innovating the future" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 md:mb-2">Industry *</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Industry *</label>
                 <select name="industry" value={formData.industry} onChange={handleChange} required className="input-field">
                   <option value="">Select Industry</option>
                   {industries.map(i => <option key={i} value={i}>{i}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 md:mb-2">Company Size *</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Company Size *</label>
                 <select name="size" value={formData.size} onChange={handleChange} required className="input-field">
                   <option value="">Select Size</option>
                   <option value="1-10">1-10 employees</option>
@@ -321,40 +324,40 @@ const CompanyProfile = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 md:mb-2">Year Founded</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Year Founded</label>
                 <input type="number" name="founded" value={formData.founded} onChange={handleChange} className="input-field" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 md:mb-2">Website</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Website</label>
                 <input type="url" name="website" value={formData.website} onChange={handleChange} className="input-field" placeholder="https://..." />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 md:mb-2">Description *</label>
-                <textarea name="description" value={formData.description} onChange={handleChange} required rows={5} className="input-field" ></textarea>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Description *</label>
+                <textarea name="description" value={formData.description} onChange={handleChange} required rows={5} className="input-field !resize-y" ></textarea>
               </div>
             </div>
           </section>
 
           {/* Location & Contact Section */}
           <section>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2 pb-2 border-b border-gray-100 dark:border-gray-800">
-              <MapPin className="w-5 h-5 text-teal-500" /> Location & Contact
+            <h3 className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] uppercase mb-6 flex items-center gap-3 pb-3 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10" style={{ fontFamily: SERIF }}>
+              <MapPin className="w-6 h-6 text-[#3B4FD8] dark:text-[#6C7EF5]" /> Location & Contact
             </h3>
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Primary Location *</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Primary Location *</label>
                 <input type="text" name="location" value={formData.location} onChange={handleChange} required className="input-field" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Headquarters</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Headquarters</label>
                 <input type="text" name="headquarters" value={formData.headquarters} onChange={handleChange} className="input-field" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Contact Email *</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Contact Email *</label>
                 <input type="email" name="contactEmail" value={formData.contactEmail} onChange={handleChange} required className="input-field" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Contact Phone</label>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Contact Phone</label>
                 <input type="tel" name="contactPhone" value={formData.contactPhone} onChange={handleChange} className="input-field" />
               </div>
             </div>
@@ -362,35 +365,47 @@ const CompanyProfile = () => {
 
           {/* Social Links Section */}
           <section>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2 pb-2 border-b border-gray-100 dark:border-gray-800">
-              <Globe className="w-5 h-5 text-teal-500" /> Social Presence
+            <h3 className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] uppercase mb-6 flex items-center gap-3 pb-3 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10" style={{ fontFamily: SERIF }}>
+              <Globe className="w-6 h-6 text-[#3B4FD8] dark:text-[#6C7EF5]" /> Social Presence
             </h3>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="relative">
-                <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
-                <input type="url" value={formData.socialLinks.linkedin} onChange={(e) => handleSocialChange('linkedin', e.target.value)} className="input-field !pl-11" placeholder="LinkedIn URL" />
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>LinkedIn URL</label>
+                <div className="relative">
+                  <Linkedin className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B7194] dark:text-[#8B90B8] w-4 h-4 pointer-events-none" />
+                  <input type="url" value={formData.socialLinks.linkedin} onChange={(e) => handleSocialChange('linkedin', e.target.value)} className="input-field !pl-12" placeholder="https://linkedin.com/company/..." />
+                </div>
               </div>
-              <div className="relative">
-                <Twitter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
-                <input type="url" value={formData.socialLinks.twitter} onChange={(e) => handleSocialChange('twitter', e.target.value)} className="input-field !pl-11" placeholder="Twitter URL" />
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Twitter URL</label>
+                <div className="relative">
+                  <Twitter className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B7194] dark:text-[#8B90B8] w-4 h-4 pointer-events-none" />
+                  <input type="url" value={formData.socialLinks.twitter} onChange={(e) => handleSocialChange('twitter', e.target.value)} className="input-field !pl-12" placeholder="https://twitter.com/..." />
+                </div>
               </div>
-              <div className="relative">
-                <Facebook className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
-                <input type="url" value={formData.socialLinks.facebook} onChange={(e) => handleSocialChange('facebook', e.target.value)} className="input-field !pl-11" placeholder="Facebook URL" />
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Facebook URL</label>
+                <div className="relative">
+                  <Facebook className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B7194] dark:text-[#8B90B8] w-4 h-4 pointer-events-none" />
+                  <input type="url" value={formData.socialLinks.facebook} onChange={(e) => handleSocialChange('facebook', e.target.value)} className="input-field !pl-12" placeholder="https://facebook.com/..." />
+                </div>
               </div>
-              <div className="relative">
-                <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
-                <input type="url" value={formData.socialLinks.instagram} onChange={(e) => handleSocialChange('instagram', e.target.value)} className="input-field !pl-11" placeholder="Instagram URL" />
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Instagram URL</label>
+                <div className="relative">
+                  <Instagram className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B7194] dark:text-[#8B90B8] w-4 h-4 pointer-events-none" />
+                  <input type="url" value={formData.socialLinks.instagram} onChange={(e) => handleSocialChange('instagram', e.target.value)} className="input-field !pl-12" placeholder="https://instagram.com/..." />
+                </div>
               </div>
             </div>
           </section>
 
           {/* Benefits Section */}
           <section>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2 pb-2 border-b border-gray-100 dark:border-gray-800">
-              <CheckCircle className="w-5 h-5 text-teal-500" /> Key Benefits
+            <h3 className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] uppercase mb-6 flex items-center gap-3 pb-3 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10" style={{ fontFamily: SERIF }}>
+              <CheckCircle className="w-6 h-6 text-[#3B4FD8] dark:text-[#6C7EF5]" /> Key Benefits
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -403,22 +418,24 @@ const CompanyProfile = () => {
                 <button
                   type="button"
                   onClick={addBenefit}
-                  className="p-3 bg-teal-500 text-white rounded-xl hover:bg-teal-600 transition-colors"
+                  className="px-6 bg-[#3B4FD8] dark:bg-[#6C7EF5] text-white dark:text-[#1A1D2E] rounded-none hover:bg-[#1A1D2E] dark:hover:bg-white transition-colors flex items-center justify-center font-bold uppercase text-[10px] tracking-widest"
+                  style={{ fontFamily: MONO }}
                 >
-                  <Plus className="w-5 h-5" />
+                  <Plus className="w-4 h-4 md:mr-2" />
+                  <span className="hidden md:inline">Add</span>
                 </button>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-3">
                 {formData.benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-center gap-2 px-3 py-1.5 bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300 rounded-lg border border-teal-100 dark:border-teal-900/50">
-                    <span className="text-sm font-medium">{benefit}</span>
-                    <button type="button" onClick={() => removeBenefit(index)} className="text-teal-500 hover:text-red-500 transition-colors">
+                  <div key={index} className="flex items-center gap-2 px-4 py-2 bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] rounded-none border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 group hover:border-[#E25C5C]/50 transition-colors cursor-default">
+                    <span className="text-[11px] font-bold uppercase tracking-wider" style={{ fontFamily: MONO }}>{benefit}</span>
+                    <button type="button" onClick={() => removeBenefit(index)} className="text-[#6B7194] dark:text-[#8B90B8] group-hover:text-[#E25C5C] transition-colors">
                       <X className="w-4 h-4" />
                     </button>
                   </div>
                 ))}
                 {formData.benefits.length === 0 && (
-                  <p className="text-sm text-gray-500 italic">No benefits added yet.</p>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7194]/50 dark:text-[#8B90B8]/50" style={{ fontFamily: MONO }}>No benefits added yet.</p>
                 )}
               </div>
             </div>
@@ -426,10 +443,10 @@ const CompanyProfile = () => {
 
           {/* Tech Stack Section */}
           <section>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2 pb-2 border-b border-gray-100 dark:border-gray-800">
-              <Building2 className="w-5 h-5 text-teal-500" /> Tech Stack
+            <h3 className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] uppercase mb-6 flex items-center gap-3 pb-3 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10" style={{ fontFamily: SERIF }}>
+              <Building2 className="w-6 h-6 text-[#3B4FD8] dark:text-[#6C7EF5]" /> Tech Stack
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -442,22 +459,24 @@ const CompanyProfile = () => {
                 <button
                   type="button"
                   onClick={addTech}
-                  className="p-3 bg-teal-500 text-white rounded-xl hover:bg-teal-600 transition-colors"
+                  className="px-6 bg-[#3B4FD8] dark:bg-[#6C7EF5] text-white dark:text-[#1A1D2E] rounded-none hover:bg-[#1A1D2E] dark:hover:bg-white transition-colors flex items-center justify-center font-bold uppercase text-[10px] tracking-widest"
+                  style={{ fontFamily: MONO }}
                 >
-                  <Plus className="w-5 h-5" />
+                  <Plus className="w-4 h-4 md:mr-2" />
+                  <span className="hidden md:inline">Add</span>
                 </button>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-3">
                 {formData.techStack.map((tech, index) => (
-                  <div key={index} className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg border border-blue-100 dark:border-blue-900/50">
-                    <span className="text-sm font-medium">{tech}</span>
-                    <button type="button" onClick={() => removeTech(index)} className="text-blue-500 hover:text-red-500 transition-colors">
+                  <div key={index} className="flex items-center gap-2 px-4 py-2 bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] rounded-none border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 group hover:border-[#E25C5C]/50 transition-colors cursor-default">
+                    <span className="text-[11px] font-bold uppercase tracking-wider" style={{ fontFamily: MONO }}>{tech}</span>
+                    <button type="button" onClick={() => removeTech(index)} className="text-[#6B7194] dark:text-[#8B90B8] group-hover:text-[#E25C5C] transition-colors">
                       <X className="w-4 h-4" />
                     </button>
                   </div>
                 ))}
                 {formData.techStack.length === 0 && (
-                  <p className="text-sm text-gray-500 italic">No technologies added yet.</p>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7194]/50 dark:text-[#8B90B8]/50" style={{ fontFamily: MONO }}>No technologies added yet.</p>
                 )}
               </div>
             </div>
@@ -465,35 +484,36 @@ const CompanyProfile = () => {
 
           {/* Hiring Manager Section */}
           <section>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2 pb-2 border-b border-gray-100 dark:border-gray-800">
-              <Users className="w-5 h-5 text-teal-500" /> Hiring Manager
+            <h3 className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] uppercase mb-6 flex items-center gap-3 pb-3 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10" style={{ fontFamily: SERIF }}>
+              <Users className="w-6 h-6 text-[#3B4FD8] dark:text-[#6C7EF5]" /> Hiring Manager
             </h3>
-            <div className="p-6 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700/50 space-y-6">
+            <div className="p-8 bg-[#F7F8FF] dark:bg-[#1A1D2E] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 rounded-none space-y-6 md:space-y-8 shadow-[4px_4px_0_0_rgba(59,79,216,0.05)] dark:shadow-[4px_4px_0_0_rgba(108,126,245,0.05)]">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name</label>
-                <input type="text" value={formData.hiringManager.name} onChange={(e) => handleHiringManagerChange('name', e.target.value)} className="input-field !bg-white dark:!bg-gray-800" />
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Name</label>
+                <input type="text" value={formData.hiringManager.name} onChange={(e) => handleHiringManagerChange('name', e.target.value)} className="input-field" />
               </div>
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-2 gap-6 md:gap-8">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Role</label>
-                  <input type="text" value={formData.hiringManager.role} onChange={(e) => handleHiringManagerChange('role', e.target.value)} className="input-field !bg-white dark:!bg-gray-800" />
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Role</label>
+                  <input type="text" value={formData.hiringManager.role} onChange={(e) => handleHiringManagerChange('role', e.target.value)} className="input-field" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
-                  <input type="email" value={formData.hiringManager.email} onChange={(e) => handleHiringManagerChange('email', e.target.value)} className="input-field !bg-white dark:!bg-gray-800" />
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Email</label>
+                  <input type="email" value={formData.hiringManager.email} onChange={(e) => handleHiringManagerChange('email', e.target.value)} className="input-field" />
                 </div>
               </div>
             </div>
           </section>
 
-          <div className="pt-6 flex justify-end">
+          <div className="pt-10 flex justify-end border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 mt-12 mb-4">
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-teal-500/25 transition-all disabled:opacity-50"
+              className="flex items-center gap-3 px-10 py-4 bg-[#F5A623] dark:bg-[#F9C74F] text-white dark:text-[#1A1D2E] font-bold text-[12px] uppercase tracking-[0.2em] rounded-none hover:bg-[#d9911a] hover:-translate-y-1 shadow-[4px_4px_0_0_rgba(26,29,46,0.15)] dark:shadow-[4px_4px_0_0_rgba(0,0,0,0.5)] transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0_0_rgba(26,29,46,0.15)]"
+              style={{ fontFamily: MONO }}
             >
-              <Save className="w-5 h-5" />
-              {loading ? 'Updating Profile...' : 'Update Profile'}
+              <Save className="w-5 h-5" strokeWidth={3} />
+              {loading ? 'UPDATING PROFILE...' : 'UPDATE PROFILE'}
             </button>
           </div>
 
@@ -503,27 +523,31 @@ const CompanyProfile = () => {
       <style>{`
         .input-field {
            width: 100%;
-           padding: 0.75rem 1rem;
-           border-radius: 0.75rem;
-           border: 1px solid #e5e7eb;
+           padding: 0.85rem 1.2rem;
+           border-radius: 0;
+           border: 1px solid rgba(59, 79, 216, 0.2);
            background-color: white;
-           color: #111827;
-           font-size: 0.875rem;
-           transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+           color: #1A1D2E;
+           font-family: ${MONO};
+           font-size: 11px;
+           letter-spacing: 0.05em;
+           transition: all 0.2s ease;
         }
         .input-field:focus {
            outline: none;
-           border-color: #14b8a6;
-           box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.1);
+           border-color: #3B4FD8;
+           background-color: #F7F8FF;
+           box-shadow: 2px 2px 0 0 rgba(59, 79, 216, 0.1);
         }
         .dark .input-field {
-           border-color: #374151;
-           background-color: #1f2937;
-           color: #f9fafb;
+           border-color: rgba(108, 126, 245, 0.2);
+           background-color: #252A41;
+           color: #E8EAF2;
         }
         .dark .input-field:focus {
-           border-color: #2dd4bf;
-           box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.1);
+           border-color: #6C7EF5;
+           background-color: #1A1D2E;
+           box-shadow: 2px 2px 0 0 rgba(108, 126, 245, 0.1);
         }
       `}</style>
     </div>

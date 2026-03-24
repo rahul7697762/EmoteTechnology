@@ -8,11 +8,14 @@ import Navbar from '../components/landing/Navbar';
 import LoginBranding from '../components/login/LoginBranding';
 import LoginBackground from '../components/login/LoginBackground';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const VerifyEmail = () => {
     const [searchParams] = useSearchParams();
     const token = searchParams.get('token');
     const dispatch = useDispatch();
-    const { user, isVerifyEmailLoading } = useSelector((state) => state.auth);
+    const { user } = useSelector((state) => state.auth);
 
     const [status, setStatus] = useState('loading'); // loading, success, error
     const [message, setMessage] = useState('Verifying your email...');
@@ -45,7 +48,7 @@ const VerifyEmail = () => {
     }, [token, dispatch]);
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] flex overflow-hidden pt-20">
+        <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] flex overflow-hidden pt-20 transition-colors duration-300">
             <Navbar />
             <div className="dark:block hidden">
                 <LoginBackground />
@@ -59,40 +62,41 @@ const VerifyEmail = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     className="w-full max-w-md"
                 >
-                    <div className="bg-white dark:bg-[#1a1c23] rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-gray-800 backdrop-blur-xl bg-opacity-90 dark:bg-opacity-90 text-center">
+                    <div className="bg-white dark:bg-[#252A41] p-10 shadow-sm border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 text-center">
 
                         <div className="mb-6 flex justify-center">
                             {status === 'loading' && (
-                                <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
-                                    <Loader className="text-blue-500 animate-spin" size={32} />
+                                <div className="w-16 h-16 bg-[#3B4FD8]/5 dark:bg-[#6C7EF5]/5 flex items-center justify-center border border-[#3B4FD8]/15 dark:border-[#6C7EF5]/15">
+                                    <Loader className="text-[#3B4FD8] dark:text-[#6C7EF5] animate-spin" size={32} strokeWidth={1.5} />
                                 </div>
                             )}
                             {status === 'success' && (
-                                <div className="w-16 h-16 bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center">
-                                    <CheckCircle className="text-green-500" size={32} />
+                                <div className="w-16 h-16 bg-[#2DC653]/10 flex items-center justify-center border border-[#2DC653]/30">
+                                    <CheckCircle className="text-[#2DC653]" size={32} strokeWidth={1.5} />
                                 </div>
                             )}
                             {status === 'error' && (
-                                <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center">
-                                    <XCircle className="text-red-500" size={32} />
+                                <div className="w-16 h-16 bg-[#E25C5C]/10 flex items-center justify-center border border-[#E25C5C]/30">
+                                    <XCircle className="text-[#E25C5C]" size={32} strokeWidth={1.5} />
                                 </div>
                             )}
                         </div>
 
-                        <h2 className="text-2xl font-bold bg-linear-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent mb-4">
+                        <h2 className="text-3xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-4" style={{ fontFamily: SERIF }}>
                             {status === 'loading' ? 'Verifying Email' : status === 'success' ? 'Verified!' : 'Verification Failed'}
                         </h2>
 
-                        <p className="text-gray-600 dark:text-gray-400 mb-8">
+                        <p className="text-[#6B7194] dark:text-[#8B90B8] text-sm mb-10 tracking-widest uppercase font-semibold" style={{ fontFamily: MONO }}>
                             {message}
                         </p>
 
                         {status !== 'loading' && (
                             <Link
                                 to={user ? (user.role === 'STUDENT' ? '/student-dashboard' : '/dashboard') : '/login'}
-                                className="w-full py-3 bg-linear-to-r from-teal-500 to-blue-600 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
+                                className="w-full py-4 bg-[#F5A623] hover:bg-[#d9911a] text-[#1A1D2E] font-bold text-xs uppercase tracking-widest transition-colors flex items-center justify-center gap-3 border border-[#1A1D2E]/10"
+                                style={{ fontFamily: MONO }}
                             >
-                                {user ? 'Continue to Dashboard' : 'Continue to Login'} <ArrowRight size={20} />
+                                {user ? 'Continue to Dashboard' : 'Continue to Login'} <ArrowRight size={16} strokeWidth={2.5} />
                             </Link>
                         )}
                     </div>

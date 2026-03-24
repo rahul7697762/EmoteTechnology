@@ -1,173 +1,157 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, Star, Clock, Filter } from 'lucide-react';
-import { useState } from 'react';
+import { BookOpen, Star, Clock, ArrowUpRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCourses } from '../../redux/slices/courseSlice';
 
-const courses = [
-    {
-        title: "Full Stack Web Development",
-        category: "Development",
-        rating: 4.8,
-        students: "1.2k",
-        duration: "12 Weeks",
-        image: "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?auto=format&fit=crop&q=80&w=800",
-        tags: ["React", "Node.js", "MongoDB"]
-    },
-    {
-        title: "Data Science & AI Bootcamp",
-        category: "Development",
-        rating: 4.9,
-        students: "850",
-        duration: "16 Weeks",
-        image: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80&w=800",
-        tags: ["Python", "TensorFlow", "ML"]
-    },
-    {
-        title: "UI/UX Design Masterclass",
-        category: "Design",
-        rating: 4.7,
-        students: "2.1k",
-        duration: "8 Weeks",
-        image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&q=80&w=800",
-        tags: ["Figma", "Design", "Prototyping"]
-    },
-    {
-        title: "Strategic HR Management",
-        category: "HR",
-        rating: 4.6,
-        students: "500+",
-        duration: "6 Weeks",
-        image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&q=80&w=800",
-        tags: ["Recruitment", "Culture", "People Ops"]
-    },
-    {
-        title: "Digital Marketing Mastery",
-        category: "Marketing",
-        rating: 4.8,
-        students: "1.5k",
-        duration: "10 Weeks",
-        image: "https://images.unsplash.com/photo-1533750516457-a7f992034fec?auto=format&fit=crop&q=80&w=800",
-        tags: ["SEO", "Social Media", "Analytics"]
-    },
-    {
-        title: "B2B Sales Excellence",
-        category: "Sales",
-        rating: 4.9,
-        students: "900+",
-        duration: "5 Weeks",
-        image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800",
-        tags: ["Negotiation", "CRM", "Closing"]
-    }
-];
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
 
-const categories = ["All", "Development", "Design", "Business", "Marketing", "Sales", "HR"];
-
-const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: {
-            staggerChildren: 0.1
-        }
-    }
-};
-
-const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-        opacity: 1,
-        y: 0,
-        transition: { duration: 0.4 }
-    }
+const getImageUrl = (url) => {
+    if (!url) return "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?auto=format&fit=crop&q=80&w=800";
+    if (url.startsWith('http')) return url;
+    const baseUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+    return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
 };
 
 const Courses = () => {
+    const dispatch = useDispatch();
+    const { courses, isFetchingPublicCourses } = useSelector((state) => state.course);
     const [selectedCategory, setSelectedCategory] = useState("All");
+
+    useEffect(() => {
+        dispatch(fetchCourses({ page: 1 }));
+    }, [dispatch]);
+
+    // Derive categories dynamically from available courses
+    const categories = ["All", ...Array.from(new Set(courses.map(c => c.category)))];
 
     const filteredCourses = selectedCategory === "All"
         ? courses
         : courses.filter(course => course.category === selectedCategory);
 
     return (
-        <section className="py-24 px-6 lg:px-8 bg-gray-50 dark:bg-[#0a0a0f]/50 transition-colors duration-300">
+        <section className="py-32 px-6 lg:px-8 bg-[#EDEEFF]/60 dark:bg-[#252A41] border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/8 transition-colors duration-300">
             <div className="max-w-7xl mx-auto">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+
+                {/* Header */}
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-14 gap-8">
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">Popular <span className="text-teal-500">Courses</span></h2>
-                        <p className="text-gray-600 dark:text-gray-400 max-w-xl">Master in-demand skills with our top-rated programs across various domains.</p>
+                        <div
+                            className="text-[10px] tracking-[0.28em] uppercase text-[#3B4FD8] dark:text-[#6C7EF5] mb-5"
+                            style={{ fontFamily: MONO }}
+                        >
+                            03 / Courses
+                        </div>
+                        <h2
+                            className="leading-[0.93]"
+                            style={{ fontFamily: SERIF, fontSize: 'clamp(2.4rem,5vw,4rem)' }}
+                        >
+                            <span className="block font-semibold text-[#1A1D2E] dark:text-[#E8EAF2]">Popular</span>
+                            <span className="block font-light italic text-[#3B4FD8] dark:text-[#6C7EF5]">Courses.</span>
+                        </h2>
                     </div>
 
-                    <div className="w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
-                        <div className="flex gap-2">
-                            {categories.map(category => (
-                                <button
-                                    key={category}
-                                    onClick={() => setSelectedCategory(category)}
-                                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${selectedCategory === category
-                                            ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/25'
-                                            : 'bg-white dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-teal-500 dark:hover:text-teal-400'
-                                        }`}
-                                >
-                                    {category}
-                                </button>
-                            ))}
-                        </div>
+                    {/* Category filter */}
+                    <div className="flex gap-2 flex-wrap">
+                        {categories.map(category => (
+                            <button
+                                key={category}
+                                onClick={() => setSelectedCategory(category)}
+                                className={`px-4 py-1.5 text-[10px] tracking-widest uppercase transition-all border ${
+                                    selectedCategory === category
+                                        ? 'bg-[#3B4FD8] dark:bg-[#6C7EF5] text-white border-[#3B4FD8] dark:border-[#6C7EF5]'
+                                        : 'text-[#6B7194] dark:text-[#8B90B8] border-[#1A1D2E]/15 dark:border-[#E8EAF2]/10 hover:border-[#3B4FD8] dark:hover:border-[#6C7EF5] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5]'
+                                }`}
+                                style={{ fontFamily: MONO }}
+                            >
+                                {category}
+                            </button>
+                        ))}
                     </div>
                 </div>
 
+                {/* Course grid */}
                 <motion.div
                     layout
-                    variants={containerVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+                    className="grid md:grid-cols-2 lg:grid-cols-3 border-t border-l border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10"
                 >
-                    <AnimatePresence mode='popLayout'>
-                        {filteredCourses.map((course, index) => (
+                    <AnimatePresence mode="popLayout">
+                        {filteredCourses.map((course) => (
                             <motion.div
                                 layout
-                                key={course.title}
-                                variants={itemVariants}
-                                initial="hidden"
-                                animate="visible"
-                                exit={{ opacity: 0, scale: 0.9 }}
-                                whileHover={{ y: -10, transition: { duration: 0.3 } }}
-                                className="group bg-white dark:bg-[#111116] rounded-3xl overflow-hidden border border-gray-100 dark:border-white/5 hover:border-teal-500/30 hover:shadow-2xl hover:shadow-teal-500/10 transition-all duration-300"
+                                key={course._id || course.title}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0, scale: 0.97 }}
+                                transition={{ duration: 0.3 }}
+                                className="group bg-[#F7F8FF] dark:bg-[#1A1D2E] border-b border-r border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 overflow-hidden cursor-pointer hover:bg-[#EDEEFF] dark:hover:bg-[#2D3350] transition-colors duration-300"
                             >
-                                <div className="relative h-48 overflow-hidden">
+                                {/* Image */}
+                                <div className="relative h-48 overflow-hidden bg-[#E8EAF2] dark:bg-[#2D3350]">
                                     <motion.img
-                                        whileHover={{ scale: 1.1 }}
-                                        transition={{ duration: 0.5 }}
-                                        src={course.image}
+                                        whileHover={{ scale: 1.06 }}
+                                        transition={{ duration: 0.65 }}
+                                        src={getImageUrl(course.thumbnail)}
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?auto=format&fit=crop&q=80&w=800";
+                                        }}
                                         alt={course.title}
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500"
                                     />
-                                    <div className="absolute top-4 right-4 bg-white/90 dark:bg-black/80 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                                        <Star size={12} className="text-yellow-400 fill-yellow-400" />
-                                        {course.rating}
-                                    </div>
-                                    <div className="absolute top-4 left-4 bg-teal-500/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-white uppercase tracking-wide">
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#1A1D2E]/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+
+                                    {/* Category badge */}
+                                    <div
+                                        className="absolute top-4 left-4 px-2 py-1 bg-[#3B4FD8] dark:bg-[#6C7EF5] text-white text-[9px] tracking-[0.2em] uppercase"
+                                        style={{ fontFamily: MONO }}
+                                    >
                                         {course.category}
                                     </div>
+
+                                    {/* Rating */}
+                                    <div className="absolute top-4 right-4 flex items-center gap-1 bg-[#F7F8FF]/92 dark:bg-[#1A1D2E]/92 backdrop-blur-sm px-2 py-1 text-[11px] font-medium text-[#1A1D2E] dark:text-[#E8EAF2]">
+                                        <Star size={10} className="text-[#F5A623] fill-[#F5A623]" />
+                                        {course.rating?.average || '0.0'}
+                                    </div>
                                 </div>
+
+                                {/* Content */}
                                 <div className="p-6">
+                                    {/* Tags */}
                                     <div className="flex gap-2 mb-4 flex-wrap">
-                                        {course.tags.map(tag => (
-                                            <span key={tag} className="text-xs font-medium px-2.5 py-1 rounded-md bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400">
+                                        {(course.tags || []).slice(0, 3).map(tag => (
+                                            <span
+                                                key={tag}
+                                                className="text-[9px] tracking-wider px-2 py-0.5 border border-[#3B4FD8]/22 text-[#3B4FD8] dark:text-[#6C7EF5] dark:border-[#6C7EF5]/18"
+                                                style={{ fontFamily: MONO }}
+                                            >
                                                 {tag}
                                             </span>
                                         ))}
                                     </div>
-                                    <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-teal-500 transition-colors line-clamp-1">{course.title}</h3>
-                                    <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 border-t border-gray-100 dark:border-white/5 pt-4 mt-4">
-                                        <div className="flex items-center gap-2">
-                                            <BookOpen size={16} />
-                                            <span>{course.students} students</span>
+
+                                    <h3
+                                        className="text-xl font-semibold text-[#1A1D2E] dark:text-[#E8EAF2] mb-4 leading-snug line-clamp-2 group-hover:text-[#3B4FD8] dark:group-hover:text-[#6C7EF5] transition-colors"
+                                        style={{ fontFamily: SERIF }}
+                                    >
+                                        {course.title}
+                                    </h3>
+
+                                    <div className="flex items-center justify-between text-xs text-[#6B7194] dark:text-[#8B90B8] border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 pt-4">
+                                        <div className="flex items-center gap-1.5">
+                                            <BookOpen size={12} />
+                                            <span>{course.enrolledCount || 0} students</span>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <Clock size={16} />
-                                            <span>{course.duration}</span>
+                                        <div className="flex items-center gap-1.5">
+                                            <Clock size={12} />
+                                            <span>{course.totalDuration ? `${course.totalDuration} Hrs` : 'Self-paced'}</span>
                                         </div>
+                                        <ArrowUpRight
+                                            size={15}
+                                            className="text-[#3B4FD8] dark:text-[#6C7EF5] opacity-0 group-hover:opacity-100 transition-opacity"
+                                        />
                                     </div>
                                 </div>
                             </motion.div>
@@ -176,18 +160,18 @@ const Courses = () => {
                 </motion.div>
 
                 {filteredCourses.length === 0 && (
-                    <div className="text-center py-20">
-                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-white/5 mb-4">
-                            <Filter size={32} className="text-gray-400" />
-                        </div>
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">No courses found</h3>
-                        <p className="text-gray-500 dark:text-gray-400">Try selecting a different category.</p>
+                    <div className="text-center py-20 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/8">
+                        <p className="text-[#6B7194] dark:text-[#8B90B8] font-light text-sm">
+                            No courses found in this category.
+                        </p>
                     </div>
                 )}
 
-                <div className="mt-12 text-center">
-                    <button className="px-8 py-3 rounded-full border border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white transition-all font-medium">
+                {/* View all */}
+                <div className="mt-12 flex justify-center">
+                    <button className="group flex items-center gap-2 px-8 py-3.5 border border-[#1A1D2E]/18 dark:border-[#E8EAF2]/14 text-sm font-medium text-[#1A1D2E] dark:text-[#E8EAF2] tracking-[0.05em] hover:border-[#3B4FD8] dark:hover:border-[#6C7EF5] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors">
                         View All Courses
+                        <ArrowUpRight size={15} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </button>
                 </div>
             </div>

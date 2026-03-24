@@ -3,12 +3,15 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   FileText, Clock, CheckCircle, XCircle, Eye, Download,
-  Calendar, MapPin, Building2, Filter, Search, AlertCircle
+  Calendar, MapPin, Building2, Filter, Search, AlertCircle, Briefcase
 } from 'lucide-react';
 import { applicationAPI } from '../services/api';
 import { showToast } from '../services/toast';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
 
 const MyApplications = () => {
   const { user } = useSelector((state) => state.auth);
@@ -95,77 +98,55 @@ const MyApplications = () => {
 
   const getStatusInfo = (status) => {
     const statusMap = {
-      PENDING: { icon: Clock, color: 'text-yellow-500 bg-yellow-100 dark:bg-yellow-900/30', label: 'Pending' },
-      REVIEWED: { icon: Eye, color: 'text-blue-500 bg-blue-100 dark:bg-blue-900/30', label: 'Reviewed' },
-      SHORTLISTED: { icon: CheckCircle, color: 'text-green-500 bg-green-100 dark:bg-green-900/30', label: 'Shortlisted' },
-      REJECTED: { icon: XCircle, color: 'text-red-500 bg-red-100 dark:bg-red-900/30', label: 'Rejected' },
+      PENDING: { icon: Clock, color: 'text-[#F5A623] bg-[#F5A623]/10 border border-[#F5A623]/30', label: 'Pending' },
+      REVIEWED: { icon: Eye, color: 'text-[#3B4FD8] dark:text-[#6C7EF5] bg-[#3B4FD8]/10 dark:bg-[#6C7EF5]/10 border border-[#3B4FD8]/30', label: 'Reviewed' },
+      SHORTLISTED: { icon: CheckCircle, color: 'text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/30', label: 'Shortlisted' },
+      REJECTED: { icon: XCircle, color: 'text-red-500 bg-red-500/10 border border-red-500/30', label: 'Rejected' },
     };
     return statusMap[status] || statusMap.PENDING;
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    const date = new Date(dateString);
+    return `${date.toLocaleString('en-US', { month: 'short' }).toUpperCase()} ${date.getDate()}, ${date.getFullYear()}`;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-[#0a0a0f] dark:to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
+    <div className="w-full">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Actions */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4"
+          className="mb-8 flex justify-end"
         >
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <FileText className="w-8 h-8 text-teal-500" />
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                My Applications
-              </h1>
-            </div>
-            <p className="text-gray-600 dark:text-gray-400">
-              Track the status of all your job applications in one place
-            </p>
-          </div>
           <button
             onClick={() => navigate('/jobs')}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-teal-600 hover:to-cyan-600 transition-all shadow-lg hover:shadow-xl"
+            className="flex items-center gap-3 px-8 py-4 bg-[#3B4FD8] text-white font-bold rounded-none hover:bg-[#2f3fab] transition-all shadow-sm uppercase tracking-widest text-[10px]"
+            style={{ fontFamily: MONO }}
           >
-            <Search className="w-5 h-5" />
-            Browse Jobs
+            <Briefcase className="w-4 h-4" />
+            BROWSE JOBS
           </button>
         </motion.div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center">
-            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              {applications.length}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+          {[
+            { label: 'TOTAL APPLICATIONS', value: applications.length, color: 'text-[#1A1D2E] dark:text-[#E8EAF2]' },
+            { label: 'SHORTLISTED', value: applications.filter(a => a.status === 'SHORTLISTED').length, color: 'text-[#10B981]' },
+            { label: 'PENDING', value: applications.filter(a => a.status === 'PENDING').length, color: 'text-[#F5A623]' },
+            { label: 'REVIEWED', value: applications.filter(a => a.status === 'REVIEWED').length, color: 'text-[#3B4FD8] dark:text-[#6C7EF5]' },
+          ].map((stat, idx) => (
+            <div key={idx} className="bg-white dark:bg-[#1A1D2E] rounded-none border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 p-6 flex flex-col justify-center items-center">
+              <div className={`text-4xl font-bold mb-3 ${stat.color} font-sans`}>
+                {stat.value}
+              </div>
+              <div className="text-[10px] font-bold text-[#6B7194] dark:text-[#8B90B8] uppercase tracking-widest" style={{ fontFamily: MONO }}>
+                {stat.label}
+              </div>
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Total Applications</div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center">
-            <div className="text-3xl font-bold text-teal-500 mb-2">
-              {applications.filter(a => a.status === 'SHORTLISTED').length}
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Shortlisted</div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center">
-            <div className="text-3xl font-bold text-yellow-500 mb-2">
-              {applications.filter(a => a.status === 'PENDING').length}
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Pending</div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center">
-            <div className="text-3xl font-bold text-blue-500 mb-2">
-              {applications.filter(a => a.status === 'REVIEWED').length}
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Reviewed</div>
-          </div>
+          ))}
         </div>
 
         {/* Filters */}
@@ -173,55 +154,58 @@ const MyApplications = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-8 shadow-lg"
+          className="bg-white dark:bg-[#1A1D2E] rounded-none border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 p-8 mb-10 shadow-sm"
         >
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-3 gap-8">
             {/* Search */}
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="flex items-center gap-2 text-[10px] font-bold text-[#6B7194] dark:text-[#8B90B8] uppercase tracking-widest mb-3" style={{ fontFamily: MONO }}>
                 <Search className="w-4 h-4" />
-                Search Applications
+                SEARCH APPLICATIONS
               </label>
               <input
                 type="text"
                 placeholder="Search by job title or company..."
                 value={filters.search}
                 onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-4 rounded-none border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 bg-[#F7F8FF] dark:bg-[#0A0B10] text-[#1A1D2E] dark:text-[#E8EAF2] focus:ring-0 focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] transition-all text-xs font-bold"
+                style={{ fontFamily: MONO }}
               />
             </div>
 
             {/* Status Filter */}
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="flex items-center gap-2 text-[10px] font-bold text-[#6B7194] dark:text-[#8B90B8] uppercase tracking-widest mb-3" style={{ fontFamily: MONO }}>
                 <Filter className="w-4 h-4" />
-                Status Filter
+                STATUS FILTER
               </label>
               <select
                 value={filters.status}
                 onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-4 rounded-none border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 bg-[#F7F8FF] dark:bg-[#0A0B10] text-[#1A1D2E] dark:text-[#E8EAF2] focus:ring-0 focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] transition-all text-xs font-bold uppercase tracking-wider appearance-none"
+                style={{ fontFamily: MONO }}
               >
-                <option value="">All Status</option>
-                <option value="PENDING">Pending</option>
-                <option value="REVIEWED">Reviewed</option>
-                <option value="SHORTLISTED">Shortlisted</option>
-                <option value="REJECTED">Rejected</option>
+                <option value="">ALL STATUSES</option>
+                <option value="PENDING">PENDING</option>
+                <option value="REVIEWED">REVIEWED</option>
+                <option value="SHORTLISTED">SHORTLISTED</option>
+                <option value="REJECTED">REJECTED</option>
               </select>
             </div>
 
             {/* Sort By */}
             <div>
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-                Sort By
+              <label className="text-[10px] font-bold text-[#6B7194] dark:text-[#8B90B8] uppercase tracking-widest mb-3 block" style={{ fontFamily: MONO }}>
+                SORT BY
               </label>
               <select
                 value={filters.sortBy}
                 onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value }))}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-4 rounded-none border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 bg-[#F7F8FF] dark:bg-[#0A0B10] text-[#1A1D2E] dark:text-[#E8EAF2] focus:ring-0 focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] transition-all text-xs font-bold uppercase tracking-wider appearance-none"
+                style={{ fontFamily: MONO }}
               >
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
+                <option value="newest">NEWEST FIRST</option>
+                <option value="oldest">OLDEST FIRST</option>
               </select>
             </div>
           </div>
@@ -229,11 +213,11 @@ const MyApplications = () => {
 
         {/* Applications List */}
         {loading ? (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-white dark:bg-gray-800 rounded-xl p-6 animate-pulse">
-                <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded mb-4 w-1/3"></div>
-                <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-2/3"></div>
+              <div key={i} className="bg-white dark:bg-[#1A1D2E] rounded-none border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 p-8 animate-pulse">
+                <div className="h-6 bg-[#F7F8FF] dark:bg-[#0A0B10] rounded-none mb-4 w-1/3 border border-[#3B4FD8]/5"></div>
+                <div className="h-4 bg-[#F7F8FF] dark:bg-[#0A0B10] rounded-none w-2/3 border border-[#3B4FD8]/5"></div>
               </div>
             ))}
           </div>
@@ -241,21 +225,24 @@ const MyApplications = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center py-16"
+            className="text-center py-20 bg-white dark:bg-[#1A1D2E] border border-dashed border-[#3B4FD8]/30 dark:border-[#6C7EF5]/30 rounded-none"
           >
-            <FileText className="w-20 h-20 mx-auto text-gray-400 mb-6" />
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+            <div className="w-20 h-20 bg-[#F7F8FF] dark:bg-[#0A0B10] border border-[#3B4FD8]/10 flex items-center justify-center mx-auto mb-6 text-[#6B7194]">
+              <FileText className="w-10 h-10" />
+            </div>
+            <h3 className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-3" style={{ fontFamily: SERIF }}>
               No applications yet
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
-              You haven't applied to any jobs yet. Start browsing opportunities and submit your first application!
+            <p className="text-[10px] font-bold text-[#6B7194] dark:text-[#8B90B8] mb-8 max-w-md mx-auto uppercase tracking-widest leading-loose" style={{ fontFamily: MONO }}>
+              YOU HAVEN'T APPLIED TO ANY JOBS YET. START BROWSING OPPORTUNITIES AND SUBMIT YOUR FIRST APPLICATION!
             </p>
-            <a
-              href="/jobs"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-teal-600 hover:to-cyan-600 transition-all"
+            <button
+              onClick={() => navigate('/jobs')}
+              className="inline-flex items-center gap-3 px-8 py-4 bg-[#3B4FD8] text-white font-bold rounded-none hover:bg-[#2f3fab] transition-all shadow-sm uppercase tracking-widest text-[10px]"
+              style={{ fontFamily: MONO }}
             >
-              Browse Jobs
-            </a>
+              BROWSE JOBS
+            </button>
           </motion.div>
         ) : (
           <motion.div
@@ -283,48 +270,51 @@ const MyApplications = () => {
                     hidden: { opacity: 0, y: 20 },
                     show: { opacity: 1, y: 0 }
                   }}
-                  className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow"
+                  className="bg-white dark:bg-[#1A1D2E] rounded-none border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 p-8 hover:border-[#3B4FD8]/30 dark:hover:border-[#6C7EF5]/30 transition-colors group relative shadow-sm"
                 >
-                  <div className="flex flex-col lg:flex-row lg:items-start gap-6">
+                  {/* Hover Accent Line */}
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#3B4FD8] dark:bg-[#6C7EF5] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  
+                  <div className="flex flex-col lg:flex-row lg:items-start gap-8">
                     {/* Company Logo */}
                     <div className="flex-shrink-0">
-                      <div className="w-16 h-16 rounded-xl bg-gray-100 dark:bg-gray-700 overflow-hidden border border-gray-100 dark:border-gray-800 flex items-center justify-center">
+                      <div className="w-20 h-20 rounded-none bg-[#F7F8FF] dark:bg-[#0A0B10] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 flex items-center justify-center p-2">
                         {application.job.company?.logo?.url || application.job.company?.logo ? (
                           <img
                             src={application.job.company.logo.url || application.job.company.logo}
                             alt={application.job.company?.companyName}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                           />
                         ) : (
-                          <Building2 className="w-8 h-8 text-gray-400" />
+                          <Building2 className="w-8 h-8 text-[#6B7194] dark:text-[#8B90B8]" />
                         )}
                       </div>
                     </div>
 
                     {/* Job Info */}
                     <div className="flex-1">
-                      <div className="flex items-start justify-between mb-4">
+                      <div className="flex flex-col lg:flex-row lg:items-start justify-between mb-6 gap-4">
                         <div>
-                          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                          <h3 className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-3" style={{ fontFamily: SERIF }}>
                             {application.job.title}
                           </h3>
-                          <div className="flex flex-wrap gap-4 text-gray-600 dark:text-gray-400 mb-3">
-                            <span className="flex items-center gap-2 font-semibold text-teal-600 dark:text-teal-400">
+                          <div className="flex flex-wrap gap-4 text-[10px] font-bold text-[#6B7194] dark:text-[#8B90B8] uppercase tracking-widest" style={{ fontFamily: MONO }}>
+                            <span className="flex items-center gap-2 text-[#3B4FD8] dark:text-[#6C7EF5]">
                               <Building2 className="w-4 h-4" />
                               {application.job.company?.companyName}
                             </span>
                             <span className="flex items-center gap-2">
                               <MapPin className="w-4 h-4" />
-                              {application.job.remote ? 'Remote' : application.job.location}
+                              {application.job.remote ? 'REMOTE' : application.job.location}
                             </span>
                             <span className="flex items-center gap-2">
                               <Calendar className="w-4 h-4" />
-                              Applied {formatDate(application.createdAt)}
+                              APPLIED {formatDate(application.createdAt)}
                             </span>
                           </div>
                         </div>
-                        <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${statusInfo.color}`}>
-                          <StatusIcon className="w-4 h-4" />
+                        <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-none text-[9px] font-bold uppercase tracking-widest ${statusInfo.color}`} style={{ fontFamily: MONO }}>
+                          <StatusIcon className="w-3.5 h-3.5" />
                           {statusInfo.label}
                         </span>
                       </div>
@@ -332,25 +322,25 @@ const MyApplications = () => {
                       {/* Application Details */}
                       <div className="space-y-4">
                         {application.coverLetter && (
-                          <div>
-                            <h4 className="font-medium text-gray-900 dark:text-white mb-2">
-                              Cover Letter
+                          <div className="p-4 bg-[#F7F8FF] dark:bg-[#0A0B10] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 rounded-none">
+                            <h4 className="text-[10px] font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-2 uppercase tracking-widest" style={{ fontFamily: MONO }}>
+                              COVER LETTER
                             </h4>
-                            <p className="text-gray-700 dark:text-gray-300 text-sm line-clamp-3">
+                            <p className="text-sm text-[#6B7194] dark:text-[#8B90B8] line-clamp-3">
                               {application.coverLetter}
                             </p>
                           </div>
                         )}
 
                         {application.notes && (
-                          <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                          <div className="p-4 bg-[#F5A623]/5 border border-[#F5A623]/20 rounded-none">
                             <div className="flex items-center gap-2 mb-2">
-                              <AlertCircle className="w-4 h-4 text-yellow-500" />
-                              <h4 className="font-medium text-yellow-800 dark:text-yellow-300">
-                                Employer Note
+                              <AlertCircle className="w-4 h-4 text-[#F5A623]" />
+                              <h4 className="text-[10px] font-bold text-[#F5A623] uppercase tracking-widest" style={{ fontFamily: MONO }}>
+                                EMPLOYER NOTE
                               </h4>
                             </div>
-                            <p className="text-yellow-700 dark:text-yellow-400 text-sm">
+                            <p className="text-sm text-[#6B7194] dark:text-[#E8EAF2]">
                               {application.notes}
                             </p>
                           </div>
@@ -359,28 +349,31 @@ const MyApplications = () => {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex flex-col gap-3 lg:w-48">
+                    <div className="flex flex-col gap-3 lg:w-48 mt-4 lg:mt-0">
                       <a
                         href={`/jobs/${application.job._id}`}
-                        className="w-full px-4 py-2 text-center border border-teal-500 text-teal-500 dark:text-teal-400 font-medium rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/20 transition-colors"
+                        className="w-full px-4 py-3 text-center bg-[#F7F8FF] dark:bg-[#0A0B10] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 text-[#3B4FD8] dark:text-[#6C7EF5] font-bold uppercase tracking-widest text-[10px] rounded-none hover:bg-[#3B4FD8]/5 transition-colors"
+                        style={{ fontFamily: MONO }}
                       >
-                        View Job
+                        VIEW JOB
                       </a>
 
                       <button
                         onClick={() => downloadResume(application.resume._id)}
-                        className="w-full px-4 py-2 text-center border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
+                        className="w-full px-4 py-3 text-center border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 text-[#1A1D2E] dark:text-[#E8EAF2] font-bold uppercase tracking-widest text-[10px] rounded-none hover:bg-[#F7F8FF] dark:hover:bg-[#0A0B10] transition-colors flex items-center justify-center gap-2"
+                        style={{ fontFamily: MONO }}
                       >
                         <Download className="w-4 h-4" />
-                        Resume
+                        RESUME
                       </button>
 
                       {application.status === 'PENDING' && (
                         <button
                           onClick={() => handleWithdraw(application._id)}
-                          className="w-full px-4 py-2 text-center border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 font-medium rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                          className="w-full px-4 py-3 text-center bg-red-500/10 border border-red-500/20 text-red-500 font-bold uppercase tracking-widest text-[10px] rounded-none hover:bg-red-500/20 transition-colors"
+                          style={{ fontFamily: MONO }}
                         >
-                          Withdraw
+                          WITHDRAW
                         </button>
                       )}
                     </div>

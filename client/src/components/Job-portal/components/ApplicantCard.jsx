@@ -3,10 +3,12 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   User, Mail, Phone, Calendar, Download, Eye, CheckCircle,
-  XCircle, Clock, MoreVertical, FileText, ExternalLink
+  XCircle, Clock, MoreVertical, FileText, ExternalLink,
+  MessageSquare
 } from 'lucide-react';
 import { applicationAPI } from '../services/api';
 import { showToast } from '../services/toast';
+import ChatModal from '../../chat/ChatModal';
 
 const SERIF = "'Space Mono', monospace";
 const MONO = "'Space Mono', monospace";
@@ -18,6 +20,7 @@ const ApplicantCard = ({ applicant, onStatusUpdate }) => {
   const [notes, setNotes] = useState(applicant.notes || '');
   const [isSavingNotes, setIsSavingNotes] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const handleStatusChange = async (newStatus) => {
     setLoading(true);
@@ -231,6 +234,15 @@ const ApplicantCard = ({ applicant, onStatusUpdate }) => {
             </a>
 
             <button
+              onClick={() => setIsChatOpen(true)}
+              className="w-full px-4 py-3 text-center bg-[#1A1D2E] text-[#00E5FF] font-bold uppercase tracking-wider hover:bg-[#3B4FD8] hover:text-white transition-colors flex items-center justify-center gap-2 border-[2px] border-[#1A1D2E] shadow-[2px_2px_0px_#1A1D2E]"
+              style={{ fontFamily: MONO }}
+            >
+              <MessageSquare className="w-4 h-4" />
+              CHAT_CMD
+            </button>
+
+            <button
               onClick={() => {
                 if (applicant.resume?.fileUrl) {
                   window.open(applicant.resume.fileUrl, '_blank');
@@ -392,6 +404,15 @@ const ApplicantCard = ({ applicant, onStatusUpdate }) => {
           </div>
         )}
       </AnimatePresence>
+
+      <ChatModal
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        jobId={applicant.job}
+        applicantId={applicant.candidate?._id || applicant.candidate}
+        jobTitle={applicant.job?.title || 'JOB_REF'}
+        otherPartyName={applicant.candidate?.name || applicant.fullName}
+      />
     </>
   );
 };

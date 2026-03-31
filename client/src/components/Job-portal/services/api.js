@@ -82,4 +82,10 @@ export const notificationAPI = {
   markAllAsRead: () => api.patch('/notifications/read-all'),
 };
 
+// Message APIs
+export const messageAPI = {
+  sendMessage: (data) => api.post('/messages', data),
+  getMessages: (jobId, applicantId) => api.get(`/messages/${jobId}/${applicantId}`),
+};
+
 export default api;

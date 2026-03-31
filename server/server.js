@@ -30,6 +30,7 @@ import companyRoutes from './routes/company.routes.js';
 import jobRoutes from './routes/job.routes.js';
 import applicationRoutes from './routes/application.routes.js';
 import uploadRoutes from './routes/upload.routes.js';
+import messageRoutes from './routes/message.routes.js';
 
 // ES Module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -104,6 +105,7 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/messages', messageRoutes);
 
 // Static Files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

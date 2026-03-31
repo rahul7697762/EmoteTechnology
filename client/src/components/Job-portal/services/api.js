@@ -44,6 +44,7 @@ export const jobAPI = {
   getAllJobs: (params) => api.get('/jobs', { params }),
   getJobById: (id) => api.get(`/jobs/${id}`),
   getJobApplications: (id) => api.get(`/jobs/${id}/applications`),
+  deleteJob: (id) => api.delete(`/jobs/${id}`),
 };
 
 // Application APIs

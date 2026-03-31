@@ -84,6 +84,30 @@ const JobDashboard = () => {
     }
   };
 
+  const handleDeleteJob = async (jobId) => {
+    if (!window.confirm('Are you sure you want to permanently delete this job and all its applications? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await jobAPI.deleteJob(jobId);
+      setJobs(prev => prev.filter(job => job._id !== jobId));
+      
+      // Update local stats
+      setStats(prev => ({
+        ...prev,
+        totalJobs: Math.max(0, prev.totalJobs - 1),
+        activeJobs: jobs.find(j => j._id === jobId)?.status === 'ACTIVE' 
+                     ? Math.max(0, prev.activeJobs - 1) 
+                     : prev.activeJobs
+      }));
+
+      showToast.success('Job deleted successfully', { style: { borderRadius: 0, fontFamily: MONO, fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold' } });
+    } catch (error) {
+      showToast.error('Failed to delete job', { style: { borderRadius: 0, fontFamily: MONO, fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold' } });
+    }
+  };
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
@@ -340,6 +364,13 @@ const JobDashboard = () => {
                           disabled={job.status === 'CLOSED'}
                           className="p-2 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 text-[#6B7194] dark:text-[#8B90B8] hover:bg-[#E25C5C] hover:border-[#E25C5C] hover:text-white transition-colors disabled:opacity-50 disabled:hover:bg-transparent bg-white dark:bg-[#252A41]"
                           title="Close Job"
+                        >
+                          <XCircle size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteJob(job._id)}
+                          className="p-2 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 text-[#6B7194] dark:text-[#8B90B8] hover:bg-red-600 hover:border-red-600 hover:text-white transition-colors disabled:opacity-50 disabled:hover:bg-transparent bg-white dark:bg-[#252A41]"
+                          title="Delete Job"
                         >
                           <Trash2 size={16} />
                         </button>

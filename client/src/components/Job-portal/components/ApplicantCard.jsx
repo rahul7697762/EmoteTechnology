@@ -1,12 +1,15 @@
 // job-portal/components/ApplicantCard.jsx
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   User, Mail, Phone, Calendar, Download, Eye, CheckCircle,
   XCircle, Clock, MoreVertical, FileText, ExternalLink
 } from 'lucide-react';
 import { applicationAPI } from '../services/api';
 import { showToast } from '../services/toast';
+
+const SERIF = "'Space Mono', monospace";
+const MONO = "'Space Mono', monospace";
 
 const ApplicantCard = ({ applicant, onStatusUpdate }) => {
   const [status, setStatus] = useState(applicant.status);
@@ -22,9 +25,25 @@ const ApplicantCard = ({ applicant, onStatusUpdate }) => {
       await onStatusUpdate(applicant._id, newStatus);
       setStatus(newStatus);
       setShowActions(false);
-      showToast.success(`Application ${newStatus.toLowerCase()} successfully`);
+      showToast.success(`Application ${newStatus.toLowerCase()} successfully`, {
+        style: {
+          borderRadius: '0',
+          border: '1px solid #3B4FD8',
+          background: '#F7F8FF',
+          color: '#1A1D2E',
+          fontFamily: MONO
+        }
+      });
     } catch (error) {
-      showToast.error('Failed to update status');
+      showToast.error('Failed to update status', {
+        style: {
+          borderRadius: '0',
+          border: '1px solid #D83B3B',
+          background: '#FFF7F7',
+          color: '#1A1D2E',
+          fontFamily: MONO
+        }
+      });
     } finally {
       setLoading(false);
     }
@@ -34,9 +53,25 @@ const ApplicantCard = ({ applicant, onStatusUpdate }) => {
     setIsSavingNotes(true);
     try {
       await applicationAPI.updateApplicationStatus(applicant._id, { notes });
-      showToast.success('Notes saved successfully');
+      showToast.success('Notes saved successfully', {
+        style: {
+          borderRadius: '0',
+          border: '1px solid #3B4FD8',
+          background: '#F7F8FF',
+          color: '#1A1D2E',
+          fontFamily: MONO
+        }
+      });
     } catch (error) {
-      showToast.error('Failed to save notes');
+      showToast.error('Failed to save notes', {
+         style: {
+          borderRadius: '0',
+          border: '1px solid #D83B3B',
+          background: '#FFF7F7',
+          color: '#1A1D2E',
+          fontFamily: MONO
+        }
+      });
     } finally {
       setIsSavingNotes(false);
     }
@@ -44,10 +79,10 @@ const ApplicantCard = ({ applicant, onStatusUpdate }) => {
 
   const getStatusInfo = (status) => {
     const statusMap = {
-      PENDING: { icon: Clock, color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400', label: 'Pending' },
-      REVIEWED: { icon: Eye, color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400', label: 'Reviewed' },
-      SHORTLISTED: { icon: CheckCircle, color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400', label: 'Shortlisted' },
-      REJECTED: { icon: XCircle, color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400', label: 'Rejected' },
+      PENDING: { icon: Clock, color: 'bg-yellow-200 text-yellow-900 border-yellow-900', label: 'PENDING' },
+      REVIEWED: { icon: Eye, color: 'bg-[#3B4FD8] text-white border-[#3B4FD8]', label: 'REVIEWED' },
+      SHORTLISTED: { icon: CheckCircle, color: 'bg-green-400 text-green-900 border-green-900', label: 'SHORTLISTED' },
+      REJECTED: { icon: XCircle, color: 'bg-red-500 text-white border-red-900 font-bold', label: 'REJECTED' },
     };
     return statusMap[status] || statusMap.PENDING;
   };
@@ -57,7 +92,7 @@ const ApplicantCard = ({ applicant, onStatusUpdate }) => {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
-    });
+    }).toUpperCase();
   };
 
   const statusInfo = getStatusInfo(status);
@@ -67,21 +102,21 @@ const ApplicantCard = ({ applicant, onStatusUpdate }) => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all"
+        className="bg-[#F7F8FF] rounded-none p-6 border-[3px] border-[#1A1D2E] shadow-[4px_4px_0px_#3B4FD8] hover:shadow-[6px_6px_0px_#3B4FD8] hover:-translate-y-1 hover:-translate-x-1 transition-all relative overflow-hidden"
       >
         <div className="flex flex-col md:flex-row md:items-start gap-6">
           {/* Applicant Info */}
           <div className="flex-1">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center text-white font-bold text-lg">
+                <div className="w-14 h-14 rounded-none border-[2px] border-[#1A1D2E] bg-[#3B4FD8] flex items-center justify-center text-[#F7F8FF] font-bold text-lg" style={{ fontFamily: MONO }}>
                   {applicant.candidate?.name?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                    {applicant.candidate?.name || 'Applicant'}
+                  <h3 className="text-xl font-black text-[#1A1D2E] tracking-tight uppercase" style={{ fontFamily: SERIF }}>
+                    {applicant.candidate?.name || 'APPLICANT'}
                   </h3>
-                  <div className="flex flex-wrap gap-3 mt-2 text-sm text-gray-600 dark:text-gray-400">
+                  <div className="flex flex-wrap gap-3 mt-2 text-sm text-[#1A1D2E] font-medium" style={{ fontFamily: MONO }}>
                     <span className="flex items-center gap-1">
                       <Mail className="w-4 h-4" />
                       {applicant.candidate?.email}
@@ -99,61 +134,73 @@ const ApplicantCard = ({ applicant, onStatusUpdate }) => {
               <div className="relative">
                 <button
                   onClick={() => setShowActions(!showActions)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  className="p-2 border-[2px] border-[#1A1D2E] hover:bg-[#3B4FD8] hover:text-white transition-colors"
                 >
-                  <MoreVertical className="w-5 h-5 text-gray-500" />
+                  <MoreVertical className="w-5 h-5" />
                 </button>
 
-                {showActions && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-10">
-                    <button
-                      onClick={() => handleStatusChange('REVIEWED')}
-                      disabled={loading || status === 'REVIEWED'}
-                      className="w-full px-4 py-3 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 flex items-center gap-2"
+                <AnimatePresence>
+                  {showActions && (
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="absolute right-0 mt-2 w-48 bg-[#F7F8FF] border-[2px] border-[#1A1D2E] shadow-[4px_4px_0px_#1A1D2E] z-10"
                     >
-                      <Eye className="w-4 h-4" />
-                      Mark as Reviewed
-                    </button>
-                    <button
-                      onClick={() => handleStatusChange('SHORTLISTED')}
-                      disabled={loading || status === 'SHORTLISTED'}
-                      className="w-full px-4 py-3 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 flex items-center gap-2"
-                    >
-                      <CheckCircle className="w-4 h-4" />
-                      Shortlist Candidate
-                    </button>
-                    <button
-                      onClick={() => handleStatusChange('REJECTED')}
-                      disabled={loading || status === 'REJECTED'}
-                      className="w-full px-4 py-3 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50 flex items-center gap-2"
-                    >
-                      <XCircle className="w-4 h-4" />
-                      Reject Application
-                    </button>
-                  </div>
-                )}
+                      <div className="flex flex-col">
+                        <button
+                          onClick={() => handleStatusChange('REVIEWED')}
+                          disabled={loading || status === 'REVIEWED'}
+                          className="w-full px-4 py-3 text-left text-sm font-bold text-[#1A1D2E] hover:bg-[#3B4FD8] hover:text-white disabled:opacity-50 flex items-center gap-2 border-b-[2px] border-[#1A1D2E]"
+                          style={{ fontFamily: MONO }}
+                        >
+                          <Eye className="w-4 h-4" />
+                          REVIEWED
+                        </button>
+                        <button
+                          onClick={() => handleStatusChange('SHORTLISTED')}
+                          disabled={loading || status === 'SHORTLISTED'}
+                          className="w-full px-4 py-3 text-left text-sm font-bold text-[#1A1D2E] hover:bg-[#3B4FD8] hover:text-white disabled:opacity-50 flex items-center gap-2 border-b-[2px] border-[#1A1D2E]"
+                          style={{ fontFamily: MONO }}
+                        >
+                          <CheckCircle className="w-4 h-4" />
+                          SHORTLIST
+                        </button>
+                        <button
+                          onClick={() => handleStatusChange('REJECTED')}
+                          disabled={loading || status === 'REJECTED'}
+                          className="w-full px-4 py-3 text-left text-sm font-bold text-[#1A1D2E] hover:bg-[#D83B3B] hover:text-white disabled:opacity-50 flex items-center gap-2"
+                          style={{ fontFamily: MONO }}
+                        >
+                          <XCircle className="w-4 h-4" />
+                          REJECT
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 
             {/* Application Details */}
             <div className="space-y-4">
               {applicant.coverLetter && (
-                <div>
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-2">
-                    Cover Letter
+                <div className="bg-[#1A1D2E] text-[#F7F8FF] p-4 border-[2px] border-black shadow-[2px_2px_0px_#3B4FD8]">
+                  <h4 className="font-bold text-sm mb-2 uppercase tracking-wider text-[#00E5FF]" style={{ fontFamily: MONO }}>
+                    [ COVER_LETTER ]
                   </h4>
-                  <p className="text-gray-700 dark:text-gray-300 text-sm line-clamp-3">
+                  <p className="text-sm line-clamp-3 leading-relaxed" style={{ fontFamily: MONO }}>
                     {applicant.coverLetter}
                   </p>
                 </div>
               )}
 
-              <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-                <span className="flex items-center gap-1">
+              <div className="flex items-center gap-4 text-sm font-bold text-[#1A1D2E]" style={{ fontFamily: MONO }}>
+                <span className="flex items-center gap-1 bg-white border-[2px] border-[#1A1D2E] px-3 py-1 shadow-[2px_2px_0px_#1A1D2E]">
                   <Calendar className="w-4 h-4" />
-                  Applied {formatDate(applicant.createdAt)}
+                  APPLIED: {formatDate(applicant.createdAt)}
                 </span>
-                <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${statusInfo.color}`}>
+                <span className={`inline-flex items-center gap-1 px-3 py-1 border-[2px] text-xs font-black tracking-widest shadow-[2px_2px_0px_#1A1D2E] ${statusInfo.color}`}>
                   <statusInfo.icon className="w-3 h-3" />
                   {statusInfo.label}
                 </span>
@@ -165,20 +212,22 @@ const ApplicantCard = ({ applicant, onStatusUpdate }) => {
           <div className="flex flex-col gap-3 md:w-48">
             <button
               onClick={() => setIsDetailsModalOpen(true)}
-              className="w-full px-4 py-2 text-center bg-teal-500 text-white font-medium rounded-lg hover:bg-teal-600 transition-colors flex items-center justify-center gap-2"
+              className="w-full px-4 py-3 text-center bg-[#3B4FD8] text-white font-bold uppercase tracking-wider hover:bg-[#1A1D2E] transition-colors flex items-center justify-center gap-2 border-[2px] border-[#1A1D2E] shadow-[2px_2px_0px_#1A1D2E]"
+              style={{ fontFamily: MONO }}
             >
               <Eye className="w-4 h-4" />
-              View Details
+              DETAILS
             </button>
 
             <a
               href={applicant.resume?.fileUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full px-4 py-2 text-center border border-teal-500 text-teal-500 dark:text-teal-400 font-medium rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/20 transition-colors flex items-center justify-center gap-2"
+              className="w-full px-4 py-3 text-center bg-white text-[#1A1D2E] font-bold uppercase tracking-wider hover:bg-[#00E5FF] transition-colors flex items-center justify-center gap-2 border-[2px] border-[#1A1D2E] shadow-[2px_2px_0px_#1A1D2E]"
+              style={{ fontFamily: MONO }}
             >
               <FileText className="w-4 h-4" />
-              View Resume
+              RESUME
             </a>
 
             <button
@@ -189,145 +238,160 @@ const ApplicantCard = ({ applicant, onStatusUpdate }) => {
                   showToast.error('Resume URL not found');
                 }
               }}
-              className="w-full px-4 py-2 text-center border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
+              className="w-full px-4 py-3 text-center bg-gray-200 text-[#1A1D2E] font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors flex items-center justify-center gap-2 border-[2px] border-[#1A1D2E] shadow-[2px_2px_0px_#1A1D2E]"
+              style={{ fontFamily: MONO }}
             >
               <Download className="w-4 h-4" />
-              Download
+              DOWNLOAD
             </button>
           </div>
         </div>
 
-        {/* Notes Section (for employers) */}
-        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+        {/* Notes Section */}
+        <div className="mt-6 pt-6 border-t-[3px] border-[#1A1D2E]">
+          <h4 className="font-bold text-sm mb-2 uppercase tracking-wider" style={{ fontFamily: MONO }}>
+            [ INTERNAL_NOTES ]
+          </h4>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Add private notes about this candidate..."
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all text-sm resize-none"
-            rows="2"
+            placeholder="ADD PRIVATE NOTES (BRUTALIST FONT)..."
+            className="w-full px-4 py-3 bg-white border-[2px] border-[#1A1D2E] text-[#1A1D2E] focus:outline-none focus:ring-0 focus:border-[#3B4FD8] transition-all text-sm resize-none shadow-[inset_2px_2px_0px_rgba(0,0,0,0.1)]"
+            rows="3"
+            style={{ fontFamily: MONO }}
           />
           <div className="mt-3 flex justify-end">
             <button
               onClick={handleSaveNotes}
               disabled={isSavingNotes || notes === applicant.notes}
-              className="px-4 py-2 bg-teal-500 text-white text-sm font-medium rounded-lg hover:bg-teal-600 transition-colors disabled:opacity-50"
+              className="px-6 py-2 bg-[#1A1D2E] text-white text-sm font-bold uppercase tracking-widest hover:bg-[#3B4FD8] transition-colors disabled:opacity-50 border-[2px] border-[#1A1D2E] shadow-[2px_2px_0px_#1A1D2E]"
+              style={{ fontFamily: MONO }}
             >
-              {isSavingNotes ? 'Saving...' : 'Save Notes'}
+              {isSavingNotes ? 'SAVING' : 'SAVE_CMD'}
             </button>
           </div>
+        </div>
+        
+        {/* Brutalist Deco */}
+        <div className="absolute top-0 right-0 w-8 h-8 bg-[#3B4FD8] border-b-[3px] border-l-[3px] border-[#1A1D2E] flex items-center justify-center">
+          <div className="w-2 h-2 bg-[#00E5FF] rounded-none"></div>
         </div>
       </motion.div>
 
       {/* Details Modal */}
-      {isDetailsModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl"
-          >
-            <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Applicant Information</h2>
-              <button
-                onClick={() => setIsDetailsModalOpen(false)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500"
-              >
-                <XCircle className="w-6 h-6" />
-              </button>
-            </div>
+      <AnimatePresence>
+        {isDetailsModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1A1D2E]/80 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, y: 50, rotateX: 20 }}
+              animate={{ opacity: 1, y: 0, rotateX: 0 }}
+              exit={{ opacity: 0, y: 50, rotateX: -20 }}
+              className="bg-[#F7F8FF] rounded-none w-full max-w-4xl max-h-[90vh] overflow-hidden border-[4px] border-[#1A1D2E] shadow-[12px_12px_0px_#3B4FD8] flex flex-col"
+            >
+              <div className="p-6 border-b-[4px] border-[#1A1D2E] bg-[#3B4FD8] flex items-center justify-between text-white flex-shrink-0">
+                <h2 className="text-2xl font-black uppercase tracking-widest" style={{ fontFamily: SERIF }}>// CANDIDATE_DATA</h2>
+                <button
+                  onClick={() => setIsDetailsModalOpen(false)}
+                  className="p-1 hover:bg-[#1A1D2E] transition-colors border-[2px] border-transparent hover:border-white"
+                >
+                  <XCircle className="w-8 h-8" />
+                </button>
+              </div>
 
-            <div className="p-8 overflow-y-auto max-h-[calc(90vh-140px)]">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Basic Info */}
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-sm font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider mb-4">Contact Details</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg"><User className="w-5 h-5" /></div>
-                        <div>
-                          <p className="text-xs text-gray-500">Full Name</p>
-                          <p className="font-semibold">{applicant.candidate?.name || applicant.fullName}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg"><Mail className="w-5 h-5" /></div>
-                        <div>
-                          <p className="text-xs text-gray-500">Email Address</p>
-                          <p className="font-semibold">{applicant.candidate?.email || applicant.email}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg"><Phone className="w-5 h-5" /></div>
-                        <div>
-                          <p className="text-xs text-gray-500">Phone Number</p>
-                          <p className="font-semibold">{applicant.candidate?.phone || applicant.phone || 'Not provided'}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Links */}
-                  {(applicant.linkedin || applicant.portfolio) && (
-                    <div>
-                      <h3 className="text-sm font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider mb-4">Professional Links</h3>
-                      <div className="space-y-3">
-                        {applicant.linkedin && (
-                          <a href={applicant.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-xl text-blue-700 dark:text-blue-400 hover:bg-blue-100 transition-colors">
-                            <span className="font-medium">LinkedIn Profile</span>
-                            <ExternalLink className="w-4 h-4" />
-                          </a>
-                        )}
-                        {applicant.portfolio && (
-                          <a href={applicant.portfolio} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-teal-50 dark:bg-teal-900/10 border border-teal-100 dark:border-teal-900/30 rounded-xl text-teal-700 dark:text-teal-400 hover:bg-teal-100 transition-colors">
-                            <span className="font-medium">Portfolio / Website</span>
-                            <ExternalLink className="w-4 h-4" />
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Cover Letter & Questionnaire */}
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-sm font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider mb-4">Cover Letter</h3>
-                    <div className="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-700">
-                      <p className="text-sm leading-relaxed whitespace-pre-wrap text-gray-700 dark:text-gray-300">
-                        {applicant.coverLetter || 'No cover letter provided.'}
-                      </p>
-                    </div>
-                  </div>
-
-                  {applicant.answers && applicant.answers.length > 0 && (
-                    <div>
-                      <h3 className="text-sm font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider mb-4">Questionnaire Responses</h3>
+              <div className="p-8 overflow-y-auto flex-1 relative bg-grid-pattern">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Basic Info */}
+                  <div className="space-y-6">
+                    <div className="bg-white border-[3px] border-[#1A1D2E] p-6 shadow-[4px_4px_0px_#1A1D2E]">
+                      <h3 className="text-sm font-black uppercase tracking-widest mb-4 bg-[#1A1D2E] text-white inline-block px-2 py-1" style={{ fontFamily: MONO }}>sys.contact</h3>
                       <div className="space-y-4">
-                        {applicant.answers.map((ans, idx) => (
-                          <div key={idx} className="bg-white dark:bg-gray-800 border-l-4 border-teal-500 p-4 rounded-r-xl shadow-sm">
-                            <p className="text-xs font-bold text-gray-500 mb-1">{ans.question}</p>
-                            <p className="text-sm font-medium">{ans.answer}</p>
+                        <div className="flex items-center gap-3 border-b-[2px] border-gray-200 pb-3">
+                          <div className="p-2 bg-[#F7F8FF] border-[2px] border-[#1A1D2E]"><User className="w-5 h-5 text-[#3B4FD8]" /></div>
+                          <div>
+                            <p className="text-xs font-bold text-gray-500 uppercase" style={{ fontFamily: MONO }}>NAME_REF</p>
+                            <p className="font-black text-lg" style={{ fontFamily: SERIF }}>{applicant.candidate?.name || applicant.fullName}</p>
                           </div>
-                        ))}
+                        </div>
+                        <div className="flex items-center gap-3 border-b-[2px] border-gray-200 pb-3">
+                          <div className="p-2 bg-[#F7F8FF] border-[2px] border-[#1A1D2E]"><Mail className="w-5 h-5 text-[#3B4FD8]" /></div>
+                          <div>
+                            <p className="text-xs font-bold text-gray-500 uppercase" style={{ fontFamily: MONO }}>EMAIL_ADDR</p>
+                            <p className="font-bold text-md" style={{ fontFamily: MONO }}>{applicant.candidate?.email || applicant.email}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 pb-2">
+                          <div className="p-2 bg-[#F7F8FF] border-[2px] border-[#1A1D2E]"><Phone className="w-5 h-5 text-[#3B4FD8]" /></div>
+                          <div>
+                            <p className="text-xs font-bold text-gray-500 uppercase" style={{ fontFamily: MONO }}>TEL_NO</p>
+                            <p className="font-bold text-md" style={{ fontFamily: MONO }}>{applicant.candidate?.phone || applicant.phone || 'NULL'}</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  )}
+
+                    {/* Links */}
+                    {(applicant.linkedin || applicant.portfolio) && (
+                      <div className="bg-[#1A1D2E] text-white border-[3px] border-[#3B4FD8] p-6 shadow-[4px_4px_0px_#3B4FD8]">
+                        <h3 className="text-sm font-black uppercase tracking-widest mb-4 text-[#00E5FF]" style={{ fontFamily: MONO }}>sys.links</h3>
+                        <div className="space-y-3">
+                          {applicant.linkedin && (
+                            <a href={applicant.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-white text-[#1A1D2E] border-[2px] border-black hover:bg-[#00E5FF] hover:border-[#1A1D2E] hover:text-black transition-all font-bold group" style={{ fontFamily: MONO }}>
+                              <span>LINKEDIN</span>
+                              <ExternalLink className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                            </a>
+                          )}
+                          {applicant.portfolio && (
+                            <a href={applicant.portfolio} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-white text-[#1A1D2E] border-[2px] border-black hover:bg-[#00E5FF] hover:border-[#1A1D2E] hover:text-black transition-all font-bold group" style={{ fontFamily: MONO }}>
+                              <span>PORTFOLIO</span>
+                              <ExternalLink className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Cover Letter & Questionnaire */}
+                  <div className="space-y-6">
+                    <div className="bg-[#F7F8FF] border-[3px] border-[#3B4FD8] p-6 shadow-[4px_4px_0px_#1A1D2E]">
+                      <h3 className="text-sm font-black uppercase tracking-widest mb-4 bg-[#3B4FD8] text-white inline-block px-2 py-1" style={{ fontFamily: MONO }}>blob.cover_letter</h3>
+                      <div className="bg-white p-4 border-[2px] border-[#1A1D2E] shadow-[inset_2px_2px_0px_rgba(0,0,0,0.1)]">
+                        <p className="text-sm leading-relaxed whitespace-pre-wrap text-[#1A1D2E]" style={{ fontFamily: MONO }}>
+                          {applicant.coverLetter || 'NULL_DATA'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {applicant.answers && applicant.answers.length > 0 && (
+                      <div className="bg-white border-[3px] border-[#1A1D2E] p-6 shadow-[4px_4px_0px_#3B4FD8]">
+                        <h3 className="text-sm font-black uppercase tracking-widest mb-4 bg-[#1A1D2E] text-[#00E5FF] inline-block px-2 py-1" style={{ fontFamily: MONO }}>array.questionnaire</h3>
+                        <div className="space-y-4">
+                          {applicant.answers.map((ans, idx) => (
+                            <div key={idx} className="bg-[#F7F8FF] border-l-[6px] border-[#3B4FD8] border-t-[2px] border-b-[2px] border-r-[2px] border-[#1A1D2E] p-4">
+                              <p className="text-xs font-black text-[#1A1D2E] mb-2 uppercase" style={{ fontFamily: MONO }}>Q: {ans.question}</p>
+                              <p className="text-sm font-medium text-[#1A1D2E]" style={{ fontFamily: SERIF }}>A: {ans.answer}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="p-6 border-t border-gray-100 dark:border-gray-700 flex justify-end">
-              <button
-                onClick={() => setIsDetailsModalOpen(false)}
-                className="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
-              >
-                Close Details
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      )}
+              <div className="p-6 border-t-[4px] border-[#1A1D2E] bg-white flex justify-end flex-shrink-0">
+                <button
+                  onClick={() => setIsDetailsModalOpen(false)}
+                  className="px-8 py-3 bg-[#1A1D2E] text-white border-[2px] border-[#1A1D2E] shadow-[4px_4px_0px_#3B4FD8] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all font-black uppercase tracking-widest"
+                  style={{ fontFamily: MONO }}
+                >
+                  TERMSIG // CLOSE
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
 };

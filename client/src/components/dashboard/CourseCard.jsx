@@ -4,58 +4,63 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const CourseCard = ({ course, handleDelete }) => {
     const navigate = useNavigate();
 
     return (
-        <div className="bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col">
+        <div className="bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 hover:shadow-lg transition-all duration-300 group flex flex-col">
             {/* Thumbnail Section */}
-            <div className="h-48 bg-slate-100 dark:bg-slate-800 relative overflow-hidden">
+            <div className="h-48 bg-[#F7F8FF] dark:bg-[#1A1D2E] relative overflow-hidden flex items-center justify-center border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10">
                 {course.thumbnail ? (
-                    <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-400 dark:text-slate-500">
-                        <BookOpen size={40} />
+                    <div className="text-[#3B4FD8]/30 dark:text-[#6C7EF5]/30">
+                        <BookOpen size={48} strokeWidth={1} />
                     </div>
                 )}
                 <div className="absolute top-4 left-4">
-                    <span className={`px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wider backdrop-blur-md ${course.status === 'PUBLISHED'
-                        ? 'bg-emerald-500/90 text-white'
-                        : 'bg-amber-500/90 text-white'
-                        }`}>
+                    <span className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest bg-white/90 dark:bg-[#1A1D2E]/90 backdrop-blur-md shadow-sm border border-white/20 ${course.status === 'PUBLISHED'
+                        ? 'text-[#2DC653]'
+                        : 'text-[#F5A623]'
+                        }`} style={{ fontFamily: MONO }}>
                         {course.status}
                     </span>
                 </div>
             </div>
 
             {/* Content Section */}
-            <div className="p-5 flex-1 flex flex-col">
-                <div className="mb-4">
-                    <h3 className="font-bold text-lg text-slate-900 dark:text-white line-clamp-2 mb-2 group-hover:text-violet-500 transition-colors">
+            <div className="p-6 flex-1 flex flex-col">
+                <div className="mb-6">
+                    <h3 className="font-semibold text-2xl text-[#1A1D2E] dark:text-[#E8EAF2] line-clamp-2 mb-3 group-hover:text-[#3B4FD8] dark:group-hover:text-[#6C7EF5] transition-colors leading-tight" style={{ fontFamily: SERIF }}>
                         {course.title || "Untitled Course"}
                     </h3>
-                    <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
-                        <span className="flex items-center gap-1">
+                    <div className="flex items-center gap-6 text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>
+                        <span className="flex items-center gap-2">
                             <Users size={14} />
                             {course.enrolledCount || 0} Students
                         </span>
-                        <span className="flex items-center gap-1">
+                        <span className="flex items-center gap-2">
                             <Clock size={14} />
                             {new Date(course.createdAt).toLocaleDateString()}
                         </span>
                     </div>
                 </div>
 
-                <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between gap-3">
+                {/* Actions */}
+                <div className="mt-auto pt-5 border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 flex items-center justify-between gap-3">
                     <div className="flex gap-2 w-full">
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
                                 navigate(`/edit-course/${course._id}`);
                             }}
-                            className="flex-1 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-500/10 hover:text-violet-600 dark:hover:text-violet-400 font-medium text-sm transition-colors flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-700"
+                            className="flex-1 py-2.5 bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/10 hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] font-semibold text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-2 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10"
+                            style={{ fontFamily: MONO }}
                         >
-                            <Edit3 size={16} />
+                            <Edit3 size={14} />
                             Edit
                         </button>
                         <button
@@ -63,15 +68,16 @@ const CourseCard = ({ course, handleDelete }) => {
                                 e.stopPropagation();
                                 navigate(`/manage-course/${course._id}`);
                             }}
-                            className="flex-1 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/20 font-medium text-sm transition-colors flex items-center justify-center gap-2 border border-emerald-200 dark:border-emerald-900/30"
+                            className="flex-1 py-2.5 bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] hover:bg-[#F5A623]/10 hover:text-[#F5A623] dark:hover:text-[#F5A623] font-semibold text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-2 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10"
                             title="Manage Submissions & Applicants"
+                            style={{ fontFamily: MONO }}
                         >
-                            <Settings size={16} />
+                            <Settings size={14} />
                             Manage
                         </button>
                         <button
                             onClick={(e) => handleDelete(course._id, e)}
-                            className="p-2 rounded-lg bg-red-50 dark:bg-red-900/10 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors border border-transparent hover:border-red-200 dark:hover:border-red-900/30"
+                            className="px-3 py-2.5 bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#E25C5C] hover:bg-[#E25C5C]/10 transition-colors flex items-center justify-center border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 hover:border-[#E25C5C]/30"
                             title="Delete Course"
                         >
                             <Trash2 size={16} />

@@ -6,7 +6,7 @@ import SignupForm from '../components/signup/SignupForm';
 
 const Signup = () => {
     return (
-        <div className="min-h-screen bg-[#0a0a0f] flex overflow-hidden pt-20">
+        <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] flex overflow-hidden pt-20">
             <Navbar />
             {/* Animated Background */}
             <LoginBackground />

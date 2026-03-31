@@ -5,6 +5,9 @@ import { getStudentCourses } from '../redux/slices/courseSlice';
 import { Search, BookOpen, ChevronRight, Clock, PlayCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const StudentCourses = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -33,53 +36,54 @@ const StudentCourses = () => {
     const totalHours = courses.reduce((acc, curr) => acc + (curr.totalDuration || 0), 0); // Assuming totalDuration is in hours or available
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] text-gray-900 dark:text-white font-sans flex transition-colors duration-300">
+        <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#0A0B10] text-[#1A1D2E] dark:text-[#E8EAF2] font-sans flex transition-colors duration-300">
             <StudentSidebar />
 
             <main className={`flex-1 p-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
 
                 {/* Hero / Welcome Section */}
-                <div className="mb-10 flex flex-col md:flex-row justify-between items-end gap-6 bg-white dark:bg-[#1a1c23] p-8 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden">
+                <div className="mb-10 flex flex-col md:flex-row justify-between items-end gap-6 bg-[#3B4FD8] text-white p-10 shadow-sm relative overflow-hidden">
                     <div className="relative z-10">
-                        <div className="flex items-center gap-3 mb-2 text-teal-500 font-semibold tracking-wide uppercase text-xs">
+                        <div className="flex items-center gap-3 mb-4 text-[#F5A623] font-bold uppercase tracking-[0.2em] text-[10px]" style={{ fontFamily: MONO }}>
                             <Clock size={14} />
                             <span>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</span>
                         </div>
-                        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-3">
-                            Welcome back, <span className="text-teal-500">{user?.name?.split(' ')[0] || 'Student'}</span>! 👋
+                        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: SERIF }}>
+                            Welcome back, {user?.name?.split(' ')[0] || 'Student'}!
                         </h1>
-                        <p className="text-gray-500 dark:text-gray-400 max-w-lg">
+                        <p className="text-white/80 max-w-lg text-sm font-medium">
                             You've made great progress this week. Pick up right where you left off and keep learning!
                         </p>
                     </div>
 
                     {/* Visual Decoration */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+                    <div className="absolute -top-10 -right-10 w-48 h-48 bg-white/5 rotate-45 pointer-events-none"></div>
 
                     {/* Stats Cards Row */}
-                    <div className="flex gap-4 relative z-10">
-                        <div className="bg-teal-50 dark:bg-teal-900/20 p-4 rounded-2xl min-w-[140px] border border-teal-100 dark:border-teal-900/30">
-                            <h4 className="text-xs font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider mb-1">In Progress</h4>
-                            <p className="text-2xl font-black text-gray-900 dark:text-white">{inProgressCount}</p>
+                    <div className="flex gap-4 relative z-10 w-full md:w-auto mt-6 md:mt-0">
+                        <div className="bg-white/10 backdrop-blur-md p-6 border border-white/20 text-center min-w-[140px] shadow-inner">
+                            <p className="text-[10px] font-bold text-white/60 uppercase tracking-[0.2em] mb-2" style={{ fontFamily: MONO }}>In Progress</p>
+                            <h4 className="text-4xl font-bold text-white shadow-sm" style={{ fontFamily: SERIF }}>{inProgressCount}</h4>
                         </div>
-                        <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-2xl min-w-[140px] border border-purple-100 dark:border-purple-900/30">
-                            <h4 className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-1">Completed</h4>
-                            <p className="text-2xl font-black text-gray-900 dark:text-white">{completedCount}</p>
+                        <div className="bg-white/10 backdrop-blur-md p-6 border border-white/20 text-center min-w-[140px] shadow-inner">
+                            <p className="text-[10px] font-bold text-white/60 uppercase tracking-[0.2em] mb-2" style={{ fontFamily: MONO }}>Completed</p>
+                            <h4 className="text-4xl font-bold text-[#F5A623]" style={{ fontFamily: SERIF }}>{completedCount}</h4>
                         </div>
                     </div>
                 </div>
 
                 {/* Filters & Search */}
-                <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-8">
-                    <div className="flex bg-gray-100 dark:bg-[#1a1c23] p-1 rounded-xl">
+                <div className="flex flex-col md:flex-row gap-6 justify-between items-center mb-10">
+                    <div className="flex bg-[#F7F8FF] dark:bg-[#1A1D2E] p-1 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 w-full md:w-auto overflow-x-auto">
                         {['ALL', 'ACTIVE', 'COMPLETED'].map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setFilter(tab)}
-                                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${filter === tab
-                                    ? 'bg-white dark:bg-gray-800 text-teal-600 dark:text-teal-400 shadow-sm'
-                                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                                className={`px-6 py-3 text-[10px] font-bold uppercase tracking-widest transition-colors flex-1 md:flex-none text-center ${filter === tab
+                                    ? 'bg-[#3B4FD8] text-white'
+                                    : 'text-[#6B7194] dark:text-[#8B90B8] hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 hover:text-[#1A1D2E] dark:hover:text-[#E8EAF2]'
                                     }`}
+                                style={{ fontFamily: MONO }}
                             >
                                 {tab === 'ALL' ? 'All Courses' : tab.charAt(0) + tab.slice(1).toLowerCase()}
                             </button>
@@ -87,78 +91,78 @@ const StudentCourses = () => {
                     </div>
 
                     <div className="relative w-full md:w-auto">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B7194] dark:text-[#8B90B8]" size={18} />
                         <input
                             type="text"
-                            placeholder="Search my courses..."
+                            placeholder="SEARCH MY COURSES..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full md:w-64 pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-800 rounded-xl bg-white dark:bg-[#1a1c23] focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all text-sm font-medium"
+                            className="w-full md:w-[320px] pl-12 pr-4 py-4 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 bg-white dark:bg-[#252A41] focus:outline-none focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] transition-colors text-[10px] font-bold uppercase tracking-widest text-[#1A1D2E] dark:text-[#E8EAF2] placeholder:text-[#6B7194] dark:placeholder:text-[#8B90B8]"
+                            style={{ fontFamily: MONO }}
                         />
                     </div>
                 </div>
 
                 {loading ? (
                     <div className="min-h-[400px] flex items-center justify-center">
-                        <div className="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
+                         <div className="w-10 h-10 border-[3px] border-[#3B4FD8]/20 border-t-[#3B4FD8] dark:border-[#6C7EF5]/20 dark:border-t-[#6C7EF5] rounded-full animate-spin"></div>
                     </div>
                 ) : filteredCourses.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                         {filteredCourses.map(course => (
-                            <div key={course._id} className="bg-white dark:bg-[#1a1c23] rounded-3xl border border-gray-100 dark:border-gray-800 overflow-hidden hover:shadow-xl hover:shadow-gray-200/50 dark:hover:shadow-black/50 transition-all duration-300 group cursor-pointer flex flex-col">
-                                <div className="h-48 relative overflow-hidden">
+                            <div key={course._id} className="bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 hover:shadow-lg hover:border-[#3B4FD8]/30 dark:hover:border-[#6C7EF5]/30 transition-all duration-300 group cursor-pointer flex flex-col pt-0">
+                                <div className="h-48 relative overflow-hidden bg-[#1A1D2E]">
                                     {course.thumbnail ? (
-                                        <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
+                                        <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
                                     ) : (
-                                        <div className="w-full h-full bg-teal-50 dark:bg-teal-900/10 flex items-center justify-center text-teal-500">
+                                        <div className="w-full h-full bg-[#1A1D2E] flex items-center justify-center text-[#3B4FD8]">
                                             <BookOpen size={48} className="opacity-50" />
                                         </div>
                                     )}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
 
                                     <div className="absolute top-4 right-4">
-                                        <span className={`px-3 py-1 text-[10px] font-extrabold rounded-full uppercase tracking-wider backdrop-blur-md shadow-lg ${course.status === 'COMPLETED'
-                                            ? 'bg-green-500 text-white'
-                                            : 'bg-white/90 text-teal-700 dark:bg-black/80 dark:text-teal-400'
-                                            }`}>
+                                        <span className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest border border-white/20 backdrop-blur-md shadow-sm ${course.status === 'COMPLETED'
+                                            ? 'bg-[#3B4FD8] text-white'
+                                            : 'bg-[#F5A623] text-[#1A1D2E]'
+                                            }`} style={{ fontFamily: MONO }}>
                                             {course.status}
                                         </span>
                                     </div>
                                 </div>
 
-                                <div className="p-7 flex flex-col flex-1">
+                                <div className="p-8 flex flex-col flex-1">
                                     <div className="flex-1">
-                                        <h3 className="font-bold text-xl text-gray-900 dark:text-white mb-3 line-clamp-2 leading-tight group-hover:text-teal-500 transition-colors">
+                                        <h3 className="font-bold text-2xl text-[#1A1D2E] dark:text-[#E8EAF2] mb-4 line-clamp-2 leading-tight group-hover:text-[#3B4FD8] dark:group-hover:text-[#6C7EF5] transition-colors" style={{ fontFamily: SERIF }}>
                                             {course.title}
                                         </h3>
-                                        <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-6 font-medium">
-                                            <span className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md">{course.totalLessons || 0} Lessons</span>
-                                            <span>•</span>
+                                        <div className="flex items-center gap-3 text-[10px] text-[#6B7194] dark:text-[#8B90B8] font-bold uppercase tracking-[0.2em] mb-8" style={{ fontFamily: MONO }}>
+                                            <span className="bg-[#3B4FD8]/10 text-[#3B4FD8] dark:bg-[#6C7EF5]/10 dark:text-[#6C7EF5] px-2 py-1">{course.totalLessons || 0} Lessons</span>
                                             <span>{Math.round(course.totalDuration / 60) || 0}h Video</span>
                                         </div>
                                     </div>
 
                                     <div className="mt-auto">
 
-                                        <div className="flex justify-between items-end mb-2">
-                                            <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Progress</span>
-                                            <span className="text-lg font-black text-teal-500">{Math.round(course.progress)}%</span>
+                                        <div className="flex justify-between items-end mb-3">
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>Progress</span>
+                                            <span className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>{Math.round(course.progress)}%</span>
                                         </div>
 
-                                        <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2.5 mb-6 overflow-hidden">
+                                        <div className="w-full bg-[#F7F8FF] dark:bg-[#1A1D2E] h-1.5 mb-8 overflow-hidden rounded-none border border-[#3B4FD8]/5 dark:border-[#6C7EF5]/5">
                                             <div
-                                                className="bg-linear-to-r from-teal-500 to-teal-400 h-full rounded-full transition-all duration-1000 ease-out relative"
+                                                className="bg-[#F5A623] h-full transition-all duration-1000 ease-out relative"
                                                 style={{ width: `${course.progress}%` }}
                                             >
-                                                <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
                                             </div>
                                         </div>
 
                                         <button
                                             onClick={() => navigate(`/course/${course.slug || course.courseId?._id || course._id}/learn`)}
-                                            className="w-full mt-4 px-4 py-2 bg-linear-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all shadow-lg shadow-violet-500/20 flex items-center justify-center gap-2"
+                                            className="w-full py-4 bg-[#3B4FD8] dark:bg-[#6C7EF5] hover:bg-[#2f3fab] dark:hover:bg-[#5b6cd4] text-white dark:text-[#1A1D2E] font-bold text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-3 border border-transparent shadow-sm"
+                                            style={{ fontFamily: MONO }}
                                         >
-                                            <PlayCircle size={18} />
+                                            <PlayCircle size={16} />
                                             Continue Learning
                                         </button>
                                     </div>
@@ -167,20 +171,20 @@ const StudentCourses = () => {
                         ))}
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-[#1a1c23] rounded-3xl border border-dashed border-gray-200 dark:border-gray-800">
-                        <div className="w-24 h-24 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6 text-gray-300 dark:text-gray-600">
-                            <BookOpen size={48} />
+                    <div className="flex flex-col items-center justify-center py-24 bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 text-center">
+                        <div className="w-20 h-20 bg-[#F7F8FF] dark:bg-[#1A1D2E] flex items-center justify-center mb-8 text-[#3B4FD8] dark:text-[#6C7EF5]">
+                            <BookOpen size={40} />
                         </div>
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No courses found</h3>
-                        <p className="text-gray-500 dark:text-gray-400 max-w-md text-center mb-8">
+                        <h3 className="text-3xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-4" style={{ fontFamily: SERIF }}>No courses found</h3>
+                        <p className="text-[#6B7194] dark:text-[#8B90B8] max-w-md text-center mb-8">
                             {searchTerm || filter !== 'ALL'
                                 ? "We couldn't find any courses matching your search. Try different keywords or filters."
-                                : "You haven't enrolled in any courses yet. It's the perfect time to start learning something new!"}
+                                : "You haven't enrolled in any courses yet. It's the perfect time to start learning!"}
                         </p>
                         {!searchTerm && filter === 'ALL' && (
                             <button
                                 onClick={() => navigate('/courses')}
-                                className="px-8 py-3 bg-teal-500 hover:bg-teal-600 text-white rounded-xl font-bold transition-all shadow-lg shadow-teal-500/30 hover:shadow-teal-500/40 hover:-translate-y-1">
+                                className="px-8 py-4 bg-[#F5A623] hover:bg-[#d9911a] text-[#1A1D2E] font-bold text-[10px] uppercase tracking-widest transition-colors shadow-sm" style={{ fontFamily: MONO }}>
                                 Browse Courses
                             </button>
                         )}

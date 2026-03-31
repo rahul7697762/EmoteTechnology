@@ -6,7 +6,7 @@ import LoginForm from '../components/login/LoginForm';
 
 const LoginPage = () => {
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] flex overflow-hidden pt-20">
+        <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] flex overflow-hidden pt-20">
             <Navbar />
             {/* Animated Background - Only viewable in dark mode or subtle in light */}
             <div className="dark:block hidden">

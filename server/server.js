@@ -56,6 +56,7 @@ const corsOptions = {
 
         const isAllowed = allowedOrigins.includes(origin) || 
                          (origin && origin.endsWith('.onrender.com')) ||
+                         (origin && origin.endsWith('.vercel.app')) ||
                          !origin; // Allow server-to-server or tools like Postman
 
         if (isAllowed) {
@@ -106,7 +107,8 @@ app.use('/api/notifications', notificationRoutes);
 
 // Static Files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// The frontend is now deployed separately on Vercel.
 
 // Health check route
 app.get('/api/health', (req, res) => {
@@ -127,9 +129,9 @@ app.post('/api/test-login', (req, res) => {
     });
 });
 
-// Handle React routing
-app.get(/(.*)/, (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+// Catch-all route for API 404s
+app.use((req, res) => {
+    res.status(404).json({ success: false, message: 'API route not found' });
 });
 
 // Global Error Handler

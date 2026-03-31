@@ -1,27 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../utils/api';
+import { Clock } from 'lucide-react';
+
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
 
 const QuizItem = ({ quiz }) => {
     return (
-        <div className="bg-white dark:bg-[#1a1c23] p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm mb-4">
-            <div className="flex gap-4">
+        <div className="bg-white dark:bg-[#252A41] p-5 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm mb-4 rounded-none">
+            <div className="flex gap-5">
                 {/* Date Box */}
-                <div className="shrink-0 w-14 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 py-2">
-                    <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400">{quiz.month}</span>
-                    <span className="text-xl font-bold text-gray-900 dark:text-white">{quiz.day}</span>
+                <div className="shrink-0 w-16 flex flex-col items-center justify-center bg-[#F7F8FF] dark:bg-[#1A1D2E] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 py-3 rounded-none">
+                    <span className="text-[10px] uppercase font-bold text-[#6B7194] dark:text-[#8B90B8] tracking-widest" style={{ fontFamily: MONO }}>{quiz.month}</span>
+                    <span className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>{quiz.day}</span>
                 </div>
 
                 {/* Content */}
                 <div className="flex-1">
-                    <h4 className="font-bold text-gray-900 dark:text-white text-sm mb-1">{quiz.title}</h4>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{quiz.time}</p>
+                    <h4 className="font-bold text-[#1A1D2E] dark:text-[#E8EAF2] text-lg mb-1" style={{ fontFamily: SERIF }}>{quiz.title}</h4>
+                    <p className="text-[10px] text-[#6B7194] dark:text-[#8B90B8] font-bold uppercase tracking-widest mb-4" style={{ fontFamily: MONO }}>{quiz.time}</p>
 
                     {quiz.active ? (
-                        <button className="w-full py-1.5 bg-amber-400 hover:bg-amber-500 text-gray-900 text-xs font-bold rounded-lg transition-colors">
+                        <button className="w-full py-3 bg-[#F5A623] hover:bg-[#d9911a] text-[#1A1D2E] text-[10px] font-bold uppercase tracking-widest transition-colors shadow-sm rounded-none border border-transparent" style={{ fontFamily: MONO }}>
                             View Details
                         </button>
                     ) : (
-                        <button className="w-full py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-bold rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                        <button className="w-full py-3 bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#6B7194] dark:text-[#8B90B8] text-[10px] font-bold uppercase tracking-widest transition-colors rounded-none border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5" style={{ fontFamily: MONO }}>
                             Reminder Set
                         </button>
                     )}
@@ -55,12 +59,8 @@ const UpcomingQuizzes = () => {
 
     if (loading) {
         return (
-            <div className="mb-8 animate-pulse">
-                <div className="h-6 w-32 bg-gray-200 dark:bg-gray-800 rounded mb-4"></div>
-                <div className="space-y-4">
-                    <div className="h-28 bg-gray-200 dark:bg-gray-800 rounded-xl"></div>
-                    <div className="h-28 bg-gray-200 dark:bg-gray-800 rounded-xl"></div>
-                </div>
+            <div className="mb-8 p-6 flex justify-center">
+                <div className="w-6 h-6 border-[3px] border-[#3B4FD8]/20 border-t-[#3B4FD8] dark:border-[#6C7EF5]/20 dark:border-t-[#6C7EF5] rounded-full animate-spin"></div>
             </div>
         )
     }
@@ -68,11 +68,11 @@ const UpcomingQuizzes = () => {
     if (quizzes.length === 0) {
         return (
             <div className="mb-8">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                    <span className="text-amber-500">⏱</span> Upcoming Quizzes
+                <h3 className="text-xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-6 flex items-center gap-3 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 pb-4" style={{ fontFamily: SERIF }}>
+                    <Clock className="text-[#F5A623]" size={20} /> Upcoming Quizzes
                 </h3>
-                <div className="p-6 bg-gray-50 dark:bg-gray-800/30 rounded-xl text-center text-gray-500 text-sm">
-                    No upcoming quizzes.
+                <div className="p-8 bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm text-center">
+                    <p className="text-[#6B7194] dark:text-[#8B90B8] text-xs uppercase tracking-widest font-bold" style={{ fontFamily: MONO }}>No upcoming quizzes.</p>
                 </div>
             </div>
         );
@@ -80,8 +80,8 @@ const UpcomingQuizzes = () => {
 
     return (
         <div className="mb-8">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                <span className="text-amber-500">⏱</span> Upcoming Quizzes
+            <h3 className="text-xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-6 flex items-center gap-3 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 pb-4" style={{ fontFamily: SERIF }}>
+                <Clock className="text-[#F5A623]" size={20} /> Upcoming Quizzes
             </h3>
             {quizzes.map(quiz => (
                 <QuizItem key={quiz.id} quiz={quiz} />

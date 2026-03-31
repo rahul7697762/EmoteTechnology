@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Loader2, Save, Eye, EyeOff, Check, X, Shield, Lock } from 'lucide-react';
+import { Loader2, Save, Eye, EyeOff, Check, Shield } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { changePassword } from '../../redux/slices/authSlice';
+
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
 
 const SecurityTab = () => {
     const dispatch = useDispatch();
@@ -77,10 +80,10 @@ const SecurityTab = () => {
     };
 
     const getStrengthColor = () => {
-        if (strength === 0) return 'bg-gray-200 dark:bg-gray-700';
-        if (strength <= 2) return 'bg-red-500';
-        if (strength === 3) return 'bg-yellow-500';
-        return 'bg-green-500';
+        if (strength === 0) return 'bg-[#1A1D2E]/10 dark:bg-[#F7F8FF]/10';
+        if (strength <= 2) return 'bg-[#E25C5C]';
+        if (strength === 3) return 'bg-[#F5A623]';
+        return 'bg-[#2DC653]';
     };
 
     const getStrengthText = () => {
@@ -90,21 +93,23 @@ const SecurityTab = () => {
         return 'Strong';
     };
 
+    const inputClasses = "w-full pl-4 pr-12 py-3 bg-[#F7F8FF] dark:bg-[#1A1D2E] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 text-[#1A1D2E] dark:text-[#E8EAF2] focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] outline-none transition-colors text-sm font-mono";
+
     return (
-        <div className="bg-white dark:bg-[#1a1c23] rounded-3xl border border-gray-100 dark:border-gray-800 shadow-xl shadow-gray-200/50 dark:shadow-none overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-500">
-            <div className="p-8 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20">
-                <div className="flex items-center gap-3 mb-2">
-                    <Shield className="w-6 h-6 text-teal-500" />
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Security & Password</h2>
+        <div className="bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="p-8 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 bg-[#3B4FD8]/5 dark:bg-[#6C7EF5]/5">
+                <div className="flex items-center gap-4 mb-2">
+                    <Shield className="w-6 h-6 text-[#3B4FD8] dark:text-[#6C7EF5]" strokeWidth={1.5} />
+                    <h2 className="text-2xl font-bold" style={{ fontFamily: SERIF }}>Security & Password</h2>
                 </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Manage your password and security preferences.</p>
+                <p className="text-[#6B7194] dark:text-[#8B90B8] text-[10px] uppercase tracking-widest mt-3 font-semibold" style={{ fontFamily: MONO }}>Manage your password and security preferences.</p>
             </div>
 
             <form onSubmit={handlePasswordSubmit} className="p-8 space-y-8">
                 <div className="space-y-6 max-w-lg">
                     {/* Current Password */}
-                    <div className="space-y-2">
-                        <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Current Password</label>
+                    <div className="space-y-3">
+                        <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>Current Password</label>
                         <div className="relative">
                             <input
                                 type={showCurrent ? "text" : "password"}
@@ -112,21 +117,21 @@ const SecurityTab = () => {
                                 value={passwordData.currentPassword}
                                 onChange={handlePasswordChange}
                                 placeholder="••••••••"
-                                className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-medium"
+                                className={inputClasses}
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowCurrent(!showCurrent)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#3B4FD8]/50 dark:text-[#6C7EF5]/50 hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors"
                             >
-                                {showCurrent ? <EyeOff size={20} /> : <Eye size={20} />}
+                                {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
                             </button>
                         </div>
                     </div>
 
                     {/* New Password */}
-                    <div className="space-y-2">
-                        <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">New Password</label>
+                    <div className="space-y-3">
+                        <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>New Password</label>
                         <div className="relative">
                             <input
                                 type={showNew ? "text" : "password"}
@@ -134,28 +139,28 @@ const SecurityTab = () => {
                                 value={passwordData.newPassword}
                                 onChange={handlePasswordChange}
                                 placeholder="••••••••"
-                                className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-medium"
+                                className={inputClasses}
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowNew(!showNew)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#3B4FD8]/50 dark:text-[#6C7EF5]/50 hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors"
                             >
-                                {showNew ? <EyeOff size={20} /> : <Eye size={20} />}
+                                {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
                             </button>
                         </div>
 
                         {/* Password Strength Meter */}
                         {passwordData.newPassword && (
-                            <div className="space-y-2 pt-2">
-                                <div className="flex justify-between text-xs font-medium text-gray-500 dark:text-gray-400">
-                                    <span>Password Strength</span>
+                            <div className="space-y-3 pt-4 border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 mt-6">
+                                <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest" style={{ fontFamily: MONO }}>
+                                    <span className="text-[#6B7194] dark:text-[#8B90B8]">Password Strength</span>
                                     <span className={
-                                        strength <= 2 ? 'text-red-500' :
-                                            strength === 3 ? 'text-yellow-500' : 'text-green-500'
+                                        strength <= 2 ? 'text-[#E25C5C]' :
+                                            strength === 3 ? 'text-[#F5A623]' : 'text-[#2DC653]'
                                     }>{getStrengthText()}</span>
                                 </div>
-                                <div className="h-1.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                <div className="h-1 w-full bg-[#1A1D2E]/10 dark:bg-[#F7F8FF]/10 overflow-hidden">
                                     <div
                                         className={`h-full transition-all duration-300 ${getStrengthColor()}`}
                                         style={{ width: `${(strength / 4) * 100}%` }}
@@ -163,22 +168,22 @@ const SecurityTab = () => {
                                 </div>
 
                                 {/* Requirements List */}
-                                <div className="grid grid-cols-2 gap-2 pt-2">
-                                    <div className={`flex items-center gap-2 text-xs ${requirements.length ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                                        {requirements.length ? <Check size={14} /> : <div className="w-3.5 h-3.5 rounded-full border border-current" />}
-                                        At least 8 characters
+                                <div className="grid grid-cols-2 gap-3 pt-3" style={{ fontFamily: MONO }}>
+                                    <div className={`flex items-center gap-2 text-[10px] uppercase tracking-widest font-semibold ${requirements.length ? 'text-[#2DC653]' : 'text-[#6B7194] dark:text-[#8B90B8]'}`}>
+                                        {requirements.length ? <Check size={14} strokeWidth={3} /> : <div className="w-3.5 h-3.5 border border-[#3B4FD8]/30 dark:border-[#6C7EF5]/30 bg-[#F7F8FF] dark:bg-[#1A1D2E]" />}
+                                        8+ characters
                                     </div>
-                                    <div className={`flex items-center gap-2 text-xs ${requirements.number ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                                        {requirements.number ? <Check size={14} /> : <div className="w-3.5 h-3.5 rounded-full border border-current" />}
-                                        Contains a number
+                                    <div className={`flex items-center gap-2 text-[10px] uppercase tracking-widest font-semibold ${requirements.number ? 'text-[#2DC653]' : 'text-[#6B7194] dark:text-[#8B90B8]'}`}>
+                                        {requirements.number ? <Check size={14} strokeWidth={3} /> : <div className="w-3.5 h-3.5 border border-[#3B4FD8]/30 dark:border-[#6C7EF5]/30 bg-[#F7F8FF] dark:bg-[#1A1D2E]" />}
+                                        One number
                                     </div>
-                                    <div className={`flex items-center gap-2 text-xs ${requirements.uppercase ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                                        {requirements.uppercase ? <Check size={14} /> : <div className="w-3.5 h-3.5 rounded-full border border-current" />}
-                                        Contains uppercase
+                                    <div className={`flex items-center gap-2 text-[10px] uppercase tracking-widest font-semibold ${requirements.uppercase ? 'text-[#2DC653]' : 'text-[#6B7194] dark:text-[#8B90B8]'}`}>
+                                        {requirements.uppercase ? <Check size={14} strokeWidth={3} /> : <div className="w-3.5 h-3.5 border border-[#3B4FD8]/30 dark:border-[#6C7EF5]/30 bg-[#F7F8FF] dark:bg-[#1A1D2E]" />}
+                                        One uppercase
                                     </div>
-                                    <div className={`flex items-center gap-2 text-xs ${requirements.special ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                                        {requirements.special ? <Check size={14} /> : <div className="w-3.5 h-3.5 rounded-full border border-current" />}
-                                        Contains special char
+                                    <div className={`flex items-center gap-2 text-[10px] uppercase tracking-widest font-semibold ${requirements.special ? 'text-[#2DC653]' : 'text-[#6B7194] dark:text-[#8B90B8]'}`}>
+                                        {requirements.special ? <Check size={14} strokeWidth={3} /> : <div className="w-3.5 h-3.5 border border-[#3B4FD8]/30 dark:border-[#6C7EF5]/30 bg-[#F7F8FF] dark:bg-[#1A1D2E]" />}
+                                        Special char
                                     </div>
                                 </div>
                             </div>
@@ -186,8 +191,8 @@ const SecurityTab = () => {
                     </div>
 
                     {/* Confirm Password */}
-                    <div className="space-y-2">
-                        <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Confirm New Password</label>
+                    <div className="space-y-3">
+                        <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>Confirm New Password</label>
                         <div className="relative">
                             <input
                                 type={showConfirm ? "text" : "password"}
@@ -195,26 +200,27 @@ const SecurityTab = () => {
                                 value={passwordData.confirmPassword}
                                 onChange={handlePasswordChange}
                                 placeholder="••••••••"
-                                className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-medium"
+                                className={inputClasses}
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowConfirm(!showConfirm)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#3B4FD8]/50 dark:text-[#6C7EF5]/50 hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors"
                             >
-                                {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
+                                {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex justify-start pt-6 border-t border-gray-100 dark:border-gray-800">
+                <div className="flex justify-start pt-8 border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10">
                     <button
                         type="submit"
                         disabled={isChangingPassword || strength < 4}
-                        className="flex items-center space-x-2 px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl transition-all font-bold shadow-lg shadow-teal-600/20 hover:shadow-teal-600/40 hover:-translate-y-0.5 disabled:opacity-70 disabled:transform-none disabled:shadow-none bg-gradient-to-r from-teal-500 to-emerald-500"
+                        className="flex items-center space-x-3 px-8 py-3.5 bg-[#F5A623] hover:bg-[#d9911a] text-[#1A1D2E] font-bold uppercase tracking-widest text-xs transition-colors disabled:opacity-70 disabled:pointer-events-none"
+                        style={{ fontFamily: MONO }}
                     >
-                        {isChangingPassword ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
+                        {isChangingPassword ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                         <span>{isChangingPassword ? 'Updating Password...' : 'Update Password'}</span>
                     </button>
                 </div>

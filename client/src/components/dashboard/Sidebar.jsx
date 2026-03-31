@@ -3,14 +3,15 @@ import { NavLink, Link } from 'react-router-dom';
 import { LayoutDashboard, BookOpen, PlusCircle, Settings, LogOut, Sun, Moon, ArrowLeft, Menu, Home } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/slices/authSlice';
-import { toggleTheme } from '../../redux/slices/uiSlice';
-import { toggleSidebar } from '../../redux/slices/uiSlice';
+import { toggleTheme, toggleSidebar } from '../../redux/slices/uiSlice';
+
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
 
 const Sidebar = () => {
     const dispatch = useDispatch();
-    const { theme } = useSelector((state) => state.ui);
+    const { theme, isSidebarCollapsed: isCollapsed } = useSelector((state) => state.ui);
     const { isLoggingOut } = useSelector((state) => state.auth);
-    const { isSidebarCollapsed: isCollapsed } = useSelector((state) => state.ui);
 
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -20,68 +21,68 @@ const Sidebar = () => {
     ];
 
     return (
-        <aside className={`${isCollapsed ? 'w-20' : 'w-64'} bg-white dark:bg-[#1a1c23] border-r border-gray-200 dark:border-gray-800 h-screen fixed left-0 top-0 overflow-y-auto z-20 hidden md:flex flex-col transition-all duration-300`}>
+        <aside className={`${isCollapsed ? 'w-20' : 'w-64'} bg-white dark:bg-[#252A41] border-r border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 h-screen fixed left-0 top-0 overflow-y-auto z-20 hidden md:flex flex-col transition-all duration-300`}>
             {/* Header */}
-            <div className={`p-6 flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'}`}>
+            <div className={`p-6 flex items-center ${isCollapsed ? 'justify-center border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 mb-2' : 'gap-4 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 mb-2'}`}>
                 {isCollapsed ? (
-                    <div className="flex flex-col gap-4 items-center">
-                        <button onClick={() => dispatch(toggleSidebar())} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-                            <Menu size={24} />
+                    <div className="flex flex-col gap-6 items-center">
+                        <button onClick={() => dispatch(toggleSidebar())} className="text-[#6B7194] dark:text-[#8B90B8] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5]">
+                            <Menu size={20} />
                         </button>
-                        <Link to="/" className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-teal-600 dark:text-teal-400">
-                            <Home size={24} />
+                        <Link to="/" className="text-[#3B4FD8] dark:text-[#6C7EF5] hover:opacity-80 transition-opacity">
+                            <Home size={20} />
                         </Link>
                     </div>
                 ) : (
                     <>
-                        <button onClick={() => dispatch(toggleSidebar())} className="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-600 dark:text-gray-300">
+                        <button onClick={() => dispatch(toggleSidebar())} className="p-2 -ml-2 text-[#6B7194] dark:text-[#8B90B8] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors">
                             <Menu size={20} />
                         </button>
                         <Link to="/">
-                            <h1 className="text-xl font-bold bg-linear-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">
-                                EmoteTech
+                            <h1 className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>
+                                Emote<span className="italic text-[#3B4FD8] dark:text-[#6C7EF5]">Tech</span>
                             </h1>
                         </Link>
                     </>
                 )}
             </div>
 
-            <nav className="mt-2 px-4 space-y-2 flex-1">
+            <nav className="px-4 space-y-1 mt-4 flex-1">
                 {navItems.map((item) => (
                     <NavLink
                         key={item.path}
                         to={item.path}
                         className={({ isActive }) =>
-                            `flex items-center ${isCollapsed ? 'justify-center px-2' : 'space-x-3 px-4'} py-3 rounded-xl transition-all duration-200 ${isActive
-                                ? 'bg-teal-500/10 text-teal-500 font-medium'
-                                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/50'
+                            `flex items-center ${isCollapsed ? 'justify-center px-2 py-4' : 'space-x-4 px-4 py-3'} transition-all duration-200 ${isActive
+                                ? 'bg-[#3B4FD8] dark:bg-[#6C7EF5] text-white'
+                                : 'text-[#6B7194] dark:text-[#8B90B8] hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/10 hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5]'
                             }`
                         }
                         title={isCollapsed ? item.label : ''}
                     >
-                        <item.icon size={20} />
-                        {!isCollapsed && <span>{item.label}</span>}
+                        <item.icon size={18} />
+                        {!isCollapsed && <span className="text-sm font-semibold uppercase tracking-wider" style={{ fontFamily: MONO }}>{item.label}</span>}
                     </NavLink>
                 ))}
             </nav>
 
-            <div className={`p-4 border-t border-gray-100 dark:border-gray-800 space-y-2 ${isCollapsed ? 'items-center flex flex-col' : ''}`}>
+            <div className={`p-4 border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 space-y-2 ${isCollapsed ? 'items-center flex flex-col' : ''}`}>
                 <button
                     onClick={() => dispatch(toggleTheme())}
-                    className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3 w-full text-left'} text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-xl transition-colors`}
+                    className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'space-x-4 px-4 py-3 w-full text-left'} text-[#6B7194] dark:text-[#8B90B8] hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/10 hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors`}
                     title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
                 >
-                    {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-                    {!isCollapsed && <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>}
+                    {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+                    {!isCollapsed && <span className="text-sm font-semibold uppercase tracking-wider" style={{ fontFamily: MONO }}>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>}
                 </button>
                 <button
                     onClick={() => dispatch(logout())}
                     disabled={isLoggingOut}
-                    className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3 w-full text-left'} text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-colors disabled:opacity-50`}
+                    className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'space-x-4 px-4 py-3 w-full text-left'} text-[#E25C5C] hover:bg-[#E25C5C]/10 transition-colors disabled:opacity-50`}
                     title="Logout"
                 >
-                    <LogOut size={20} />
-                    {!isCollapsed && <span>{isLoggingOut ? 'Logging...' : 'Logout'}</span>}
+                    <LogOut size={18} />
+                    {!isCollapsed && <span className="text-sm font-semibold uppercase tracking-wider" style={{ fontFamily: MONO }}>{isLoggingOut ? 'Logging...' : 'Logout'}</span>}
                 </button>
             </div>
         </aside>

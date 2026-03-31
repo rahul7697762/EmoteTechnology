@@ -24,6 +24,9 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const DiscussionFullPage = ({ courseId, isEmbedded = false, isFaculty = false }) => {
     const dispatch = useDispatch();
     const { threads, loading, isMaximized, hasMore, currentPage } = useSelector((state) => state.discussion);
@@ -79,43 +82,45 @@ const DiscussionFullPage = ({ courseId, isEmbedded = false, isFaculty = false })
     if (!isMaximized && !isEmbedded) return null;
 
     return (
-        <div className={`${isEmbedded ? 'relative h-full' : 'fixed inset-0 z-50 bg-slate-50 dark:bg-[#0B1120] animate-in fade-in slide-in-from-bottom-10 duration-300'} overflow-hidden flex flex-col`}>
+        <div className={`${isEmbedded ? 'relative h-full' : 'fixed inset-0 z-50 bg-[#F7F8FF] dark:bg-[#0A0B10] animate-in fade-in slide-in-from-bottom-10 duration-300'} overflow-hidden flex flex-col`}>
 
             {/* TOP BAR */}
-            <div className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] flex items-center justify-between px-6 shrink-0">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-violet-100 dark:bg-violet-900/30 rounded-xl flex items-center justify-center text-violet-600 dark:text-violet-400">
-                        <MessageSquare size={20} />
+            <div className="h-20 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 bg-white dark:bg-[#1A1D2E] flex items-center justify-between px-8 shrink-0">
+                <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-[#F7F8FF] dark:bg-[#0A0B10] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 flex items-center justify-center text-[#3B4FD8] dark:text-[#6C7EF5]">
+                        <MessageSquare size={24} />
                     </div>
                     <div>
-                        <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100 leading-none">Class Discussions</h1>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Connect with your peers and instructors</p>
+                        <h1 className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] leading-none" style={{ fontFamily: SERIF }}>Class Discussions</h1>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mt-2" style={{ fontFamily: MONO }}>Connect with your peers and instructors</p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                     {/* Search - Visual only for now */}
                     <div className="relative hidden md:block">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#3B4FD8] dark:text-[#6C7EF5]" size={16} />
                         <input
                             type="text"
-                            placeholder="Search discussions..."
-                            className="bg-slate-100 dark:bg-slate-800 border-none rounded-full py-2 pl-10 pr-4 w-64 text-sm focus:ring-2 focus:ring-violet-500"
+                            placeholder="SEARCH DISCUSSIONS"
+                            className="bg-[#F7F8FF] dark:bg-[#0A0B10] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 rounded-none py-3 pl-12 pr-4 w-72 text-[10px] font-bold tracking-widest text-[#1A1D2E] dark:text-[#E8EAF2] focus:ring-0 focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] outline-none transition-colors placeholder:text-[#6B7194] dark:placeholder:text-[#8B90B8]"
+                            style={{ fontFamily: MONO }}
                         />
                     </div>
 
                     <button
                         onClick={() => dispatch(setDiscussionMaximized(false))}
-                        className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center gap-2 transition-colors"
+                        className="p-3 text-[#1A1D2E] dark:text-[#E8EAF2] hover:bg-[#3B4FD8]/10 dark:hover:bg-[#6C7EF5]/10 border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 rounded-none flex items-center gap-2 transition-colors"
+                        style={{ fontFamily: MONO }}
                     >
-                        <Minimize2 size={20} />
-                        <span className="hidden sm:inline text-sm font-medium">Minimize</span>
+                        <Minimize2 size={18} />
+                        <span className="hidden sm:inline text-[10px] font-bold uppercase tracking-widest">MINIMIZE</span>
                     </button>
                 </div>
             </div>
 
             {/* MAIN CONTENT GRID */}
-            <div className="flex-1 overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+            <div className="flex-1 overflow-hidden grid grid-cols-1 lg:grid-cols-12 bg-[#F7F8FF] dark:bg-[#0A0B10]">
 
                 {/* LEFT: Thread List */}
                 <div
@@ -124,46 +129,49 @@ const DiscussionFullPage = ({ courseId, isEmbedded = false, isFaculty = false })
                 >
 
                     {/* Controls & Filters */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-                        <div className="flex bg-slate-100 dark:bg-slate-800/50 p-1 rounded-lg">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+                        <div className="flex bg-[#F7F8FF] dark:bg-[#0A0B10] p-1 border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 rounded-none">
                             {['latest', 'top', 'unanswered'].map((filter) => (
                                 <button
                                     key={filter}
                                     onClick={() => setSelectedSort(filter)}
-                                    className={`px-4 py-1.5 text-sm font-medium rounded-md capitalize transition-all ${selectedSort === filter
-                                        ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm'
-                                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                                    className={`px-6 py-2 text-[10px] uppercase font-bold tracking-widest rounded-none transition-all ${selectedSort === filter
+                                        ? 'bg-[#3B4FD8] text-white shadow-sm'
+                                        : 'text-[#6B7194] dark:text-[#8B90B8] hover:text-[#1A1D2E] dark:hover:text-[#E8EAF2]'
                                         }`}
+                                    style={{ fontFamily: MONO }}
                                 >
-                                    {filter === 'latest' ? 'Newest' : filter}
+                                    {filter === 'latest' ? 'NEWEST' : filter.toUpperCase()}
                                 </button>
                             ))}
                         </div>
 
                         <button
                             onClick={() => setShowCreate(!showCreate)}
-                            className="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium text-sm flex items-center gap-2 shadow-sm shadow-violet-200 dark:shadow-none transition-all"
+                            className="px-6 py-3 bg-[#F5A623] hover:bg-[#d9911a] text-[#1A1D2E] rounded-none font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-sm transition-colors"
+                            style={{ fontFamily: MONO }}
                         >
                             {showCreate ? <X size={18} /> : <Plus size={18} />}
-                            {showCreate ? 'Cancel' : 'Create Discussion'}
+                            {showCreate ? 'CANCEL' : 'CREATE DISCUSSION'}
                         </button>
                     </div>
 
                     {/* Create Form */}
                     {showCreate && (
-                        <div className="mb-8 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm animate-in slide-in-from-top-4">
-                            <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700/50 flex items-center justify-between">
-                                <h3 className="font-semibold text-slate-800 dark:text-slate-200">Start a New Discussion</h3>
-                                <button onClick={() => setShowCreate(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
-                                    <X size={18} />
+                        <div className="mb-8 bg-white dark:bg-[#1A1D2E] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 rounded-none overflow-hidden shadow-sm animate-in slide-in-from-top-4">
+                            <div className="p-6 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 flex items-center justify-between">
+                                <h3 className="text-xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>Start a New Discussion</h3>
+                                <button onClick={() => setShowCreate(false)} className="text-[#6B7194] hover:text-[#1A1D2E] dark:text-[#8B90B8] dark:hover:text-[#E8EAF2] hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 p-2 transition-colors">
+                                    <X size={20} />
                                 </button>
                             </div>
-                            <div className="p-6">
-                                <div className="space-y-4">
+                            <div className="p-8">
+                                <div className="space-y-6">
                                     <div>
-                                        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Title</label>
+                                        <label className="block text-[10px] font-bold text-[#6B7194] dark:text-[#8B90B8] uppercase tracking-widest mb-2" style={{ fontFamily: MONO }}>TITLE</label>
                                         <input
-                                            className="w-full text-lg font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all placeholder:text-slate-400"
+                                            className="w-full text-xl font-bold bg-[#F7F8FF] dark:bg-[#0A0B10] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 rounded-none px-6 py-4 focus:ring-0 focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] outline-none transition-all placeholder:text-[#6B7194]/50 dark:placeholder:text-[#8B90B8]/50 text-[#1A1D2E] dark:text-[#E8EAF2]"
+                                            style={{ fontFamily: SERIF }}
                                             placeholder="What's this discussion about?"
                                             value={title}
                                             onChange={e => setTitle(e.target.value)}
@@ -171,27 +179,29 @@ const DiscussionFullPage = ({ courseId, isEmbedded = false, isFaculty = false })
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Content</label>
+                                        <label className="block text-[10px] font-bold text-[#6B7194] dark:text-[#8B90B8] uppercase tracking-widest mb-2" style={{ fontFamily: MONO }}>CONTENT</label>
                                         <textarea
-                                            className="w-full min-h-[150px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4 text-slate-700 dark:text-slate-300 resize-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all placeholder:text-slate-400"
+                                            className="w-full min-h-[160px] bg-[#F7F8FF] dark:bg-[#0A0B10] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 rounded-none p-6 text-[#1A1D2E] dark:text-[#E8EAF2] resize-none focus:ring-0 focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] outline-none transition-all placeholder:text-[#6B7194]/50 dark:placeholder:text-[#8B90B8]/50"
                                             placeholder="Elaborate on your question or thought..."
                                             value={content}
                                             onChange={e => setContent(e.target.value)}
                                         />
                                     </div>
-                                    <div className="flex justify-end gap-3 pt-2">
+                                    <div className="flex justify-end gap-4 pt-4">
                                         <button
                                             onClick={() => setShowCreate(false)}
-                                            className="px-4 py-2 text-slate-600 dark:text-slate-400 font-medium hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                                            className="px-6 py-4 border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 text-[#1A1D2E] dark:text-[#E8EAF2] font-bold hover:bg-[#F7F8FF] dark:hover:bg-[#0A0B10] rounded-none transition-colors text-[10px] uppercase tracking-widest"
+                                            style={{ fontFamily: MONO }}
                                         >
-                                            Cancel
+                                            CANCEL
                                         </button>
                                         <button
                                             onClick={handleCreate}
                                             disabled={!title.trim() || !content.trim()}
-                                            className="px-6 py-2 bg-violet-600 text-white font-medium rounded-lg hover:bg-violet-700 shadow-md shadow-violet-200 dark:shadow-none disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                            className="px-8 py-4 bg-[#3B4FD8] hover:bg-[#2f3fab] text-white font-bold rounded-none shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-[10px] uppercase tracking-widest"
+                                            style={{ fontFamily: MONO }}
                                         >
-                                            Post Discussion
+                                            POST DISCUSSION
                                         </button>
                                     </div>
                                 </div>
@@ -200,51 +210,51 @@ const DiscussionFullPage = ({ courseId, isEmbedded = false, isFaculty = false })
                     )}
 
                     {/* Thread Cards */}
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                         {threads.map((thread) => (
-                            <div key={thread._id} className="bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-700/50 rounded-xl p-1 flex gap-4 hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+                            <div key={thread._id} className="bg-white dark:bg-[#1A1D2E] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 rounded-none flex hover:border-[#3B4FD8]/30 dark:hover:border-[#6C7EF5]/30 transition-colors shadow-sm">
                                 {/* Vote Column */}
-                                <div className="flex flex-col items-center gap-1 p-3 min-w-[3rem] bg-slate-50 dark:bg-slate-800/50 rounded-l-lg border-r border-transparent">
+                                <div className="flex flex-col items-center gap-2 p-4 min-w-[4rem] bg-[#F7F8FF] dark:bg-[#0A0B10] border-r border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10">
                                     <button
                                         onClick={() => handleUpvote(thread._id)}
-                                        className="text-slate-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 p-1 rounded transition-colors"
+                                        className="text-[#6B7194] dark:text-[#8B90B8] hover:text-[#F5A623] hover:bg-[#F5A623]/10 p-2 rounded-none transition-colors"
                                     >
-                                        <ChevronUp size={24} className={thread.upvotes?.includes('ME') ? 'text-orange-500' : ''} />
+                                        <ChevronUp size={28} className={thread.upvotes?.includes('ME') ? 'text-[#F5A623]' : ''} />
                                     </button>
-                                    <span className="font-bold text-sm text-slate-700 dark:text-slate-300">
+                                    <span className="font-bold text-lg text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: MONO }}>
                                         {thread.upvotes?.length || 0}
                                     </span>
-                                    <button className="text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 p-1 rounded transition-colors">
-                                        <ChevronDown size={24} />
+                                    <button className="text-[#6B7194] dark:text-[#8B90B8] hover:text-[#F5A623] hover:bg-[#F5A623]/10 p-2 rounded-none transition-colors">
+                                        <ChevronDown size={28} />
                                     </button>
                                 </div>
 
                                 {/* Content Column */}
-                                <div className="flex-1 py-3 pr-4">
+                                <div className="flex-1 p-6">
                                     {/* Meta */}
-                                    <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-2">
-                                        <div className="w-5 h-5 rounded-full bg-indigo-100 dark:bg-indigo-900/30 overflow-hidden">
+                                    <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-4" style={{ fontFamily: MONO }}>
+                                        <div className="w-6 h-6 border border-[#3B4FD8]/20 overflow-hidden bg-[#F7F8FF] dark:bg-[#0A0B10]">
                                             {thread.createdBy?.profile?.avatar ? (
                                                 <img src={thread.createdBy.profile.avatar} className="w-full h-full object-cover" />
                                             ) : (
-                                                <div className="w-full h-full flex items-center justify-center font-bold text-indigo-600 dark:text-indigo-400 text-[9px]">
+                                                <div className="w-full h-full flex items-center justify-center text-[#3B4FD8] dark:text-[#6C7EF5]">
                                                     {thread.createdBy?.name?.[0]}
                                                 </div>
                                             )}
                                         </div>
-                                        <span className="font-medium text-slate-700 dark:text-slate-300 hover:underline cursor-pointer">
+                                        <span className="text-[#1A1D2E] dark:text-[#E8EAF2] hover:underline cursor-pointer">
                                             {thread.createdBy?.name}
                                         </span>
                                         <span>•</span>
                                         <span>{formatDistanceToNow(new Date(thread.createdAt), { addSuffix: true })}</span>
                                         {thread.isPinned && (
-                                            <span className="ml-2 px-1.5 py-0.5 bg-sky-100 text-sky-700 dark:bg-sky-500/10 dark:text-sky-400 text-[10px] font-bold rounded uppercase tracking-wider">
-                                                Pinned
+                                            <span className="ml-[2px] px-2 py-1 border border-[#3B4FD8]/30 text-[#3B4FD8] dark:border-[#6C7EF5]/30 dark:text-[#6C7EF5]">
+                                                PINNED
                                             </span>
                                         )}
                                         {thread.isFAQ && (
-                                            <span className="ml-2 px-1.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 text-[10px] font-bold rounded uppercase tracking-wider flex items-center gap-1">
-                                                <HelpCircle size={10} /> FAQ
+                                            <span className="ml-[2px] px-2 py-1 border border-[#10B981]/30 text-[#10B981] flex items-center gap-2">
+                                                <HelpCircle size={12} /> FAQ
                                             </span>
                                         )}
                                     </div>
@@ -252,53 +262,54 @@ const DiscussionFullPage = ({ courseId, isEmbedded = false, isFaculty = false })
                                     {/* Title & Preview */}
                                     <h3
                                         onClick={() => setExpandedThreadId(thread._id)}
-                                        className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2 cursor-pointer hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                                        className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-3 cursor-pointer hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors"
+                                        style={{ fontFamily: SERIF }}
                                     >
                                         {thread.title}
                                     </h3>
-                                    <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-2 mb-4">
+                                    <p className="text-[#1A1D2E]/70 dark:text-[#E8EAF2]/70 text-base line-clamp-2 mb-6 leading-relaxed">
                                         {thread.content}
                                     </p>
 
                                     {/* Actions */}
-                                    <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-6">
                                         <button
                                             onClick={() => setExpandedThreadId(thread._id)}
-                                            className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 px-2 py-1 rounded-md transition-colors"
+                                            className="flex items-center gap-2 text-[#6B7194] dark:text-[#8B90B8] hover:bg-[#F7F8FF] dark:hover:bg-[#0A0B10] px-3 py-2 border border-transparent hover:border-[#3B4FD8]/20 dark:hover:border-[#6C7EF5]/20 transition-colors"
                                         >
                                             <MessageCircle size={18} />
-                                            <span className="text-xs font-bold">{thread.replyCount} Comments</span>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest" style={{ fontFamily: MONO }}>{thread.replyCount} COMMENTS</span>
                                         </button>
 
                                         {isFaculty && (
                                             <>
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); dispatch(toggleThreadPin(thread._id)); }}
-                                                    className={`p-1.5 rounded-md transition-colors ${thread.isPinned ? 'text-sky-600 bg-sky-50 dark:bg-sky-900/20' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
+                                                    className={`p-2 border transition-colors ${thread.isPinned ? 'text-[#3B4FD8] border-[#3B4FD8]/30 bg-[#3B4FD8]/5 dark:text-[#6C7EF5] dark:border-[#6C7EF5]/30' : 'text-[#6B7194] dark:text-[#8B90B8] border-transparent hover:border-[#3B4FD8]/20 dark:hover:border-[#6C7EF5]/20'}`}
                                                     title={thread.isPinned ? "Unpin" : "Pin"}
                                                 >
-                                                    <Pin size={16} />
+                                                    <Pin size={18} />
                                                 </button>
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); dispatch(toggleThreadFAQ(thread._id)); }}
-                                                    className={`p-1.5 rounded-md transition-colors ${thread.isFAQ ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
+                                                    className={`p-2 border transition-colors ${thread.isFAQ ? 'text-[#10B981] border-[#10B981]/30 bg-[#10B981]/5' : 'text-[#6B7194] dark:text-[#8B90B8] border-transparent hover:border-[#10B981]/20'}`}
                                                     title={thread.isFAQ ? "Unmark FAQ" : "Mark as FAQ"}
                                                 >
-                                                    <HelpCircle size={16} />
+                                                    <HelpCircle size={18} />
                                                 </button>
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); dispatch(toggleThreadLock(thread._id)); }}
-                                                    className={`p-1.5 rounded-md transition-colors ${thread.isLocked ? 'text-rose-600 bg-rose-50 dark:bg-rose-900/20' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
+                                                    className={`p-2 border transition-colors ${thread.isLocked ? 'text-[#EF4444] border-[#EF4444]/30 bg-[#EF4444]/5' : 'text-[#6B7194] dark:text-[#8B90B8] border-transparent hover:border-[#EF4444]/20'}`}
                                                     title={thread.isLocked ? "Unlock" : "Lock"}
                                                 >
-                                                    <Lock size={16} />
+                                                    <Lock size={18} />
                                                 </button>
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); if (window.confirm('Delete thread?')) dispatch(deleteThread(thread._id)); }}
-                                                    className="p-1.5 rounded-md text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                                    className="p-2 border border-transparent text-[#6B7194] dark:text-[#8B90B8] hover:text-[#EF4444] hover:border-[#EF4444]/20 transition-colors"
                                                     title="Delete"
                                                 >
-                                                    <Trash2 size={16} />
+                                                    <Trash2 size={18} />
                                                 </button>
                                             </>
                                         )}
@@ -307,15 +318,15 @@ const DiscussionFullPage = ({ courseId, isEmbedded = false, isFaculty = false })
                             </div>
                         ))}
                         {loading && hasMore && (
-                            <div className="py-4 text-center text-slate-500 text-sm animate-pulse">
-                                Loading more discussions...
+                            <div className="py-8 text-center text-[#6B7194] dark:text-[#8B90B8] text-[10px] font-bold uppercase tracking-widest animate-pulse" style={{ fontFamily: MONO }}>
+                                LOADING MORE DISCUSSIONS...
                             </div>
                         )}
                     </div>
                 </div>
 
                 {/* RIGHT: Selected Thread Detail (or Trending Sidebar if none selected) */}
-                <div className={`col-span-1 lg:col-span-4 bg-white dark:bg-[#1E293B] border-l border-slate-200 dark:border-slate-800 ${expandedThreadId ? 'block' : 'hidden lg:block'}`}>
+                <div className={`col-span-1 lg:col-span-4 bg-white dark:bg-[#1A1D2E] border-l border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 ${expandedThreadId ? 'block' : 'hidden lg:block'}`}>
                     {expandedThreadId ? (
                         <ThreadViewer
                             threadId={expandedThreadId}
@@ -323,14 +334,14 @@ const DiscussionFullPage = ({ courseId, isEmbedded = false, isFaculty = false })
                             isFaculty={isFaculty}
                         />
                     ) : (
-                        <div className="p-6">
-                            <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-4">
-                                Community Rules
+                        <div className="p-8">
+                            <h3 className="text-[10px] font-bold text-[#6B7194] dark:text-[#8B90B8] uppercase tracking-widest mb-6" style={{ fontFamily: MONO }}>
+                                COMMUNITY RULES
                             </h3>
-                            <div className="space-y-4 text-sm text-slate-600 dark:text-slate-300">
-                                <p>1. Be respectful to others.</p>
-                                <p>2. Keep discussions relevant to the course.</p>
-                                <p>3. No spam or self-promotion.</p>
+                            <div className="space-y-4 text-sm text-[#1A1D2E]/80 dark:text-[#E8EAF2]/80 font-medium">
+                                <p className="p-4 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 bg-[#F7F8FF] dark:bg-[#0A0B10]"><span className="text-[#3B4FD8] font-bold mr-2">01.</span> Be respectful to others.</p>
+                                <p className="p-4 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 bg-[#F7F8FF] dark:bg-[#0A0B10]"><span className="text-[#3B4FD8] font-bold mr-2">02.</span> Keep discussions relevant to the course.</p>
+                                <p className="p-4 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 bg-[#F7F8FF] dark:bg-[#0A0B10]"><span className="text-[#3B4FD8] font-bold mr-2">03.</span> No spam or self-promotion.</p>
                             </div>
                         </div>
                     )}
@@ -373,92 +384,95 @@ const ThreadViewer = ({ threadId, onClose, isFaculty }) => {
     if (!thread) return null;
 
     return (
-        <div className="h-full flex flex-col">
+        <div className="h-full flex flex-col bg-white dark:bg-[#1A1D2E]">
             {/* Header */}
-            <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
-                <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full lg:hidden">
-                    <X size={20} />
-                </button>
-                <span className="font-semibold text-sm">Thread Details</span>
-                {thread.isLocked && <span className="text-xs bg-rose-100 text-rose-600 px-2 py-0.5 rounded font-bold flex items-center gap-1"><Lock size={12} /> Locked</span>}
+            <div className="p-6 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <button onClick={onClose} className="p-2 border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 hover:bg-[#F7F8FF] dark:hover:bg-[#0A0B10] text-[#1A1D2E] dark:text-[#E8EAF2] rounded-none lg:hidden">
+                        <X size={20} />
+                    </button>
+                    <span className="font-bold text-[10px] uppercase tracking-widest text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: MONO }}>THREAD DETAILS</span>
+                </div>
+                {thread.isLocked && <span className="text-[10px] font-bold border border-[#EF4444]/30 text-[#EF4444] px-3 py-1 uppercase tracking-widest flex items-center gap-2" style={{ fontFamily: MONO }}><Lock size={12} /> LOCKED</span>}
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                 {/* OP */}
-                <div className="mb-6">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-8 h-8 rounded-full bg-violet-100 overflow-hidden">
-                            {thread.createdBy?.profile?.avatar && <img src={thread.createdBy.profile.avatar} className="w-full h-full object-cover" />}
+                <div className="mb-10">
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="w-12 h-12 border border-[#3B4FD8]/20 bg-[#F7F8FF] dark:bg-[#0A0B10] overflow-hidden">
+                            {thread.createdBy?.profile?.avatar ? <img src={thread.createdBy.profile.avatar} className="w-full h-full object-cover" /> : <div className="w-full h-full flex justify-center items-center font-bold text-[#3B4FD8] dark:text-[#6C7EF5]">{thread.createdBy?.name?.[0]}</div>}
                         </div>
                         <div>
-                            <p className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                            <p className="font-bold text-lg text-[#1A1D2E] dark:text-[#E8EAF2] flex items-center gap-3" style={{ fontFamily: SERIF }}>
                                 {thread.createdBy?.name}
-                                {thread.createdBy?.role === 'FACULTY' && <span className="bg-violet-100 text-violet-700 text-[10px] px-1.5 py-0.5 rounded font-bold">INSTRUCTOR</span>}
+                                {thread.createdBy?.role === 'FACULTY' && <span className="border border-[#F5A623] text-[#F5A623] text-[9px] font-bold px-2 py-1 uppercase tracking-widest" style={{ fontFamily: MONO }}>INSTRUCTOR</span>}
                             </p>
-                            <p className="text-xs text-slate-500">{formatDistanceToNow(new Date(thread.createdAt), { addSuffix: true })}</p>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mt-1" style={{ fontFamily: MONO }}>{formatDistanceToNow(new Date(thread.createdAt), { addSuffix: true })}</p>
                         </div>
                     </div>
-                    <h2 className="text-xl font-bold mb-2 text-slate-900 dark:text-slate-100">{thread.title}</h2>
-                    <div className="prose dark:prose-invert text-sm text-slate-600 dark:text-slate-300">
+                    <h2 className="text-3xl font-bold mb-4 text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>{thread.title}</h2>
+                    <div className="prose prose-lg dark:prose-invert text-[#1A1D2E]/80 dark:text-[#E8EAF2]/80 leading-relaxed font-medium">
                         {thread.content}
                     </div>
                 </div>
 
-                <div className="h-px bg-slate-200 dark:bg-slate-800 my-4" />
+                <div className="h-px bg-[#3B4FD8]/10 dark:bg-[#6C7EF5]/10 my-8" />
 
                 {/* Replies */}
-                <div className="space-y-6">
+                <div className="space-y-8">
                     {activeThreadReplies.map(reply => (
-                        <div key={reply._id} className={`flex gap-3 ${reply.parentReplyId ? 'ml-8 md:ml-12 border-l-2 border-slate-100 dark:border-slate-800 pl-4' : ''} ${(thread.bestReplyId?._id === reply._id || thread.bestReplyId === reply._id) ? 'bg-amber-50 dark:bg-amber-900/10 p-3 rounded-lg border border-amber-200 dark:border-amber-800' : ''}`}>
-                            <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 shrink-0 overflow-hidden">
+                        <div key={reply._id} className={`flex gap-4 ${reply.parentReplyId ? 'ml-8 md:ml-12 border-l-2 border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 pl-6' : ''} ${(thread.bestReplyId?._id === reply._id || thread.bestReplyId === reply._id) ? 'bg-[#F2A323]/5 p-6 border border-[#F5A623]/30' : ''}`}>
+                            <div className="w-8 h-8 border border-[#3B4FD8]/20 bg-[#F7F8FF] dark:bg-[#0A0B10] shrink-0 overflow-hidden">
                                 {reply.createdBy?.profile?.avatar ? (
                                     <img src={reply.createdBy.profile.avatar} className="w-full h-full object-cover" />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-slate-500">
+                                    <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-[#3B4FD8] dark:text-[#6C7EF5] uppercase" style={{ fontFamily: MONO }}>
                                         {reply.createdBy?.name?.[0]}
                                     </div>
                                 )}
                             </div>
                             <div className="flex-1">
-                                <div className="flex items-center justify-between mb-1">
-                                    <div className="flex items-center gap-2">
-                                        <span className="font-semibold text-xs text-slate-800 dark:text-slate-200">{reply.createdBy?.name}</span>
-                                        <span className="text-[10px] text-slate-400">{formatDistanceToNow(new Date(reply.createdAt))} ago</span>
+                                <div className="flex flex-wrap items-center justify-between mb-3 gap-2">
+                                    <div className="flex items-center gap-3">
+                                        <span className="font-bold text-base text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>{reply.createdBy?.name}</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>{formatDistanceToNow(new Date(reply.createdAt))} AGO</span>
                                         {(thread.bestReplyId?._id === reply._id || thread.bestReplyId === reply._id) && (
-                                            <span className="flex items-center gap-1 text-[10px] font-bold text-amber-600 dark:text-amber-500 bg-amber-100 dark:bg-amber-900/30 px-1.5 py-0.5 rounded-full">
-                                                <Star size={10} fill="currentColor" /> Best Answer
+                                            <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#F5A623] border border-[#F5A623]/30 bg-[#F5A623]/5 px-2 py-1" style={{ fontFamily: MONO }}>
+                                                <Star size={12} fill="currentColor" /> BEST ANSWER
                                             </span>
                                         )}
                                     </div>
 
                                     {isFaculty && (
-                                        <div className="flex items-center gap-1">
+                                        <div className="flex items-center gap-2">
                                             <button
                                                 onClick={() => dispatch(markBestReply({ threadId: thread._id, replyId: reply._id }))}
-                                                className={`p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors ${(thread.bestReplyId?._id === reply._id || thread.bestReplyId === reply._id) ? 'text-amber-500' : 'text-slate-300 hover:text-amber-500'}`}
+                                                className={`p-2 border transition-colors ${(thread.bestReplyId?._id === reply._id || thread.bestReplyId === reply._id) ? 'text-[#F5A623] border-[#F5A623]/30 bg-[#F5A623]/5' : 'text-[#6B7194] border-transparent hover:border-[#F5A623]/30 hover:text-[#F5A623]'}`}
                                                 title="Mark as Best Answer"
                                             >
-                                                <Star size={14} fill={(thread.bestReplyId?._id === reply._id || thread.bestReplyId === reply._id) ? "currentColor" : "none"} />
+                                                <Star size={16} fill={(thread.bestReplyId?._id === reply._id || thread.bestReplyId === reply._id) ? "currentColor" : "none"} />
                                             </button>
                                             <button
                                                 onClick={() => { if (window.confirm('Delete reply?')) dispatch(deleteReply(reply._id)); }}
-                                                className="p-1 rounded text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                                className="p-2 border border-transparent text-[#6B7194] hover:text-[#EF4444] hover:border-[#EF4444]/30 transition-colors"
                                                 title="Delete Reply"
                                             >
-                                                <Trash2 size={14} />
+                                                <Trash2 size={16} />
                                             </button>
                                         </div>
                                     )}
                                 </div>
-                                <p className="text-sm text-slate-600 dark:text-slate-300 mb-1">{reply.content}</p>
+                                <p className="text-base text-[#1A1D2E]/80 dark:text-[#E8EAF2]/80 mb-4 leading-relaxed font-medium">{reply.content}</p>
 
                                 {/* Reply Action - Hide if locked */}
                                 {!thread.isLocked && (
                                     <button
                                         onClick={() => initiateReply(reply)}
-                                        className="text-xs text-violet-600 dark:text-violet-400 font-medium hover:underline flex items-center gap-1"
+                                        className="text-[10px] font-bold text-[#3B4FD8] dark:text-[#6C7EF5] uppercase tracking-widest hover:underline flex items-center gap-2"
+                                        style={{ fontFamily: MONO }}
                                     >
-                                        Reply
+                                        REPLY
                                     </button>
                                 )}
                             </div>
@@ -469,24 +483,24 @@ const ThreadViewer = ({ threadId, onClose, isFaculty }) => {
 
             {/* Reply Box - Conditional Render based on Lock Status */}
             {!thread.isLocked ? (
-                <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
+                <div className="p-6 border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 bg-[#F7F8FF] dark:bg-[#0A0B10]">
                     {replyingTo && (
-                        <div className="flex items-center justify-between bg-violet-50 dark:bg-violet-900/20 px-3 py-2 rounded-lg mb-2 text-xs">
-                            <span className="text-violet-700 dark:text-violet-300 font-medium">
-                                Replying to <span className="font-bold">{replyingTo.name}</span>
+                        <div className="flex items-center justify-between border border-[#3B4FD8]/20 bg-white dark:bg-[#1A1D2E] px-4 py-3 mb-4 text-[10px] uppercase font-bold tracking-widest" style={{ fontFamily: MONO }}>
+                            <span className="text-[#6B7194] dark:text-[#8B90B8]">
+                                REPLYING TO <span className="text-[#3B4FD8] dark:text-[#6C7EF5]">{replyingTo.name}</span>
                             </span>
                             <button
                                 onClick={() => setReplyingTo(null)}
-                                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                                className="text-[#6B7194] hover:text-[#1A1D2E] dark:hover:text-[#E8EAF2]"
                             >
-                                <X size={14} />
+                                <X size={16} />
                             </button>
                         </div>
                     )}
                     <div className="relative">
                         <textarea
-                            className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:ring-1 focus:ring-violet-500 pr-12 resize-none"
-                            rows="3"
+                            className="w-full bg-white dark:bg-[#1A1D2E] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 rounded-none p-4 text-[#1A1D2E] dark:text-[#E8EAF2] focus:ring-0 focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] outline-none transition-all placeholder:text-[#6B7194]/50 pr-16 resize-none"
+                            rows="4"
                             placeholder="Write a comment..."
                             value={replyContent}
                             onChange={e => setReplyContent(e.target.value)}
@@ -494,17 +508,17 @@ const ThreadViewer = ({ threadId, onClose, isFaculty }) => {
                         <button
                             onClick={handleReply}
                             disabled={!replyContent.trim()}
-                            className="absolute bottom-2 right-2 p-1.5 bg-violet-600 text-white rounded-md hover:bg-violet-700 disabled:opacity-50 transition-colors"
+                            className="absolute bottom-4 right-4 p-4 bg-[#3B4FD8] text-white rounded-none hover:bg-[#2f3fab] disabled:opacity-50 transition-colors"
                         >
-                            <MessageSquare size={16} />
+                            <MessageSquare size={18} />
                         </button>
                     </div>
                 </div>
             ) : (
-                <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-center">
-                    <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center justify-center gap-2">
+                <div className="p-6 border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 bg-[#F7F8FF] dark:bg-[#0A0B10] text-center">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#EF4444] flex items-center justify-center gap-3" style={{ fontFamily: MONO }}>
                         <Lock size={16} />
-                        This thread has been locked by an instructor.
+                        THIS THREAD HAS BEEN LOCKED BY AN INSTRUCTOR.
                     </p>
                 </div>
             )}

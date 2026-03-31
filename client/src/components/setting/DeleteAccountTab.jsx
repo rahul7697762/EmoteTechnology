@@ -1,8 +1,11 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertTriangle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { deleteAccount } from '../../redux/slices/authSlice';
+
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
 
 const DeleteAccountTab = () => {
     const dispatch = useDispatch();
@@ -24,24 +27,28 @@ const DeleteAccountTab = () => {
     };
 
     return (
-        <div className="bg-white dark:bg-[#1a1c23] rounded-3xl border border-red-200 dark:border-red-900/30 shadow-xl shadow-red-100/50 dark:shadow-none overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-500">
-            <div className="p-8 border-b border-red-100 dark:border-red-900/20 bg-red-50/50 dark:bg-red-900/5">
-                <h2 className="text-xl font-bold text-red-600 dark:text-red-400">Delete Account</h2>
-                <p className="text-sm text-red-600/70 dark:text-red-400/70 mt-1">Irreversible actions for your account.</p>
+        <div className="bg-white dark:bg-[#252A41] border border-[#E25C5C]/20 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="p-8 border-b border-[#E25C5C]/20 bg-[#E25C5C]/5 flex items-center gap-4">
+                <AlertTriangle size={24} className="text-[#E25C5C]" strokeWidth={1.5} />
+                <div>
+                    <h2 className="text-2xl font-bold text-[#E25C5C]" style={{ fontFamily: SERIF }}>Delete Account</h2>
+                    <p className="text-[#E25C5C]/70 text-[10px] uppercase tracking-widest mt-1 font-semibold" style={{ fontFamily: MONO }}>Irreversible actions for your account.</p>
+                </div>
             </div>
             <div className="p-8">
-                <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-6 rounded-2xl border border-red-100 dark:border-red-900/20 bg-red-50/30 dark:bg-red-900/10">
-                    <div>
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Delete Account</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mt-1 leading-relaxed">
-                            Permanently remove your account and all of its content from the EmoteTechnology platform.
-                            <span className="font-bold text-red-500 block mt-1">This action cannot be undone.</span>
+                <div className="flex flex-col md:flex-row items-center justify-between gap-8 p-8 border border-[#E25C5C]/20 bg-[#F7F8FF] dark:bg-[#1A1D2E]">
+                    <div className="flex-1">
+                        <h3 className="text-xl font-bold mb-3" style={{ fontFamily: SERIF }}>Delete Account Data</h3>
+                        <p className="text-[#6B7194] dark:text-[#8B90B8] text-sm leading-relaxed" style={{ fontFamily: MONO }}>
+                            Permanently remove your account and all of its content from the platform.
+                            <span className="font-bold text-[#E25C5C] block mt-4 uppercase tracking-widest text-[10px]">Warning: This action cannot be undone.</span>
                         </p>
                     </div>
                     <button
                         onClick={handleDeleteAccount}
                         disabled={isDeletingAccount}
-                        className="shrink-0 flex items-center gap-2 px-6 py-3 bg-white dark:bg-transparent border-2 border-red-500 text-red-600 dark:text-red-500 hover:bg-red-500 hover:text-white rounded-xl font-bold text-sm transition-all hover:scale-105 shadow-sm disabled:opacity-70 disabled:transform-none"
+                        className="shrink-0 flex items-center gap-3 px-8 py-3.5 bg-transparent border-2 border-[#E25C5C] text-[#E25C5C] hover:bg-[#E25C5C] hover:text-white transition-colors disabled:opacity-70 disabled:pointer-events-none font-bold text-xs uppercase tracking-widest"
+                        style={{ fontFamily: MONO }}
                     >
                         {isDeletingAccount && <Loader2 size={16} className="animate-spin" />}
                         {isDeletingAccount ? 'Deleting...' : 'Delete Account'}

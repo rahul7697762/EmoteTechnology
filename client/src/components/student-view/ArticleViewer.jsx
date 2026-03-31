@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { completeLesson } from '../../redux/slices/progressSlice';
@@ -7,12 +6,13 @@ import remarkGfm from 'remark-gfm';
 import { BookOpen, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const ArticleViewer = ({ lesson, courseId }) => {
     const dispatch = useDispatch();
     const { lessonProgress, isLoading } = useSelector((state) => state.progress);
     const progress = lessonProgress[lesson._id];
-
-
 
     const handleMarkCompleted = async () => {
         try {
@@ -27,30 +27,33 @@ const ArticleViewer = ({ lesson, courseId }) => {
     };
 
     return (
-        <div className="flex-1 overflow-y-auto custom-scrollbar bg-white dark:bg-[#0F172A]">
-            <div className="max-w-3xl mx-auto px-6 py-10 lg:py-16">
-                <div className="mb-8 pb-6 border-b border-slate-100 dark:border-slate-800">
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-2 text-violet-600 dark:text-violet-400">
-                            <BookOpen size={20} />
-                            <span className="text-xs font-bold uppercase tracking-wider">Reading Material</span>
+        <div className="flex-1 overflow-y-auto custom-scrollbar bg-[#F7F8FF] dark:bg-[#0A0B10]">
+            <div className="max-w-4xl mx-auto px-6 py-12 lg:py-20">
+                <div className="mb-12 pb-8 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10">
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-3 text-[#3B4FD8] dark:text-[#6C7EF5] bg-[#3B4FD8]/5 dark:bg-[#6C7EF5]/5 px-3 py-1.5 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10">
+                            <BookOpen size={16} />
+                            <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ fontFamily: MONO }}>Reading Material</span>
                         </div>
                         {progress?.isCompleted && (
-                            <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-bold text-sm bg-green-50 dark:bg-green-900/20 px-3 py-1 rounded-full">
-                                <CheckCircle size={16} /> Completed
+                            <span className="flex items-center gap-2 bg-[#3B4FD8] text-white font-bold text-[10px] uppercase tracking-widest px-4 py-1.5 shadow-sm border border-[#3B4FD8]/20" style={{ fontFamily: MONO }}>
+                                <CheckCircle size={14} /> COMPLETED
                             </span>
                         )}
                     </div>
-                    <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">
+                    <h1 className="text-4xl md:text-6xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] leading-tight" style={{ fontFamily: SERIF }}>
                         {lesson.title}
                     </h1>
                 </div>
 
                 <div className="prose prose-lg dark:prose-invert max-w-none 
-                    prose-headings:font-bold prose-headings:text-slate-900 dark:prose-headings:text-white
-                    prose-p:text-slate-600 dark:prose-p:text-slate-300 prose-p:leading-relaxed
-                    prose-a:text-violet-600 dark:prose-a:text-violet-400 prose-a:no-underline hover:prose-a:underline
-                    prose-img:rounded-xl prose-img:shadow-lg prose-img:my-8
+                    prose-headings:font-bold prose-headings:text-[#1A1D2E] dark:prose-headings:text-[#E8EAF2]
+                    prose-p:text-[#1A1D2E]/80 dark:prose-p:text-[#E8EAF2]/80 prose-p:leading-relaxed
+                    prose-a:text-[#3B4FD8] dark:prose-a:text-[#6C7EF5] prose-a:font-bold prose-a:underline-offset-4 hover:prose-a:text-[#F5A623]
+                    prose-img:rounded-none prose-img:border prose-img:border-[#3B4FD8]/10 dark:prose-img:border-[#6C7EF5]/10 prose-img:shadow-md prose-img:my-10
+                    prose-strong:text-[#1A1D2E] dark:prose-strong:text-[#E8EAF2]
+                    prose-blockquote:border-l-[4px] prose-blockquote:border-[#3B4FD8] dark:prose-blockquote:border-[#6C7EF5] prose-blockquote:bg-[#3B4FD8]/5 dark:prose-blockquote:bg-[#6C7EF5]/5 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:font-medium prose-blockquote:italic
+                    prose-pre:bg-[#1A1D2E] prose-pre:text-[#E8EAF2] prose-pre:rounded-none prose-pre:border prose-pre:border-[#3B4FD8]/20
                 ">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {lesson.content || "> *No content available for this lesson.*"}
@@ -58,24 +61,25 @@ const ArticleViewer = ({ lesson, courseId }) => {
                 </div>
 
                 {/* Mark as Completed Button */}
-                <div className="mt-16 pt-8 border-t border-slate-100 dark:border-slate-800 flex justify-center">
+                <div className="mt-20 pt-10 border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 flex justify-center">
                     <button
                         onClick={handleMarkCompleted}
                         disabled={progress?.isCompleted}
                         className={`
-                            px-8 py-3 rounded-full font-bold text-lg shadow-lg transition-all transform active:scale-95 flex items-center gap-2
+                            px-12 py-5 font-bold text-[10px] uppercase tracking-widest transition-colors flex items-center gap-3 rounded-none border border-transparent shadow-sm
                             ${progress?.isCompleted
-                                ? 'bg-green-100 text-green-700 cursor-default shadow-none dark:bg-green-900/20 dark:text-green-400'
-                                : 'bg-violet-600 text-white hover:bg-violet-700 hover:shadow-violet-500/25'
+                                ? 'bg-[#3B4FD8] text-white cursor-default'
+                                : 'bg-[#F5A623] text-[#1A1D2E] hover:bg-[#d9911a] hover:border-[#F5A623]/20'
                             }
                         `}
+                        style={{ fontFamily: MONO }}
                     >
                         {progress?.isCompleted ? (
                             <>
-                                <CheckCircle size={20} /> Completed
+                                <CheckCircle size={16} /> COMPLETED
                             </>
                         ) : (
-                            "Mark as Completed"
+                            "MARK AS COMPLETED"
                         )}
                     </button>
                 </div>

@@ -4,6 +4,9 @@ import { fetchCourseThreads, setDiscussionMaximized, createThread, resetDiscussi
 import { MessageSquare, Maximize2, X, Plus, ThumbsUp, MessageCircle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const DiscussionSidebar = ({ courseId, onClose, width, isMobile, isEmbedded = false }) => {
     const dispatch = useDispatch();
     const { threads, loading, error, hasMore, currentPage } = useSelector((state) => state.discussion);
@@ -45,9 +48,9 @@ const DiscussionSidebar = ({ courseId, onClose, width, isMobile, isEmbedded = fa
     return (
         <aside
             className={isEmbedded
-                ? `w-full h-full flex flex-col bg-white dark:bg-[#0F172A]`
+                ? `w-full h-full flex flex-col bg-white dark:bg-[#1A1D2E]`
                 : `
-                fixed inset-y-0 right-0 z-30 bg-white dark:bg-[#0F172A] border-l border-slate-200 dark:border-slate-800 shadow-xl
+                fixed inset-y-0 right-0 z-30 bg-white dark:bg-[#1A1D2E] border-l border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-2xl
                 transform transition-transform duration-300 ease-in-out flex flex-col
                 translate-x-0
                 lg:relative lg:shadow-none lg:z-0 lg:transition-none
@@ -55,15 +58,15 @@ const DiscussionSidebar = ({ courseId, onClose, width, isMobile, isEmbedded = fa
             style={isEmbedded ? {} : { width: isMobile ? '100%' : (typeof width === 'string' ? width : `${width}px`) }}
         >
             {/* HEADER */}
-            <div className="h-16 px-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-white/50 dark:bg-[#0F172A]/50 backdrop-blur-sm">
-                <h3 className="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                    <MessageSquare size={18} className="text-violet-600" />
+            <div className="h-16 px-6 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 flex items-center justify-between shrink-0 bg-white dark:bg-[#1A1D2E]">
+                <h3 className="text-xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] flex items-center gap-3" style={{ fontFamily: SERIF }}>
+                    <MessageSquare size={20} className="text-[#3B4FD8] dark:text-[#6C7EF5]" />
                     Discussions
                 </h3>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
                     <button
                         onClick={() => dispatch(setDiscussionMaximized(true))}
-                        className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                        className="p-2 text-[#6B7194] hover:text-[#1A1D2E] dark:text-[#8B90B8] dark:hover:text-[#E8EAF2] hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 transition-colors"
                         title="Maximize"
                     >
                         <Maximize2 size={18} />
@@ -71,7 +74,7 @@ const DiscussionSidebar = ({ courseId, onClose, width, isMobile, isEmbedded = fa
                     {onClose && (
                         <button
                             onClick={onClose}
-                            className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                            className="p-2 text-[#6B7194] hover:text-[#1A1D2E] dark:text-[#8B90B8] dark:hover:text-[#E8EAF2] hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 transition-colors"
                         >
                             <X size={18} />
                         </button>
@@ -81,7 +84,7 @@ const DiscussionSidebar = ({ courseId, onClose, width, isMobile, isEmbedded = fa
 
             {/* CONTENT */}
             <div
-                className="flex-1 overflow-y-auto p-4 custom-scrollbar"
+                className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-[#F7F8FF] dark:bg-[#0A0B10]"
                 onScroll={handleScroll}
             >
 
@@ -89,42 +92,50 @@ const DiscussionSidebar = ({ courseId, onClose, width, isMobile, isEmbedded = fa
                 {!showCreate ? (
                     <button
                         onClick={() => setShowCreate(true)}
-                        className="w-full flex items-center justify-center gap-2 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition-colors mb-6 shadow-sm shadow-violet-200 dark:shadow-none"
+                        className="w-full flex items-center justify-center gap-3 py-4 bg-[#F5A623] hover:bg-[#d9911a] text-[#1A1D2E] font-bold transition-colors mb-8 shadow-sm text-[10px] uppercase tracking-widest"
+                        style={{ fontFamily: MONO }}
                     >
-                        <Plus size={18} />
-                        New Discussion
+                        <Plus size={16} />
+                        NEW DISCUSSION
                     </button>
                 ) : (
                     /* CREATE THREAD FORM */
-                    <div className="p-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 animate-in slide-in-from-top-2">
-                        <div className="mb-4 flex items-center justify-between">
-                            <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">New Discussion</h3>
-                            <button onClick={() => setShowCreate(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
-                                <X size={16} />
+                    <div className="p-6 bg-white dark:bg-[#252A41] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 animate-in slide-in-from-top-2 mb-8">
+                        <div className="mb-6 flex items-center justify-between pb-4 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10">
+                            <h3 className="text-xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>New Discussion</h3>
+                            <button onClick={() => setShowCreate(false)} className="text-[#6B7194] hover:text-[#1A1D2E] dark:text-[#8B90B8] dark:hover:text-[#E8EAF2]">
+                                <X size={18} />
                             </button>
                         </div>
 
-                        <div className="space-y-3">
-                            <input
-                                className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all placeholder:text-slate-400"
-                                placeholder="Topic Title"
-                                value={newThreadTitle}
-                                onChange={(e) => setNewThreadTitle(e.target.value)}
-                                autoFocus
-                            />
-                            <textarea
-                                className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all placeholder:text-slate-400 resize-none min-h-[100px]"
-                                placeholder="What's on your mind?"
-                                value={newThreadContent}
-                                onChange={(e) => setNewThreadContent(e.target.value)}
-                            />
-                            <div className="flex justify-end pt-2">
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-[10px] font-bold text-[#6B7194] dark:text-[#8B90B8] uppercase tracking-widest mb-2" style={{ fontFamily: MONO }}>TITLE</label>
+                                <input
+                                    className="w-full px-4 py-3 bg-[#F7F8FF] dark:bg-[#0A0B10] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 text-[#1A1D2E] dark:text-[#E8EAF2] focus:ring-0 focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] outline-none transition-all placeholder:text-[#6B7194]/50 dark:placeholder:text-[#8B90B8]/50"
+                                    placeholder="Topic Title"
+                                    value={newThreadTitle}
+                                    onChange={(e) => setNewThreadTitle(e.target.value)}
+                                    autoFocus
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-bold text-[#6B7194] dark:text-[#8B90B8] uppercase tracking-widest mb-2" style={{ fontFamily: MONO }}>CONTENT</label>
+                                <textarea
+                                    className="w-full px-4 py-3 bg-[#F7F8FF] dark:bg-[#0A0B10] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 text-[#1A1D2E] dark:text-[#E8EAF2] focus:ring-0 focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] outline-none transition-all placeholder:text-[#6B7194]/50 dark:placeholder:text-[#8B90B8]/50 resize-none min-h-[120px]"
+                                    placeholder="What's on your mind?"
+                                    value={newThreadContent}
+                                    onChange={(e) => setNewThreadContent(e.target.value)}
+                                />
+                            </div>
+                            <div className="flex justify-end pt-4">
                                 <button
                                     onClick={handleCreateThread}
                                     disabled={!newThreadTitle.trim() || !newThreadContent.trim()}
-                                    className="w-full px-3 py-2 bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                                    className="w-full px-6 py-4 bg-[#3B4FD8] hover:bg-[#2f3fab] text-white font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm text-[10px] uppercase tracking-widest"
+                                    style={{ fontFamily: MONO }}
                                 >
-                                    Post Discussion
+                                    POST DISCUSSION
                                 </button>
                             </div>
                         </div>
@@ -133,53 +144,59 @@ const DiscussionSidebar = ({ courseId, onClose, width, isMobile, isEmbedded = fa
 
                 {/* Initial Loading State */}
                 {loading && threads.length === 0 && (
-                    <div className="flex justify-center p-4">
-                        <div className="w-6 h-6 border-2 border-violet-600 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="flex justify-center p-8">
+                        <div className="w-8 h-8 border-[3px] border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 border-t-[#3B4FD8] dark:border-t-[#6C7EF5] animate-spin"></div>
                     </div>
                 )}
 
                 {/* Thread List */}
                 <div className="space-y-4">
                     {threads.map(thread => (
-                        <div key={thread._id} className="group relative bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 hover:border-violet-300 dark:hover:border-violet-700 hover:shadow-md transition-all cursor-pointer"
+                        <div key={thread._id} className="group relative bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 p-5 hover:border-[#3B4FD8] dark:hover:border-[#6C7EF5] hover:shadow-md transition-all cursor-pointer"
                             onClick={() => dispatch(setDiscussionMaximized(true))} /* For now, clicking expands full view as per request */
                         >
-                            <div className="flex items-start justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                            <div className="flex items-start justify-between mb-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 border border-[#3B4FD8]/20 overflow-hidden bg-[#F7F8FF] dark:bg-[#0A0B10]">
                                         {thread.createdBy?.profile?.avatar ? (
                                             <img src={thread.createdBy.profile.avatar} alt={thread.createdBy.name} className="w-full h-full object-cover" />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-slate-500">
+                                            <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-[#6B7194] dark:text-[#8B90B8]">
                                                 {thread.createdBy?.name?.[0]}
                                             </div>
                                         )}
                                     </div>
-                                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate max-w-[120px]">
-                                        {thread.createdBy?.name}
-                                    </span>
-                                    <span className="text-[10px] text-slate-400">• {formatDistanceToNow(new Date(thread.createdAt), { addSuffix: true })}</span>
+                                    <div className="flex flex-col">
+                                        <span className="text-[10px] font-bold text-[#1A1D2E] dark:text-[#E8EAF2] uppercase tracking-widest truncate max-w-[120px]" style={{ fontFamily: MONO }}>
+                                            {thread.createdBy?.name}
+                                        </span>
+                                        <span className="text-[9px] font-bold text-[#6B7194]/70 dark:text-[#8B90B8]/70 uppercase tracking-widest" style={{ fontFamily: MONO }}>
+                                            {formatDistanceToNow(new Date(thread.createdAt), { addSuffix: true })}
+                                        </span>
+                                    </div>
                                 </div>
                                 {thread.isPinned && (
-                                    <span className="text-[10px] font-bold px-1.5 py-0.5 bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400 rounded-full">PINNED</span>
+                                    <span className="text-[9px] font-bold px-2 py-1 border border-[#3B4FD8]/30 dark:border-[#6C7EF5]/30 text-[#3B4FD8] dark:text-[#6C7EF5] uppercase tracking-widest" style={{ fontFamily: MONO }}>
+                                        PINNED
+                                    </span>
                                 )}
                             </div>
 
-                            <h4 className="font-semibold text-slate-800 dark:text-slate-100 mb-1 line-clamp-2 leading-tight group-hover:text-violet-600 transition-colors">
+                            <h4 className="text-lg font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-2 line-clamp-2 leading-snug group-hover:text-[#3B4FD8] dark:group-hover:text-[#6C7EF5] transition-colors" style={{ fontFamily: SERIF }}>
                                 {thread.title}
                             </h4>
-                            <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-3">
+                            <p className="text-sm text-[#1A1D2E]/70 dark:text-[#E8EAF2]/70 line-clamp-2 mb-4 leading-relaxed">
                                 {thread.content}
                             </p>
 
-                            <div className="flex items-center justify-between text-slate-400 dark:text-slate-500">
-                                <div className="flex items-center gap-3">
-                                    <span className="flex items-center gap-1 text-xs">
-                                        <ThumbsUp size={14} />
+                            <div className="flex items-center justify-between text-[#6B7194] dark:text-[#8B90B8] border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 pt-3">
+                                <div className="flex items-center gap-6">
+                                    <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest" style={{ fontFamily: MONO }}>
+                                        <ThumbsUp size={14} className="text-[#3B4FD8] dark:text-[#6C7EF5]" />
                                         {thread.upvotes?.length || 0}
                                     </span>
-                                    <span className="flex items-center gap-1 text-xs">
-                                        <MessageCircle size={14} />
+                                    <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest" style={{ fontFamily: MONO }}>
+                                        <MessageCircle size={14} className="text-[#F5A623]" />
                                         {thread.replyCount || 0}
                                     </span>
                                 </div>
@@ -188,18 +205,18 @@ const DiscussionSidebar = ({ courseId, onClose, width, isMobile, isEmbedded = fa
                     ))}
 
                     {loading && hasMore && threads.length > 0 && (
-                        <div className="py-4 text-center text-slate-500 text-xs animate-pulse">
-                            Loading more...
+                        <div className="py-6 text-center text-[#6B7194] dark:text-[#8B90B8] text-[10px] font-bold uppercase tracking-widest animate-pulse" style={{ fontFamily: MONO }}>
+                            LOADING MORE...
                         </div>
                     )}
 
                     {!loading && threads.length === 0 && (
-                        <div className="text-center py-10">
-                            <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-400">
-                                <MessageSquare size={24} />
+                        <div className="text-center py-12 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 bg-white dark:bg-[#1A1D2E]">
+                            <div className="w-16 h-16 bg-[#F7F8FF] dark:bg-[#0A0B10] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 flex items-center justify-center mx-auto mb-4 text-[#6B7194] dark:text-[#8B90B8]">
+                                <MessageSquare size={32} />
                             </div>
-                            <p className="text-slate-500 dark:text-slate-400 text-sm">No discussions yet.</p>
-                            <p className="text-slate-400 dark:text-slate-500 text-xs mt-1">Be the first to start a conversation!</p>
+                            <p className="text-lg font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-1" style={{ fontFamily: SERIF }}>No discussions yet</p>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>Be the first to start a conversation!</p>
                         </div>
                     )}
                 </div>

@@ -17,6 +17,9 @@ import { checkReviewStatus } from '../redux/slices/courseSlice';
 import DiscussionSidebar from '../components/student-view/DiscussionSidebar';
 import DiscussionFullPage from '../components/student-view/DiscussionFullPage';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const StudentCourseView = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -184,17 +187,17 @@ const StudentCourseView = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-screen bg-slate-50 dark:bg-[#0F172A]">
-                <div className="w-10 h-10 border-4 border-violet-600 border-t-transparent rounded-full animate-spin"></div>
+            <div className="flex items-center justify-center h-screen bg-[#F7F8FF] dark:bg-[#0A0B10]">
+                <div className="w-10 h-10 border-[3px] border-[#3B4FD8]/20 border-t-[#3B4FD8] dark:border-[#6C7EF5]/20 dark:border-t-[#6C7EF5] rounded-full animate-spin"></div>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="flex items-center justify-center h-screen bg-slate-50 dark:bg-[#0F172A] text-red-500">
+            <div className="flex items-center justify-center h-screen bg-[#F7F8FF] dark:bg-[#0A0B10] text-[#E25C5C]">
                 <p>Error loading course: {error}</p>
-                <button onClick={() => navigate('/student-courses')} className="ml-4 underline">Go Back</button>
+                <button onClick={() => navigate('/student-courses')} className="ml-4 underline font-bold" style={{ fontFamily: MONO }}>GO BACK</button>
             </div>
         );
     }
@@ -202,7 +205,7 @@ const StudentCourseView = () => {
     if (!processedCourse) return null;
 
     return (
-        <div className="flex flex-col h-screen bg-[#F8FAFC] dark:bg-[#0F172A] overflow-hidden font-sans text-slate-900 dark:text-slate-100 select-none">
+        <div className="flex flex-col h-screen bg-[#F7F8FF] dark:bg-[#0A0B10] overflow-hidden font-sans text-[#1A1D2E] dark:text-[#E8EAF2] select-none">
 
             {/* 1. FULL WIDTH HEADER */}
             <CourseHeader
@@ -244,7 +247,7 @@ const StudentCourseView = () => {
                     {/* Drag Handle - Sidebar */}
                     {isSidebarOpen && !isMobile && (
                         <div
-                            className="w-1 hover:w-1.5 h-full cursor-col-resize hover:bg-violet-500/50 active:bg-violet-600 transition-all z-40 absolute right-0 translate-x-1/2"
+                            className="w-1 hover:w-1.5 h-full cursor-col-resize hover:bg-[#3B4FD8]/50 active:bg-[#3B4FD8] transition-all z-40 absolute right-0 translate-x-1/2"
                             onMouseDown={() => setIsResizingSidebar(true)}
                         />
                     )}
@@ -259,7 +262,7 @@ const StudentCourseView = () => {
                 )}
 
                 {/* MAIN CONTENT AREA */}
-                <main className="flex-1 flex flex-col min-w-0 bg-white dark:bg-[#0f172a] relative z-0">
+                <main className="flex-1 flex flex-col min-w-0 bg-[#F7F8FF] dark:bg-[#0A0B10] relative z-0">
                     {/* Content Viewer */}
                     <div className="flex-1 relative overflow-hidden flex flex-col">
                         {activeLesson ? (
@@ -278,11 +281,11 @@ const StudentCourseView = () => {
                             )
                         ) : (
                             /* EMPTY STATE */
-                            <div className="flex-1 flex flex-col items-center justify-center text-slate-500">
-                                <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
-                                    <PlayCircle size={32} className="text-slate-400" />
+                            <div className="flex-1 flex flex-col items-center justify-center text-[#6B7194] dark:text-[#8B90B8]">
+                                <div className="w-16 h-16 bg-white dark:bg-[#1A1D2E] rounded-none border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 flex items-center justify-center mb-4">
+                                    <PlayCircle size={32} className="text-[#3B4FD8] dark:text-[#6C7EF5]" />
                                 </div>
-                                <p className="font-medium">Select a lesson to start learning</p>
+                                <p className="font-bold text-[10px] uppercase tracking-widest" style={{ fontFamily: MONO }}>Select a lesson to start learning</p>
                             </div>
                         )}
                     </div>
@@ -296,7 +299,7 @@ const StudentCourseView = () => {
                         <>
                             {!isMobile && (
                                 <div
-                                    className="w-1 hover:w-1.5 h-full cursor-col-resize hover:bg-violet-500/50 active:bg-violet-600 transition-all z-40 absolute left-0 -translate-x-1/2"
+                                    className="w-1 hover:w-1.5 h-full cursor-col-resize hover:bg-[#3B4FD8]/50 active:bg-[#3B4FD8] transition-all z-40 absolute left-0 -translate-x-1/2"
                                     onMouseDown={() => setIsResizingRightSidebar(true)}
                                 />
                             )}
@@ -314,7 +317,7 @@ const StudentCourseView = () => {
                         <>
                             {!isMobile && (
                                 <div
-                                    className="w-1 hover:w-1.5 h-full cursor-col-resize hover:bg-violet-500/50 active:bg-violet-600 transition-all z-40 absolute left-0 -translate-x-1/2"
+                                    className="w-1 hover:w-1.5 h-full cursor-col-resize hover:bg-[#3B4FD8]/50 active:bg-[#3B4FD8] transition-all z-40 absolute left-0 -translate-x-1/2"
                                     onMouseDown={() => setIsResizingRightSidebar(true)}
                                 />
                             )}

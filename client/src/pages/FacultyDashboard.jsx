@@ -1,12 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Added Link
+import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Sidebar from '../components/dashboard/Sidebar';
 import StatsCard from '../components/dashboard/StatsCard';
 import RecentCoursesTable from '../components/dashboard/RecentCoursesTable';
-import { Users, BookOpen, DollarSign, Star, Search, Bell, Settings, LogOut, User } from 'lucide-react'; // Added icons
+import { Users, BookOpen, DollarSign, Star, Search, Bell, Settings, LogOut, User } from 'lucide-react';
 import { getFacultyCourses, getDashboardStats } from '../redux/slices/courseSlice';
-import { logout } from '../redux/slices/authSlice'; // Added logout
+import { logout } from '../redux/slices/authSlice';
+
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
 
 const FacultyDashboard = () => {
     const { user } = useSelector((state) => state.auth);
@@ -17,8 +20,6 @@ const FacultyDashboard = () => {
 
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const profileRef = useRef(null);
-
-    // Default user image if none provided
     const userImage = user?.profile?.avatar;
 
     useEffect(() => {
@@ -26,7 +27,6 @@ const FacultyDashboard = () => {
         dispatch(getDashboardStats());
     }, [dispatch]);
 
-    // Close on click outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (profileRef.current && !profileRef.current.contains(event.target)) {
@@ -46,48 +46,47 @@ const FacultyDashboard = () => {
 
     if (isFetchingCourses && isFetchingStats) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] flex items-center justify-center">
+                <div className="w-12 h-12 border-4 border-[#3B4FD8] border-t-transparent animate-spin"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] transition-colors duration-300">
+        <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] transition-colors duration-300">
             <Sidebar />
 
             <main className={`p-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
                 {/* Top Header Row: Search & Profile */}
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 pb-6">
                     {/* Search Bar */}
                     <div className="relative w-full md:max-w-xl">
-                        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#6B7194] dark:text-[#8B90B8]" size={18} />
                         <input
                             type="text"
                             placeholder="Search your courses..."
-                            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-[#1a1c23] border border-gray-200 dark:border-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500/50 transition-shadow shadow-sm"
+                            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-[#1A1D2E] border border-[#3B4FD8]/15 dark:border-[#6C7EF5]/15 text-[#1A1D2E] dark:text-[#E8EAF2] placeholder-[#6B7194] dark:placeholder-[#8B90B8] focus:outline-none focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] transition-colors font-mono text-sm"
+                            style={{ fontFamily: MONO }}
                         />
                     </div>
 
                     {/* Right Side: Notification & Profile */}
                     <div className="flex items-center gap-6 w-full md:w-auto justify-end">
-                        <button className="relative text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
-                            <Bell size={24} />
-                            <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-[#0a0a0f]"></span>
+                        <button className="relative text-[#6B7194] dark:text-[#8B90B8] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors">
+                            <Bell size={22} />
+                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#F5A623] border border-[#F7F8FF] dark:border-[#1A1D2E]"></span>
                         </button>
 
                         <div className="relative" ref={profileRef}>
                             <button
                                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                                className="flex items-center gap-3 pl-6 border-l border-gray-200 dark:border-gray-800 focus:outline-none"
-                                aria-expanded={isProfileOpen}
-                                aria-haspopup="true"
+                                className="flex items-center gap-4 pl-6 border-l border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 focus:outline-none"
                             >
                                 <div className="text-right hidden sm:block">
-                                    <h4 className="text-sm font-bold text-gray-900 dark:text-white leading-tight">
+                                    <h4 className="text-sm font-semibold text-[#1A1D2E] dark:text-[#E8EAF2] leading-tight" style={{ fontFamily: SERIF }}>
                                         {user?.name || 'Faculty Member'}
                                     </h4>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    <p className="text-[10px] text-[#6B7194] dark:text-[#8B90B8] uppercase tracking-widest mt-0.5" style={{ fontFamily: MONO }}>
                                         Instructor
                                     </p>
                                 </div>
@@ -95,29 +94,27 @@ const FacultyDashboard = () => {
                                     <img
                                         src={userImage}
                                         alt="Profile"
-                                        className={`w-10 h-10 rounded-full object-cover border-2 shadow-sm transition-colors ${isProfileOpen ? 'border-teal-500' : 'border-white dark:border-gray-800'
-                                            }`}
+                                        className={`w-10 h-10 object-cover border transition-colors ${isProfileOpen ? 'border-[#3B4FD8] dark:border-[#6C7EF5]' : 'border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20'}`}
                                     />
                                 ) : (
-                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 border-2 shadow-sm transition-colors ${isProfileOpen ? 'border-teal-500 text-teal-600' : 'border-white dark:border-gray-800 text-gray-400'}`}>
-                                        <User size={20} />
+                                    <div className={`w-10 h-10 flex items-center justify-center bg-[#3B4FD8]/5 dark:bg-[#6C7EF5]/5 border transition-colors ${isProfileOpen ? 'border-[#3B4FD8] text-[#3B4FD8] dark:border-[#6C7EF5] dark:text-[#6C7EF5]' : 'border-[#3B4FD8]/20 text-[#6B7194] dark:border-[#6C7EF5]/20 dark:text-[#8B90B8]'}`}>
+                                        <User size={18} />
                                     </div>
                                 )}
                             </button>
 
                             {/* Dropdown Menu */}
                             {isProfileOpen && (
-                                <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-[#1a1c23] rounded-xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-100">
-                                    <div className="p-2">
-                                        <Link to="/settings" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors">
-                                            <Settings size={18} />
-                                            <span>Settings</span>
+                                <div className="absolute right-0 top-full mt-3 w-48 bg-white dark:bg-[#252A41] shadow-2xl border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 z-50 animate-in fade-in zoom-in-95 duration-100">
+                                    <div className="p-1">
+                                        <Link to="/settings" className="flex items-center gap-3 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[#1A1D2E] dark:text-[#E8EAF2] hover:bg-[#F7F8FF] dark:hover:bg-[#1A1D2E] transition-colors" style={{ fontFamily: MONO }}>
+                                            <Settings size={14} /> Settings
                                         </Link>
                                         <button
                                             onClick={handleLogout}
-                                            className="w-full flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors text-left"
+                                            className="w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[#E25C5C] hover:bg-[#E25C5C]/10 transition-colors text-left" style={{ fontFamily: MONO }}
                                         >
-                                            <LogOut size={16} /> Logout
+                                            <LogOut size={14} /> Logout
                                         </button>
                                     </div>
                                 </div>
@@ -126,34 +123,34 @@ const FacultyDashboard = () => {
                     </div>
                 </div>
 
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                        Welcome back, {user?.name?.split(' ')[0] || 'Faculty'}! 👋
+                <div className="mb-10">
+                    <h1 className="text-4xl font-semibold mb-2" style={{ fontFamily: SERIF }}>
+                        Welcome back, <span className="italic text-[#3B4FD8] dark:text-[#6C7EF5]">{user?.name?.split(' ')[0] || 'Faculty'}</span>
                     </h1>
-                    <p className="text-gray-500 dark:text-gray-400 mt-2">
+                    <p className="text-[#6B7194] dark:text-[#8B90B8] text-sm font-mono tracking-tight">
                         Here's what's happening with your courses today.
                     </p>
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                     <StatsCard
                         title="Total Revenue"
-                        value={`$${(stats?.totalRevenue || 0).toLocaleString()}`}
+                        value={`₹${(stats?.totalRevenue || 0).toLocaleString()}`}
                         icon={DollarSign}
-                        color="emerald"
+                        color="indigo"
                     />
                     <StatsCard
                         title="Total Students"
                         value={stats?.totalStudents || 0}
                         icon={Users}
-                        color="blue"
+                        color="amber"
                     />
                     <StatsCard
                         title="Active Courses"
                         value={stats?.activeCourses || 0}
                         icon={BookOpen}
-                        color="purple"
+                        color="indigo"
                     />
                     <StatsCard
                         title="Average Rating"
@@ -165,11 +162,12 @@ const FacultyDashboard = () => {
 
                 {/* Recent Courses Section */}
                 <section>
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">Your Recent Courses</h2>
+                    <div className="flex items-center justify-between mb-6 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 pb-4">
+                        <h2 className="text-2xl font-bold" style={{ fontFamily: SERIF }}>Your Recent Courses</h2>
                         <button
                             onClick={() => navigate('/my-courses')}
-                            className="px-4 py-2 text-sm font-medium text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10 rounded-lg hover:bg-teal-100 dark:hover:bg-teal-500/20 transition-colors"
+                            className="px-5 py-2 text-xs font-semibold uppercase tracking-widest text-[#3B4FD8] dark:text-[#6C7EF5] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 transition-colors"
+                            style={{ fontFamily: MONO }}
                         >
                             View All
                         </button>

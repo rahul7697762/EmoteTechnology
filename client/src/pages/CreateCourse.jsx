@@ -9,6 +9,9 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const CreateCourse = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -96,16 +99,18 @@ const CreateCourse = () => {
         }
     };
 
+    const inputClasses = "w-full bg-[#F7F8FF] dark:bg-[#1A1D2E] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 pl-11 pr-4 py-3 text-[#1A1D2E] dark:text-[#E8EAF2] placeholder-[#6B7194] dark:placeholder-[#8B90B8] focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] outline-none transition-colors text-sm appearance-none";
+
     return (
-        <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] flex transition-colors duration-300">
+        <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] flex transition-colors duration-300">
             <Sidebar />
 
             <div className={`flex-1 p-8 overflow-y-auto h-screen transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
                 <div className="max-w-5xl mx-auto">
-                    <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Create New Course</h1>
-                        <p className="text-slate-500 dark:text-slate-400 mt-2">
-                            Fill in the basic details to start building your curriculum.
+                    <div className="mb-10 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 pb-6">
+                        <h1 className="text-4xl font-semibold mb-2" style={{ fontFamily: SERIF }}>Create New Course</h1>
+                        <p className="text-[#6B7194] dark:text-[#8B90B8] text-sm uppercase tracking-widest font-semibold" style={{ fontFamily: MONO }}>
+                            Curriculum Details
                         </p>
                     </div>
 
@@ -115,16 +120,16 @@ const CreateCourse = () => {
                         <div className="lg:col-span-2 space-y-8">
 
                             {/* Basic Details Card */}
-                            <div className="bg-white dark:bg-[#1E293B] rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-                                <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-                                    <BookOpen size={20} className="text-violet-500" />
+                            <div className="bg-white dark:bg-[#252A41] p-8 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm">
+                                <h2 className="text-2xl font-bold mb-8 flex items-center gap-3" style={{ fontFamily: SERIF }}>
+                                    <BookOpen size={24} className="text-[#3B4FD8] dark:text-[#6C7EF5]" strokeWidth={1.5} />
                                     Course Details
                                 </h2>
 
-                                <div className="space-y-5">
+                                <div className="space-y-6">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                                            Course Title <span className="text-red-500">*</span>
+                                        <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>
+                                            Course Title <span className="text-[#E25C5C]">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -132,12 +137,13 @@ const CreateCourse = () => {
                                             value={formData.title}
                                             onChange={handleChange}
                                             placeholder="e.g. Complete Web Development Bootcamp"
-                                            className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400"
+                                            className="w-full bg-[#F7F8FF] dark:bg-[#1A1D2E] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 px-4 py-3 text-[#1A1D2E] dark:text-[#E8EAF2] placeholder-[#6B7194] dark:placeholder-[#8B90B8] focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] outline-none transition-colors text-sm"
+                                            style={{ fontFamily: MONO }}
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                                        <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>
                                             Description
                                         </label>
                                         <textarea
@@ -146,22 +152,24 @@ const CreateCourse = () => {
                                             onChange={handleChange}
                                             rows="5"
                                             placeholder="Tell students what they'll learn..."
-                                            className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 resize-none"
+                                            className="w-full bg-[#F7F8FF] dark:bg-[#1A1D2E] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 px-4 py-3 text-[#1A1D2E] dark:text-[#E8EAF2] placeholder-[#6B7194] dark:placeholder-[#8B90B8] focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] outline-none transition-colors text-sm resize-none"
+                                            style={{ fontFamily: MONO }}
                                         />
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                                                Category <span className="text-red-500">*</span>
+                                            <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>
+                                                Category <span className="text-[#E25C5C]">*</span>
                                             </label>
                                             <div className="relative">
-                                                <Layers className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                                <Layers className="absolute left-4 top-1/2 -translate-y-1/2 text-[#3B4FD8]/50 dark:text-[#6C7EF5]/50" size={18} />
                                                 <select
                                                     name="category"
                                                     value={formData.category}
                                                     onChange={handleChange}
-                                                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent outline-none transition-all appearance-none"
+                                                    className={inputClasses}
+                                                    style={{ fontFamily: MONO }}
                                                 >
                                                     <option value="TECH">Technology</option>
                                                     <option value="NON-TECH">Non-Technology</option>
@@ -173,16 +181,17 @@ const CreateCourse = () => {
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                                            <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>
                                                 Language
                                             </label>
                                             <div className="relative">
-                                                <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                                <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-[#3B4FD8]/50 dark:text-[#6C7EF5]/50" size={18} />
                                                 <select
                                                     name="language"
                                                     value={formData.language}
                                                     onChange={handleChange}
-                                                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent outline-none transition-all appearance-none"
+                                                    className={inputClasses}
+                                                    style={{ fontFamily: MONO }}
                                                 >
                                                     <option value="English">English</option>
                                                     <option value="Spanish">Spanish</option>
@@ -196,24 +205,25 @@ const CreateCourse = () => {
                             </div>
 
                             {/* Pricing Card */}
-                            <div className="bg-white dark:bg-[#1E293B] rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-                                <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-                                    <DollarSign size={20} className="text-emerald-500" />
+                            <div className="bg-white dark:bg-[#252A41] p-8 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm">
+                                <h2 className="text-2xl font-bold mb-8 flex items-center gap-3" style={{ fontFamily: SERIF }}>
+                                    <DollarSign size={24} className="text-[#F5A623]" strokeWidth={1.5} />
                                     Pricing & Level
                                 </h2>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                                        <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>
                                             Currency
                                         </label>
                                         <div className="relative">
-                                            <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                            <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-[#3B4FD8]/50 dark:text-[#6C7EF5]/50" size={18} />
                                             <select
                                                 name="currency"
                                                 value={formData.currency}
                                                 onChange={handleChange}
-                                                className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none"
+                                                className={inputClasses}
+                                                style={{ fontFamily: MONO }}
                                             >
                                                 <option value="INR">INR (₹)</option>
                                                 <option value="USD">USD ($)</option>
@@ -222,7 +232,7 @@ const CreateCourse = () => {
                                         </div>
                                     </div>
                                     <div className="md:col-span-2">
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                                        <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>
                                             Price
                                         </label>
                                         <input
@@ -231,14 +241,15 @@ const CreateCourse = () => {
                                             value={formData.price}
                                             onChange={handleChange}
                                             min="0"
-                                            className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                                            className="w-full bg-[#F7F8FF] dark:bg-[#1A1D2E] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 px-4 py-3 text-[#1A1D2E] dark:text-[#E8EAF2] focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] outline-none transition-colors text-sm"
+                                            style={{ fontFamily: MONO }}
                                         />
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-5">
+                                <div className="grid grid-cols-1 md:grid-cols-2 mt-6 gap-6">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                                        <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>
                                             Discount (%)
                                         </label>
                                         <input
@@ -248,20 +259,22 @@ const CreateCourse = () => {
                                             onChange={handleChange}
                                             min="0"
                                             max="100"
-                                            className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                                            className="w-full bg-[#F7F8FF] dark:bg-[#1A1D2E] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 px-4 py-3 text-[#1A1D2E] dark:text-[#E8EAF2] focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] outline-none transition-colors text-sm"
+                                            style={{ fontFamily: MONO }}
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                                        <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>
                                             Level
                                         </label>
                                         <div className="relative">
-                                            <Tag className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                            <Tag className="absolute left-4 top-1/2 -translate-y-1/2 text-[#3B4FD8]/50 dark:text-[#6C7EF5]/50" size={18} />
                                             <select
                                                 name="level"
                                                 value={formData.level}
                                                 onChange={handleChange}
-                                                className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all appearance-none"
+                                                className={inputClasses}
+                                                style={{ fontFamily: MONO }}
                                             >
                                                 <option value="BEGINNER">Beginner</option>
                                                 <option value="INTERMEDIATE">Intermediate</option>
@@ -276,31 +289,31 @@ const CreateCourse = () => {
                         {/* Right Column - Media */}
                         <div className="space-y-8">
                             {/* Thumbnail Upload */}
-                            <div className="bg-white dark:bg-[#1E293B] rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-                                <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Course Thumbnail</h2>
+                            <div className="bg-white dark:bg-[#252A41] p-8 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm">
+                                <h2 className="text-xl font-bold mb-6" style={{ fontFamily: SERIF }}>Course Thumbnail</h2>
                                 <div className="space-y-4">
                                     <div
                                         onClick={() => thumbnailInputRef.current?.click()}
-                                        className={`relative aspect-video rounded-xl border-2 border-dashed transition-all cursor-pointer overflow-hidden group 
+                                        className={`relative aspect-video border border-dashed transition-colors cursor-pointer flex flex-col items-center justify-center p-6 group
                                             ${thumbnailPreview
                                                 ? 'border-transparent'
-                                                : 'border-slate-300 dark:border-slate-600 hover:border-violet-500 dark:hover:border-violet-400 bg-slate-50 dark:bg-slate-800/50'
+                                                : 'border-[#3B4FD8]/30 dark:border-[#6C7EF5]/30 hover:border-[#3B4FD8] dark:hover:border-[#6C7EF5] bg-[#F7F8FF] dark:bg-[#1A1D2E]'
                                             }`}
                                     >
                                         {thumbnailPreview ? (
                                             <>
                                                 <img src={thumbnailPreview} alt="Thumbnail preview" className="w-full h-full object-cover" />
-                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                    <div className="bg-white/10 backdrop-blur-sm p-3 rounded-full text-white">
+                                                <div className="absolute inset-0 bg-[#1A1D2E]/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                    <div className="bg-white p-4 text-[#1A1D2E]">
                                                         <Upload size={24} />
                                                     </div>
                                                 </div>
                                             </>
                                         ) : (
-                                            <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 group-hover:text-violet-500 transition-colors">
-                                                <ImageIcon size={48} className="mb-2" />
-                                                <span className="text-sm font-medium">Upload Thumbnail</span>
-                                                <span className="text-xs text-slate-400 mt-1">1280x720 recommended</span>
+                                            <div className="text-[#6B7194] dark:text-[#8B90B8] group-hover:text-[#3B4FD8] dark:group-hover:text-[#6C7EF5] transition-colors flex flex-col items-center">
+                                                <ImageIcon size={40} className="mb-4" strokeWidth={1} />
+                                                <span className="text-xs font-semibold uppercase tracking-widest" style={{ fontFamily: MONO }}>Upload Thumbnail</span>
+                                                <span className="text-[10px] uppercase tracking-widest mt-2 opacity-60" style={{ fontFamily: MONO }}>1280x720 recommended</span>
                                             </div>
                                         )}
                                         <input
@@ -312,31 +325,31 @@ const CreateCourse = () => {
                                         />
                                     </div>
                                     {thumbnailPreview && (
-                                        <button type="button" onClick={removeThumbnail} className="text-sm text-red-500 hover:text-red-400 flex items-center gap-1">
-                                            <X size={14} /> Remove
+                                        <button type="button" onClick={removeThumbnail} className="text-[10px] font-bold uppercase tracking-widest text-[#E25C5C] hover:text-[#c44949] flex items-center gap-2" style={{ fontFamily: MONO }}>
+                                            <X size={14} strokeWidth={2.5} /> Remove Image
                                         </button>
                                     )}
                                 </div>
                             </div>
 
                             {/* Preview Video Upload */}
-                            <div className="bg-white dark:bg-[#1E293B] rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-                                <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Preview Video</h2>
+                            <div className="bg-white dark:bg-[#252A41] p-8 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm">
+                                <h2 className="text-xl font-bold mb-6" style={{ fontFamily: SERIF }}>Preview Video</h2>
                                 <div className="space-y-4">
                                     <div
                                         onClick={() => videoInputRef.current?.click()}
-                                        className={`relative aspect-video rounded-xl border-2 border-dashed transition-all cursor-pointer overflow-hidden group 
+                                        className={`relative aspect-video border border-dashed transition-colors cursor-pointer flex flex-col items-center justify-center p-6 group
                                             ${videoPreview
                                                 ? 'border-transparent'
-                                                : 'border-slate-300 dark:border-slate-600 hover:border-emerald-500 dark:hover:border-emerald-400 bg-slate-50 dark:bg-slate-800/50'
+                                                : 'border-[#3B4FD8]/30 dark:border-[#6C7EF5]/30 hover:border-[#3B4FD8] dark:hover:border-[#6C7EF5] bg-[#F7F8FF] dark:bg-[#1A1D2E]'
                                             }`}
                                     >
                                         {videoPreview ? (
                                             <video src={videoPreview} controls className="w-full h-full object-cover" />
                                         ) : (
-                                            <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 group-hover:text-emerald-500 transition-colors">
-                                                <Video size={48} className="mb-2" />
-                                                <span className="text-sm font-medium">Upload Preview Video</span>
+                                            <div className="text-[#6B7194] dark:text-[#8B90B8] group-hover:text-[#3B4FD8] dark:group-hover:text-[#6C7EF5] transition-colors flex flex-col items-center">
+                                                <Video size={40} className="mb-4" strokeWidth={1} />
+                                                <span className="text-xs font-semibold uppercase tracking-widest" style={{ fontFamily: MONO }}>Upload Video</span>
                                             </div>
                                         )}
                                         <input
@@ -348,24 +361,22 @@ const CreateCourse = () => {
                                         />
                                     </div>
                                     {videoPreview && (
-                                        <button type="button" onClick={removeVideo} className="text-sm text-red-500 hover:text-red-400 flex items-center gap-1">
-                                            <X size={14} /> Remove
+                                        <button type="button" onClick={removeVideo} className="text-[10px] font-bold uppercase tracking-widest text-[#E25C5C] hover:text-[#c44949] flex items-center gap-2" style={{ fontFamily: MONO }}>
+                                            <X size={14} strokeWidth={2.5} /> Remove Video
                                         </button>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="pt-4">
-                                <button
-                                    type="submit"
-                                    disabled={isCreatingCourse}
-                                    className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-violet-500/20 active:scale-95 transition-all disabled:opacity-70 disabled:pointer-events-none flex items-center justify-center gap-2 text-lg"
-                                >
-                                    {isCreatingCourse ? <Loader2 className="animate-spin" size={24} /> : 'Create Course'}
-                                </button>
-                            </div>
+                            <button
+                                type="submit"
+                                disabled={isCreatingCourse}
+                                className="w-full bg-[#F5A623] hover:bg-[#d9911a] text-[#1A1D2E] font-semibold py-4 px-6 transition-colors disabled:opacity-70 disabled:pointer-events-none flex items-center justify-center gap-3 text-sm uppercase tracking-widest mt-10"
+                                style={{ fontFamily: MONO }}
+                            >
+                                {isCreatingCourse ? <Loader2 className="animate-spin" size={20} /> : 'Create Course'}
+                            </button>
                         </div>
-
                     </form>
                 </div>
             </div>

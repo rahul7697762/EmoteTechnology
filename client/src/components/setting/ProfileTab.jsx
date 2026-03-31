@@ -4,6 +4,9 @@ import { User, Mail, Phone, MapPin, Briefcase, Award, Loader2, Camera, Save } fr
 import { toast } from 'react-hot-toast';
 import { updateProfile } from '../../redux/slices/authSlice';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const ProfileTab = () => {
     const dispatch = useDispatch();
     const { user, isUpdatingProfile } = useSelector((state) => state.auth);
@@ -69,7 +72,6 @@ const ProfileTab = () => {
         const formDataToSend = new FormData();
         formDataToSend.append('name', formData.name);
 
-        // Profile object
         const profileData = {
             bio: formData.bio,
             phone: formData.phone,
@@ -81,7 +83,6 @@ const ProfileTab = () => {
             formDataToSend.append('avatar', avatarFile);
         }
 
-        // Faculty specific
         if (user.role === 'FACULTY') {
             const facultyData = {
                 expertise: formData.expertise,
@@ -93,50 +94,51 @@ const ProfileTab = () => {
         try {
             await dispatch(updateProfile(formDataToSend)).unwrap();
             toast.success('Profile updated successfully!');
-            // No need to dispatch getMe(), updateProfile should update the user in store
         } catch (error) {
-            // Error is handled in slice or we can show toast here
             toast.error(typeof error === 'string' ? error : 'Failed to update profile');
         }
     };
 
+    const inputClasses = "w-full pl-10 pr-4 py-3 bg-[#F7F8FF] dark:bg-[#1A1D2E] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 text-[#1A1D2E] dark:text-[#E8EAF2] focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] outline-none transition-colors text-sm font-mono";
+
     return (
-        <div className="bg-white dark:bg-[#1a1c23] rounded-3xl border border-gray-100 dark:border-gray-800 shadow-xl shadow-gray-200/50 dark:shadow-none overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-500">
-            <div className="p-8 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 flex justify-between items-center">
+        <div className="bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="p-8 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 bg-[#3B4FD8]/5 dark:bg-[#6C7EF5]/5 flex justify-between items-center">
                 <div>
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Profile Details</h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Update your personal information.</p>
+                    <h2 className="text-2xl font-bold" style={{ fontFamily: SERIF }}>Profile Details</h2>
+                    <p className="text-[#6B7194] dark:text-[#8B90B8] text-[10px] uppercase tracking-widest mt-2 font-semibold" style={{ fontFamily: MONO }}>Update your personal information.</p>
                 </div>
             </div>
+
             <form onSubmit={handleProfileSubmit} className="p-8 space-y-8">
                 {/* Avatar Section */}
-                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 bg-gray-50 dark:bg-gray-800/30 p-6 rounded-2xl border border-gray-100 dark:border-gray-700/50">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 bg-[#F7F8FF] dark:bg-[#1A1D2E] p-8 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10">
                     <div className="relative group shrink-0">
-                        <div className="w-28 h-28 rounded-full overflow-hidden bg-white dark:bg-gray-800 border-4 border-white dark:border-gray-700 shadow-lg ring-2 ring-teal-100 dark:ring-teal-500/20">
+                        <div className="w-28 h-28 overflow-hidden bg-white dark:bg-[#252A41] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20">
                             {previewUrl ? (
                                 <img src={previewUrl} alt="Avatar" className="w-full h-full object-cover" />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-100 dark:bg-gray-800">
-                                    <User size={40} />
+                                <div className="w-full h-full flex items-center justify-center text-[#3B4FD8]/40 dark:text-[#6C7EF5]/40 bg-[#F7F8FF] dark:bg-[#1A1D2E]">
+                                    <User size={40} strokeWidth={1.5} />
                                 </div>
                             )}
                         </div>
-                        <label htmlFor="avatar-upload" className="absolute inset-0 flex items-center justify-center bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-all cursor-pointer rounded-full backdrop-blur-[2px]">
+                        <label htmlFor="avatar-upload" className="absolute inset-0 flex items-center justify-center bg-[#1A1D2E]/60 text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer backdrop-blur-[2px]">
                             <Camera size={24} />
                         </label>
                         <input type="file" id="avatar-upload" className="hidden" accept="image/*" onChange={handleFileChange} />
                     </div>
                     <div className="text-center sm:text-left flex-1">
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Profile Photo</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-4">
+                        <h3 className="text-xl font-bold mb-2" style={{ fontFamily: SERIF }}>Profile Photo</h3>
+                        <p className="text-[#6B7194] dark:text-[#8B90B8] text-[10px] uppercase tracking-widest mb-6" style={{ fontFamily: MONO }}>
                             We recommend an image of at least 400x400px.
                         </p>
-                        <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
-                            <label htmlFor="avatar-upload" className="px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-semibold cursor-pointer transition-all shadow-sm">
+                        <div className="flex flex-wrap gap-4 justify-center sm:justify-start">
+                            <label htmlFor="avatar-upload" className="px-6 py-2.5 bg-[#3B4FD8] text-white hover:bg-[#2e3ea8] text-[10px] uppercase tracking-widest font-semibold cursor-pointer transition-colors" style={{ fontFamily: MONO }}>
                                 Upload New
                             </label>
                             {previewUrl && (
-                                <button type="button" onClick={() => { setPreviewUrl(null); setAvatarFile(null); }} className="px-5 py-2.5 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl text-sm font-semibold transition-all">
+                                <button type="button" onClick={() => { setPreviewUrl(null); setAvatarFile(null); }} className="px-6 py-2.5 border border-[#E25C5C]/30 text-[#E25C5C] hover:bg-[#E25C5C]/10 text-[10px] uppercase tracking-widest font-semibold transition-colors" style={{ fontFamily: MONO }}>
                                     Remove
                                 </button>
                             )}
@@ -144,132 +146,137 @@ const ProfileTab = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
-                    <div className="space-y-2">
-                        <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Full Name</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 pt-4">
+                    <div className="space-y-3">
+                        <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>Full Name</label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                <User size={18} />
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#3B4FD8]/50 dark:text-[#6C7EF5]/50">
+                                <User size={16} />
                             </div>
                             <input
                                 type="text"
                                 name="name"
                                 value={formData.name}
                                 onChange={handleInputChange}
-                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-medium"
+                                className={inputClasses}
+                                style={{ fontFamily: MONO }}
                             />
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email Address</label>
+                    <div className="space-y-3">
+                        <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>Email Address</label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                <Mail size={18} />
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#3B4FD8]/50 dark:text-[#6C7EF5]/50">
+                                <Mail size={16} />
                             </div>
                             <input
                                 type="email"
                                 value={formData.email}
                                 readOnly
-                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/80 text-gray-500 cursor-not-allowed font-medium"
+                                className="w-full pl-10 pr-4 py-3 bg-[#F7F8FF]/50 dark:bg-[#1A1D2E]/50 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 text-[#6B7194] dark:text-[#8B90B8] cursor-not-allowed text-sm"
+                                style={{ fontFamily: MONO }}
                             />
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Phone</label>
+                    <div className="space-y-3">
+                        <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>Phone</label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                <Phone size={18} />
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#3B4FD8]/50 dark:text-[#6C7EF5]/50">
+                                <Phone size={16} />
                             </div>
                             <input
                                 type="tel"
                                 name="phone"
                                 value={formData.phone}
                                 onChange={handleInputChange}
-                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-medium"
+                                className={inputClasses}
+                                style={{ fontFamily: MONO }}
                             />
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Country</label>
+                    <div className="space-y-3">
+                        <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>Country</label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                <MapPin size={18} />
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#3B4FD8]/50 dark:text-[#6C7EF5]/50">
+                                <MapPin size={16} />
                             </div>
                             <select
                                 name="country"
                                 value={formData.country}
                                 onChange={handleInputChange}
-                                className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all appearance-none font-medium"
+                                className={`${inputClasses} appearance-none`}
+                                style={{ fontFamily: MONO }}
                             >
                                 <option value="">Select Country</option>
                                 {['India', 'United States', 'United Kingdom', 'Canada', 'Australia'].map(c => (
                                     <option key={c} value={c}>{c}</option>
                                 ))}
                             </select>
-                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
-                            </div>
                         </div>
                     </div>
 
                     {user?.role === 'FACULTY' && (
                         <>
-                            <div className="md:col-span-2 space-y-2">
-                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Expertise</label>
+                            <div className="md:col-span-2 space-y-3">
+                                <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>Expertise</label>
                                 <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                        <Briefcase size={18} />
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#3B4FD8]/50 dark:text-[#6C7EF5]/50">
+                                        <Briefcase size={16} />
                                     </div>
                                     <input
                                         type="text"
                                         value={Array.isArray(formData.expertise) ? formData.expertise.join(', ') : formData.expertise || ''}
                                         onChange={handleExpertiseChange}
-                                        placeholder="e.g. Computer Science, Machine Learning (comma separated)"
-                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-medium"
+                                        placeholder="e.g. Computer Science, UI/UX"
+                                        className={inputClasses}
+                                        style={{ fontFamily: MONO }}
                                     />
                                 </div>
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Years of Experience</label>
+                            <div className="space-y-3">
+                                <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>Years of Experience</label>
                                 <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                        <Award size={18} />
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#3B4FD8]/50 dark:text-[#6C7EF5]/50">
+                                        <Award size={16} />
                                     </div>
                                     <input
                                         type="number"
                                         name="yearsOfExperience"
                                         value={formData.yearsOfExperience}
                                         onChange={handleInputChange}
-                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all font-medium"
+                                        className={inputClasses}
+                                        style={{ fontFamily: MONO }}
                                     />
                                 </div>
                             </div>
                         </>
                     )}
 
-                    <div className="md:col-span-2 space-y-2">
-                        <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Bio</label>
+                    <div className="md:col-span-2 space-y-3">
+                        <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>Bio</label>
                         <textarea
                             name="bio"
                             value={formData.bio}
                             onChange={handleInputChange}
                             rows="4"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/40 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all resize-none font-medium"
+                            className="w-full px-4 py-3 bg-[#F7F8FF] dark:bg-[#1A1D2E] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 text-[#1A1D2E] dark:text-[#E8EAF2] focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] outline-none transition-colors resize-none text-sm"
                             placeholder="Tell us a bit about yourself..."
+                            style={{ fontFamily: MONO }}
                         ></textarea>
                     </div>
                 </div>
 
-                <div className="flex justify-end pt-8 border-t border-gray-100 dark:border-gray-800">
+                <div className="flex justify-end pt-8 border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10">
                     <button
                         type="submit"
                         disabled={isUpdatingProfile}
-                        className="flex items-center space-x-2 px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl transition-all font-bold shadow-lg shadow-teal-600/20 hover:shadow-teal-600/40 hover:-translate-y-0.5 disabled:opacity-70 disabled:transform-none"
+                        className="flex items-center space-x-3 px-8 py-3.5 bg-[#F5A623] hover:bg-[#d9911a] text-[#1A1D2E] font-bold uppercase tracking-widest text-xs transition-colors disabled:opacity-70 disabled:pointer-events-none"
+                        style={{ fontFamily: MONO }}
                     >
-                        {isUpdatingProfile ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
+                        {isUpdatingProfile ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                         <span>{isUpdatingProfile ? 'Saving Changes...' : 'Save Changes'}</span>
                     </button>
                 </div>

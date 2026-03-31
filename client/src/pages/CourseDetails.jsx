@@ -12,6 +12,9 @@ import toast from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const CourseDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -142,20 +145,21 @@ const CourseDetails = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] flex items-center justify-center">
+                <div className="w-14 h-14 border-[3px] border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 border-t-[#3B4FD8] dark:border-t-[#6C7EF5] rounded-full animate-spin"></div>
             </div>
         );
     }
 
     if (error || !course) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] flex flex-col items-center justify-center text-center px-4">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Course Not Found</h2>
-                <p className="text-gray-500 dark:text-gray-400 mb-6">{error || "The course you're looking for doesn't exist."}</p>
+            <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] flex flex-col items-center justify-center text-center px-4">
+                <h2 className="text-3xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-4" style={{ fontFamily: SERIF }}>Course Not Found</h2>
+                <p className="text-[#6B7194] dark:text-[#8B90B8] mb-8 font-semibold uppercase tracking-widest text-sm" style={{ fontFamily: MONO }}>{error || "The course you're looking for doesn't exist."}</p>
                 <button
                     onClick={() => navigate('/courses')}
-                    className="px-6 py-2 bg-teal-500 text-white rounded-xl font-semibold hover:bg-teal-600 transition-colors"
+                    className="px-10 py-4 bg-[#F5A623] hover:bg-[#d9911a] text-[#1A1D2E] font-bold text-xs uppercase tracking-widest transition-colors shadow-sm"
+                    style={{ fontFamily: MONO }}
                 >
                     Browse Courses
                 </button>
@@ -164,13 +168,13 @@ const CourseDetails = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] text-gray-900 dark:text-white font-sans transition-colors duration-300">
+        <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] font-sans transition-colors duration-300">
             <Navbar />
 
             {/* Video Preview Modal */}
             {previewVideoUrl && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-                    <div className="relative w-full max-w-4xl bg-black rounded-2xl overflow-hidden shadow-2xl aspect-video">
+                    <div className="relative w-full max-w-4xl bg-black border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 overflow-hidden shadow-2xl aspect-video">
                         <button
                             onClick={closePreview}
                             className="absolute top-4 right-4 z-10 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
@@ -190,9 +194,9 @@ const CourseDetails = () => {
             {/* Article Preview Modal */}
             {previewArticle && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-                    <div className="relative w-full max-w-3xl bg-white dark:bg-[#1a1c23] rounded-2xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
-                        <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
-                            <h3 className="text-lg font-bold text-gray-900 dark:text-white truncate pr-8">
+                    <div className="relative w-full max-w-3xl bg-white dark:bg-[#252A41] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+                        <div className="flex items-center justify-between p-5 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 bg-[#F7F8FF] dark:bg-[#1A1D2E]">
+                            <h3 className="text-xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] truncate pr-8" style={{ fontFamily: SERIF }}>
                                 {previewArticle.title}
                             </h3>
                             <button
@@ -218,40 +222,35 @@ const CourseDetails = () => {
 
 
             {/* Hero Section */}
-            <div className="bg-gray-900 text-white pt-32 pb-20 relative overflow-hidden">
-                <div className="absolute inset-0 bg-linear-to-br from-teal-900/40 to-black/80 z-0"></div>
+            <div className="bg-[#1A1D2E] text-[#E8EAF2] pt-32 pb-20 relative overflow-hidden border-b border-[#6C7EF5]/10">
                 <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
                         <div className="lg:col-span-2">
-                            <div className="flex items-center gap-2 text-teal-400 font-semibold tracking-wide uppercase text-sm mb-4">
+                            <div className="flex items-center gap-2 text-[#F5A623] font-bold tracking-[0.2em] uppercase text-xs mb-6" style={{ fontFamily: MONO }}>
                                 <span>{course.category || 'Development'}</span>
-                                <span>•</span>
+                                <span className="opacity-50">•</span>
                                 <span>{course.level || 'All Levels'}</span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
+                            <h1 className="text-4xl md:text-6xl font-extrabold mb-8 leading-tight" style={{ fontFamily: SERIF }}>
                                 {course.title}
                             </h1>
-                            <p className="text-xl text-gray-300 mb-8 max-w-2xl leading-relaxed">
+                            <p className="text-lg text-[#8B90B8] mb-10 max-w-2xl leading-relaxed" style={{ fontFamily: MONO }}>
                                 {course.description?.substring(0, 150)}...
                             </p>
 
-                            <div className="flex flex-wrap gap-6 text-sm text-gray-300 font-medium">
+                            <div className="flex flex-wrap gap-6 text-xs uppercase tracking-widest text-[#8B90B8] font-semibold" style={{ fontFamily: MONO }}>
                                 <div className="flex items-center gap-2">
-                                    <Star className="text-yellow-400 fill-current" size={18} />
-                                    <span className="text-white font-bold">{course.rating?.average || 4.8}</span>
-                                    <span>({course.rating?.count || 120} ratings)</span>
+                                    <Star className="text-[#F5A623] fill-current" size={16} />
+                                    <span className="text-[#E8EAF2]">{course.rating?.average || 4.8}</span>
+                                    <span>({course.rating?.count || 120} RATINGS)</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <User size={18} />
-                                    <span>Created by <span className="text-white underline decoration-teal-500 underline-offset-4">{course.instructor?.name || 'Instructor'}</span></span>
+                                    <User size={16} className="text-[#3B4FD8] dark:text-[#6C7EF5]" />
+                                    <span>CREATED BY <span className="text-[#E8EAF2]">{course.instructor?.name || 'Instructor'}</span></span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Clock size={18} />
-                                    <span>Last updated {new Date(course.updatedAt || Date.now()).toLocaleDateString()}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Share2 size={18} />
-                                    <span>English</span>
+                                    <Clock size={16} className="text-[#3B4FD8] dark:text-[#6C7EF5]" />
+                                    <span>UPDATED {new Date(course.updatedAt || Date.now()).toLocaleDateString()}</span>
                                 </div>
                             </div>
                         </div>
@@ -266,42 +265,42 @@ const CourseDetails = () => {
                     <div className="lg:col-span-2 space-y-12">
 
                         {/* What you'll learn */}
-                        <div className="bg-white dark:bg-[#1a1c23] rounded-3xl p-8 border border-gray-100 dark:border-gray-800 shadow-sm">
-                            <h2 className="text-2xl font-bold mb-6">What you'll learn</h2>
+                        <div className="bg-white dark:bg-[#252A41] p-8 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm">
+                            <h2 className="text-2xl font-bold mb-6 text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>What you'll learn</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {course.learningOutcomes?.map((outcome, idx) => (
-                                    <div key={idx} className="flex gap-3 text-gray-600 dark:text-gray-300 text-sm">
-                                        <CheckCircle size={20} className="text-teal-500 shrink-0" />
+                                    <div key={idx} className="flex gap-3 text-[#1A1D2E] dark:text-[#E8EAF2] text-sm font-medium">
+                                        <CheckCircle size={20} className="text-[#3B4FD8] dark:text-[#6C7EF5] shrink-0" strokeWidth={2} />
                                         <span>{outcome}</span>
                                     </div>
                                 )) || (
-                                        <p className="text-gray-500 italic">No learning outcomes listed.</p>
+                                        <p className="text-[#6B7194] dark:text-[#8B90B8] italic">No learning outcomes listed.</p>
                                     )}
                             </div>
                         </div>
 
                         {/* Description */}
                         <div>
-                            <h2 className="text-2xl font-bold mb-4">Description</h2>
-                            <div className="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed">
+                            <h2 className="text-2xl font-bold mb-4 text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>Description</h2>
+                            <div className="prose dark:prose-invert max-w-none text-[#6B7194] dark:text-[#8B90B8] leading-relaxed">
                                 {course.description}
                             </div>
                         </div>
 
                         {/* Syllabus */}
                         <div>
-                            <h2 className="text-2xl font-bold mb-6">Course Content</h2>
-                            <div className="bg-white dark:bg-[#1a1c23] rounded-3xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+                            <h2 className="text-2xl font-bold mb-6 text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>Course Content</h2>
+                            <div className="bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm">
                                 {course.modules?.map((module, idx) => (
-                                    <div key={module._id} className="border-b border-gray-100 dark:border-gray-800 last:border-0">
-                                        <div className="px-6 py-4 bg-gray-50/50 dark:bg-gray-800/30 flex justify-between items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors">
-                                            <div className="flex gap-3 items-center">
-                                                <span className="text-gray-400 font-bold text-sm">SEC {idx + 1}</span>
-                                                <h3 className="font-bold text-gray-900 dark:text-white">{module.title}</h3>
+                                    <div key={module._id} className="border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 last:border-0">
+                                        <div className="px-6 py-4 bg-[#F7F8FF] dark:bg-[#1A1D2E] flex justify-between items-center cursor-pointer hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 transition-colors">
+                                            <div className="flex gap-4 items-center">
+                                                <span className="text-[#6B7194] dark:text-[#8B90B8] font-bold text-xs uppercase tracking-widest" style={{ fontFamily: MONO }}>SEC {idx + 1}</span>
+                                                <h3 className="font-bold text-[#1A1D2E] dark:text-[#E8EAF2] text-lg" style={{ fontFamily: SERIF }}>{module.title}</h3>
                                             </div>
-                                            <span className="text-xs text-gray-500 font-medium">{module.subModulesCount || 0} Lessons</span>
+                                            <span className="text-xs text-[#6B7194] dark:text-[#8B90B8] font-bold uppercase tracking-widest" style={{ fontFamily: MONO }}>{module.subModulesCount || 0} Lessons</span>
                                         </div>
-                                        <div className="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-[#1a1c23]">
+                                        <div className="divide-y divide-[#3B4FD8]/10 dark:divide-[#6C7EF5]/10 bg-white dark:bg-[#252A41]">
                                             {module.subModules?.map((lesson) => (
                                                 <div
                                                     key={lesson._id}
@@ -310,23 +309,23 @@ const CourseDetails = () => {
                                                             handleLessonPreview(lesson);
                                                         }
                                                     }}
-                                                    className={`flex items-center justify-between p-3 rounded-lg transition-colors ${lesson.isPreview ? 'cursor-pointer hover:bg-teal-50 dark:hover:bg-teal-900/10' : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}
+                                                    className={`flex items-center justify-between p-4 transition-colors ${lesson.isPreview ? 'cursor-pointer hover:bg-[#F5A623]/5' : 'hover:bg-[#F7F8FF] dark:hover:bg-[#1A1D2E]'}`}
                                                 >
-                                                    <div className="flex items-center gap-3">
-                                                        <span className="text-gray-400">
-                                                            {lesson.type === 'VIDEO' ? <PlayCircle size={16} /> : <FileText size={16} />}
+                                                    <div className="flex items-center gap-4">
+                                                        <span className="text-[#3B4FD8] dark:text-[#6C7EF5]">
+                                                            {lesson.type === 'VIDEO' ? <PlayCircle size={18} strokeWidth={1.5} /> : <FileText size={18} strokeWidth={1.5} />}
                                                         </span>
-                                                        <span className={`font-medium text-sm ${lesson.isPreview ? 'text-teal-600 dark:text-teal-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                                                        <span className={`font-medium text-sm ${lesson.isPreview ? 'text-[#F5A623]' : 'text-[#1A1D2E] dark:text-[#E8EAF2]'}`}>
                                                             {lesson.title}
                                                         </span>
                                                     </div>
                                                     {lesson.isPreview ? (
-                                                        <span className="text-teal-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1">
-                                                            {lesson.type === 'VIDEO' && <Play size={10} />}
+                                                        <span className="text-[#F5A623] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5" style={{ fontFamily: MONO }}>
+                                                            {lesson.type === 'VIDEO' && <Play size={10} fill="currentColor" />}
                                                             Free Preview
                                                         </span>
                                                     ) : (
-                                                        <Lock size={14} className="text-gray-400" />
+                                                        <Lock size={14} className="text-[#6B7194] dark:text-[#8B90B8]" />
                                                     )}
                                                 </div>
                                             ))}
@@ -338,18 +337,18 @@ const CourseDetails = () => {
 
                         {/* Reviews Section */}
                         <div className="space-y-6">
-                            <h2 className="text-2xl font-bold">Student Reviews</h2>
+                            <h2 className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>Student Reviews</h2>
                             {reviews && reviews.length > 0 ? (
                                 <div className="grid gap-6">
                                     {reviews.map((review) => (
-                                        <div key={review._id} className="bg-white dark:bg-[#1a1c23] p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
+                                        <div key={review._id} className="bg-white dark:bg-[#252A41] p-6 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm">
                                             <div className="flex items-center justify-between mb-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 dark:text-violet-400 font-bold">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-12 h-12 bg-[#3B4FD8]/10 dark:bg-[#6C7EF5]/10 flex items-center justify-center text-[#3B4FD8] dark:text-[#6C7EF5] text-lg font-bold" style={{ fontFamily: SERIF }}>
                                                         {review.userId?.name?.charAt(0) || 'U'}
                                                     </div>
                                                     <div>
-                                                        <h4 className="font-bold text-sm text-gray-900 dark:text-white">
+                                                        <h4 className="font-bold text-sm text-[#1A1D2E] dark:text-[#E8EAF2] mb-1">
                                                             {review.userId?.name || 'Unknown User'}
                                                         </h4>
                                                         <div className="flex items-center gap-1">
@@ -357,63 +356,66 @@ const CourseDetails = () => {
                                                                 <Star
                                                                     key={i}
                                                                     size={14}
-                                                                    className={`${i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300 dark:text-gray-600'}`}
+                                                                    className={`${i < review.rating ? 'text-[#F5A623] fill-current' : 'text-[#3B4FD8]/20 dark:text-[#6C7EF5]/20'}`}
                                                                 />
                                                             ))}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <span className="text-xs text-gray-500">
+                                                <span className="text-xs text-[#6B7194] dark:text-[#8B90B8] uppercase tracking-widest font-bold" style={{ fontFamily: MONO }}>
                                                     {new Date(review.createdAt).toLocaleDateString()}
                                                 </span>
                                             </div>
-
-                                            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                                            {review.title && (
+                                                <h5 className="font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-2" style={{ fontFamily: SERIF }}>
+                                                    {review.title}
+                                                </h5>
+                                            )}
+                                            <p className="text-[#6B7194] dark:text-[#8B90B8] text-sm leading-relaxed">
                                                 {review.comment}
                                             </p>
                                         </div>
                                     ))}
                                 </div>
                             ) : (
-                                <div className="text-center py-10 bg-gray-50 dark:bg-gray-800/30 rounded-3xl border border-dashed border-gray-200 dark:border-gray-700">
-                                    <p className="text-gray-500 dark:text-gray-400">No reviews yet. Be the first to review this course!</p>
+                                <div className="text-center py-10 bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 shadow-sm">
+                                    <p className="text-[#6B7194] dark:text-[#8B90B8] text-sm uppercase tracking-widest font-bold" style={{ fontFamily: MONO }}>No reviews yet. Be the first to review this course!</p>
                                 </div>
                             )}
                         </div>
                     </div>
-
                     {/* Right Column: Floating Card */}
                     <div className="lg:col-span-1">
-                        <div className="sticky top-28 bg-white dark:bg-[#1a1c23] rounded-3xl border border-gray-100 dark:border-gray-800 p-6 shadow-xl shadow-teal-900/5">
-                            <div className="rounded-2xl overflow-hidden mb-6 relative aspect-video group cursor-pointer" onClick={handlePreviewOpen}>
+                        <div className="sticky top-28 bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 p-6 shadow-sm">
+                            <div className="mb-6 relative aspect-video group cursor-pointer border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 overflow-hidden" onClick={handlePreviewOpen}>
                                 <img
                                     src={course.thumbnail || 'https://via.placeholder.com/400x250'}
                                     alt={course.title}
                                     className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                                 />
                                 <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                                    <PlayCircle size={48} className="text-white opacity-80 group-hover:scale-110 transition-transform duration-300 drop-shadow-lg" />
+                                    <PlayCircle size={48} className="text-white opacity-80 group-hover:scale-110 transition-transform duration-300 drop-shadow-lg" strokeWidth={1.5} />
                                 </div>
                             </div>
 
-                            <div className="flex flex-col mb-6">
+                            <div className="flex flex-col mb-8">
                                 <div className="flex items-end gap-3 flex-wrap">
                                     {course.price && course.discount > 0 ? (
                                         <>
-                                            <span className="text-4xl font-extrabold text-gray-900 dark:text-white">
+                                            <span className="text-4xl font-extrabold text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>
                                                 {getCurrencySymbol(course.currency)}
                                                 {(course.price * (1 - course.discount / 100)).toFixed(2)}
                                             </span>
-                                            <span className="text-lg text-gray-400 line-through mb-1.5">
+                                            <span className="text-lg text-[#6B7194] dark:text-[#8B90B8] line-through mb-1.5" style={{ fontFamily: SERIF }}>
                                                 {getCurrencySymbol(course.currency)}
                                                 {course.price}
                                             </span>
-                                            <span className="text-sm font-bold text-red-500 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-full mb-2">
+                                            <span className="text-[10px] font-bold text-[#F5A623] uppercase tracking-widest border border-[#F5A623]/30 bg-[#F5A623]/10 px-2 py-1 mb-2" style={{ fontFamily: MONO }}>
                                                 {course.discount}% OFF
                                             </span>
                                         </>
                                     ) : (
-                                        <span className="text-4xl font-extrabold text-gray-900 dark:text-white">
+                                        <span className="text-4xl font-extrabold text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>
                                             {course.price ? `${getCurrencySymbol(course.currency)}${course.price}` : 'Free'}
                                         </span>
                                     )}
@@ -422,32 +424,33 @@ const CourseDetails = () => {
 
                             <button
                                 onClick={handleEnroll}
-                                className="w-full py-4 bg-teal-500 hover:bg-teal-600 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 transition-all active:scale-[0.98] mb-4"
+                                className="w-full py-4 bg-[#3B4FD8] hover:bg-[#2c3ea8] text-white font-bold text-xs uppercase tracking-widest shadow-sm transition-all active:scale-[0.98] mb-6 border border-transparent"
+                                style={{ fontFamily: MONO }}
                             >
                                 Enroll Now
                             </button>
 
-                            <p className="text-center text-xs text-gray-500 mb-6 font-medium">
+                            <p className="text-center text-[10px] text-[#6B7194] dark:text-[#8B90B8] uppercase tracking-[0.2em] font-bold mb-8" style={{ fontFamily: MONO }}>
                                 30-Day Money-Back Guarantee
                             </p>
 
                             <div className="space-y-4">
-                                <h4 className="font-bold text-gray-900 dark:text-white text-sm uppercase tracking-wider mb-2">This course includes:</h4>
-                                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                                    <PlayCircle size={18} className="text-teal-500" />
+                                <h4 className="font-bold text-[#1A1D2E] dark:text-[#E8EAF2] text-xs uppercase tracking-widest mb-4" style={{ fontFamily: MONO }}>This course includes:</h4>
+                                <div className="flex items-center gap-4 text-sm text-[#1A1D2E] dark:text-[#E8EAF2] font-medium">
+                                    <PlayCircle size={18} className="text-[#3B4FD8] dark:text-[#6C7EF5]" strokeWidth={1.5} />
                                     <span>{course.modules?.reduce((acc, m) => acc + (m.subModulesCount || 0), 0) || 0} lessons</span>
                                 </div>
-                                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                                    <Clock size={18} className="text-teal-500" />
+                                <div className="flex items-center gap-4 text-sm text-[#1A1D2E] dark:text-[#E8EAF2] font-medium">
+                                    <Clock size={18} className="text-[#3B4FD8] dark:text-[#6C7EF5]" strokeWidth={1.5} />
                                     <span>Full lifetime access</span>
                                 </div>
-                                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                                    <Share2 size={18} className="text-teal-500" />
+                                <div className="flex items-center gap-4 text-sm text-[#1A1D2E] dark:text-[#E8EAF2] font-medium">
+                                    <Share2 size={18} className="text-[#3B4FD8] dark:text-[#6C7EF5]" strokeWidth={1.5} />
                                     <span>Access on mobile and TV</span>
                                 </div>
                                 {course.certificateEnabled && (
-                                    <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                                        <Award size={18} className="text-teal-500" />
+                                    <div className="flex items-center gap-4 text-sm text-[#1A1D2E] dark:text-[#E8EAF2] font-medium">
+                                        <Award size={18} className="text-[#3B4FD8] dark:text-[#6C7EF5]" strokeWidth={1.5} />
                                         <span>Certificate of completion</span>
                                     </div>
                                 )}

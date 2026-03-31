@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Zap, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
+import { Zap, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, Sparkles } from 'lucide-react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../redux/slices/authSlice';
 import SocialLogin from './SocialLogin';
 import toast from 'react-hot-toast';
+
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
@@ -29,10 +32,6 @@ const LoginForm = () => {
                 const { user } = response
                 toast.success('Login successful!');
 
-                // Role-priority redirects:
-                // - Company/employer -> Job portal (employer view)
-                // - Faculty/Admin -> Faculty dashboard
-                // - Student -> honor `from` if present, otherwise student dashboard
                 if ((user.role || '').toUpperCase() === 'COMPANY' || (user.role || '').toUpperCase() === 'EMPLOYER') {
                     navigate('/company/dashboard');
                     return;
@@ -52,7 +51,6 @@ const LoginForm = () => {
                     return;
                 }
 
-                // fallback: honor `from` or go home
                 if (from) {
                     navigate(from);
                     return;
@@ -65,7 +63,7 @@ const LoginForm = () => {
         }
     };
 
-
+    const inputClasses = "w-full py-3.5 pl-12 pr-4 bg-[#F7F8FF] dark:bg-[#1A1D2E] border border-[#3B4FD8]/15 dark:border-[#6C7EF5]/15 text-[#1A1D2E] dark:text-[#E8EAF2] placeholder-[#6B7194] dark:placeholder-[#8B90B8] focus:outline-none focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] transition-colors";
 
     return (
         <motion.div
@@ -76,34 +74,31 @@ const LoginForm = () => {
         >
             {/* Mobile Logo */}
             <div className="lg:hidden flex items-center justify-center gap-3 mb-10">
-                <div className="w-10 h-10 bg-linear-to-br from-teal-400 to-cyan-500 rounded-xl flex items-center justify-center">
-                    <Zap size={22} className="text-white" />
+                <div className="w-10 h-10 bg-[#3B4FD8] dark:bg-[#6C7EF5] flex items-center justify-center">
+                    <Sparkles size={18} className="text-white dark:text-[#1A1D2E]" />
                 </div>
-                <span className="text-xl font-bold text-white">
-                    Emote<span className="text-teal-400">Technology</span>
+                <span className="text-xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>
+                    Emote<span className="italic text-[#3B4FD8] dark:text-[#6C7EF5]">Technology</span>
                 </span>
             </div>
 
             {/* Form Card */}
-            <div className="bg-white dark:bg-white/5 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-3xl p-8 shadow-2xl">
-                <div className="text-center mb-8">
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Sign In</h2>
+            <div className="bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 p-8 shadow-2xl">
+                <div className="text-center mb-8 pb-6 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10">
+                    <h2 className="text-3xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>Sign In</h2>
                 </div>
 
-
-
-
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Email */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
+                        <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Email Address</label>
                         <div className="relative">
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={20} />
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#3B4FD8]/50 dark:text-[#6C7EF5]/50" size={18} />
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full py-4 pl-12 pr-4 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-teal-500 focus:bg-white dark:focus:bg-white/10 transition-all"
+                                className={inputClasses}
                                 placeholder="you@example.com"
                                 required
                             />
@@ -112,77 +107,75 @@ const LoginForm = () => {
 
                     {/* Password */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                        <label className="block text-xs font-semibold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] mb-2" style={{ fontFamily: MONO }}>Password</label>
                         <div className="relative">
-                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={20} />
+                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#3B4FD8]/50 dark:text-[#6C7EF5]/50" size={18} />
                             <input
                                 type={showPassword ? 'text' : 'password'}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full py-4 pl-12 pr-12 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-teal-500 focus:bg-white dark:focus:bg-white/10 transition-all"
+                                className={`${inputClasses} pr-12`}
                                 placeholder="••••••••"
                                 required
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6B7194] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors"
                             >
-                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                             </button>
                         </div>
                     </div>
 
                     {/* Remember & Forgot */}
                     <div className="flex items-center justify-between text-sm">
-                        <label className="flex items-center gap-2 text-gray-600 dark:text-gray-400 cursor-pointer">
+                        <label className="flex items-center gap-2 text-[#3E435E] dark:text-[#A7ACC8] cursor-pointer">
                             <input
                                 type="checkbox"
-                                className="w-4 h-4 rounded bg-gray-50 dark:bg-white/10 border-gray-300 dark:border-white/20 text-teal-500 focus:ring-teal-500"
+                                className="w-4 h-4 rounded-none bg-[#F7F8FF] dark:bg-[#1A1D2E] border-[#3B4FD8]/20 text-[#3B4FD8] accent-[#3B4FD8]"
                             />
                             Remember me
                         </label>
-                        <Link to="/forgot-password" className="text-teal-400 hover:text-teal-300 transition-colors">
+                        <Link to="/forgot-password" className="text-[#3B4FD8] dark:text-[#6C7EF5] font-semibold hover:underline transition-colors" style={{ fontFamily: MONO }}>
                             Forgot Password?
                         </Link>
                     </div>
 
                     {/* Submit Button */}
-                    <motion.button
+                    <button
                         type="submit"
                         disabled={isLoggingIn}
-                        whileHover={{ scale: isLoggingIn ? 1 : 1.02 }}
-                        whileTap={{ scale: isLoggingIn ? 1 : 0.98 }}
                         className={`
-                            w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center gap-2
-                            bg-linear-to-r from-teal-500 to-cyan-500 shadow-xl shadow-teal-500/30
-                            hover:shadow-2xl transition-all disabled:opacity-70
+                            w-full py-4 text-xs font-semibold uppercase tracking-widest text-[#1A1D2E] dark:text-[#1A1D2E] flex items-center justify-center gap-2
+                            bg-[#F5A623] hover:bg-[#d9911a] transition-colors disabled:opacity-70 mt-2
                         `}
+                        style={{ fontFamily: MONO }}
                     >
                         {isLoggingIn ? (
-                            <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                         ) : (
                             <>
-                                Sign in
-                                <ArrowRight size={20} />
+                                Sign in To Account
+                                <ArrowRight size={16} />
                             </>
                         )}
-                    </motion.button>
+                    </button>
                 </form>
 
                 <div className="flex items-center my-8">
-                    <div className="flex-1 h-px bg-gray-200 dark:bg-white/10"></div>
-                    <span className="px-4 text-sm text-gray-500">Or continue with</span>
-                    <div className="flex-1 h-px bg-gray-200 dark:bg-white/10"></div>
+                    <div className="flex-1 h-px bg-[#3B4FD8]/10 dark:bg-[#6C7EF5]/10"></div>
+                    <span className="px-4 text-xs tracking-wider uppercase text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>Or continue with</span>
+                    <div className="flex-1 h-px bg-[#3B4FD8]/10 dark:bg-[#6C7EF5]/10"></div>
                 </div>
 
                 {/* Social Login */}
                 <SocialLogin />
 
                 {/* Sign Up Link */}
-                <p className="text-center text-gray-600 dark:text-gray-400 mt-8 text-sm">
+                <p className="text-center text-[#6B7194] dark:text-[#8B90B8] mt-8 text-sm">
                     Don't have an account?{' '}
-                    <Link to="/signup" className="text-teal-400 font-semibold hover:text-teal-300 transition-colors">
+                    <Link to="/signup" className="text-[#3B4FD8] dark:text-[#6C7EF5] font-semibold hover:underline transition-colors">
                         Sign up for free
                     </Link>
                 </p>

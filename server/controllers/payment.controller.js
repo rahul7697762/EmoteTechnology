@@ -52,6 +52,10 @@ export const createOrder = async (req, res) => {
             return res.status(400).json({ success: false, message: "Course is free, please use direct enrollment" });
         }
 
+        if (!razorpayInstance) {
+            return res.status(503).json({ success: false, message: "Payment gateway is currently unavailable because API keys are not configured" });
+        }
+
         const options = {
             amount: Math.round(amount * 100), // amount in paise, ensuring integer
             currency: course.currency || "INR",

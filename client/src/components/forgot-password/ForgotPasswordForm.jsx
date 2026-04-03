@@ -6,6 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { forgotPassword } from '../../redux/slices/authSlice';
 import toast from 'react-hot-toast';
 
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const MONO = "'Space Mono', 'Courier New', monospace";
+
 const ForgotPasswordForm = () => {
     const [email, setEmail] = useState('');
     const { isForgotPasswordLoading } = useSelector((state) => state.auth);
@@ -31,33 +34,34 @@ const ForgotPasswordForm = () => {
 
     return (
         <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             className="w-full max-w-md"
         >
-            <div className="bg-white dark:bg-[#1a1c23] rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-gray-800 backdrop-blur-xl bg-opacity-90 dark:bg-opacity-90">
-                <div className="text-center mb-10">
-                    <h2 className="text-3xl font-bold bg-linear-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent mb-2">
+            <div className="bg-white dark:bg-[#1A1D2E] rounded-none p-8 md:p-10 border-2 border-[#1A1D2E] dark:border-[#6C7EF5]/20 shadow-[8px_8px_0_#1A1D2E] dark:shadow-[8px_8px_0_#3B4FD8] transition-all duration-300 relative overflow-hidden group">
+                {/* Accent Lines */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-[#3B4FD8] dark:bg-[#6C7EF5]"></div>
+                <div className="absolute top-0 right-0 w-16 h-16 border-t-4 border-r-4 border-[#F5A623] translate-x-4 -translate-y-4 group-hover:translate-x-0 group-hover:-translate-y-0 transition-transform duration-500 opacity-20"></div>
+
+                <div className="text-left mb-10">
+                    <h2 className="text-4xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2] mb-3 uppercase tracking-tight" style={{ fontFamily: SERIF }}>
                         Forgot Password?
                     </h2>
-                    <p className="text-gray-500 dark:text-gray-400">
-                        Enter your email address to receive a verification code.
-                    </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-8">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">
-                            Email Address
+                        <label className="text-xs font-bold text-[#1A1D2E] dark:text-[#E8EAF2] uppercase tracking-widest mb-2 block" style={{ fontFamily: MONO }}>
+                            Email Address <span className="text-[#E25C5C]">*</span>
                         </label>
                         <div className="relative group">
-                            <Mail className="absolute left-4 top-3.5 text-gray-400 group-focus-within:text-teal-500 transition-colors" size={20} />
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B7194] dark:text-[#8B90B8] group-focus-within:text-[#3B4FD8] dark:group-focus-within:text-[#6C7EF5] transition-colors" size={20} />
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3.5 bg-gray-50 dark:bg-[#0a0a0f] border border-gray-200 dark:border-gray-800 rounded-xl focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition-all dark:text-white"
-                                placeholder="name@example.com"
+                                className="w-full pl-12 pr-4 py-4 bg-[#F7F8FF] dark:bg-[#0A0B10] border-2 border-[#1A1D2E]/10 dark:border-[#6C7EF5]/20 focus:border-[#3B4FD8] dark:focus:border-[#6C7EF5] focus:outline-none transition-colors dark:text-white rounded-none font-mono text-sm"
+                                placeholder="your@gmail.com"
                                 required
                             />
                         </div>
@@ -66,21 +70,22 @@ const ForgotPasswordForm = () => {
                     <button
                         type="submit"
                         disabled={isForgotPasswordLoading}
-                        className="w-full py-4 bg-linear-to-r from-teal-500 to-blue-600 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="w-full py-4 bg-[#3B4FD8] dark:bg-[#6C7EF5] text-white rounded-none font-bold text-sm uppercase tracking-widest hover:bg-[#1A1D2E] dark:hover:bg-white dark:hover:text-[#1A1D2E] transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-[#3B4FD8] dark:border-[#6C7EF5] hover:border-[#1A1D2E] dark:hover:border-white"
+                        style={{ fontFamily: MONO }}
                     >
                         {isForgotPasswordLoading ? (
-                            <Loader className="animate-spin" size={24} />
+                            <Loader className="animate-spin" size={20} />
                         ) : (
                             <>
-                                Send Verification Code <ArrowRight size={20} />
+                                GET CODE <ArrowRight size={18} strokeWidth={2.5} />
                             </>
                         )}
                     </button>
 
-                    <div className="text-center mt-6">
-                        <Link to="/login" className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-teal-500 dark:hover:text-teal-400 transition-colors">
-                            <ArrowLeft size={16} className="mr-2" />
-                            Back to Login
+                    <div className="text-center mt-8 border-t border-[#1A1D2E]/10 dark:border-[#6C7EF5]/10 pt-6">
+                        <Link to="/login" className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-[#6B7194] dark:text-[#8B90B8] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors" style={{ fontFamily: MONO }}>
+                            <ArrowLeft size={16} className="mr-2" strokeWidth={2.5} />
+                            Return to Login
                         </Link>
                     </div>
                 </form>

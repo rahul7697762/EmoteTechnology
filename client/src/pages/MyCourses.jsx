@@ -4,8 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getFacultyCourses, deleteCourse } from '../redux/slices/courseSlice';
 import Sidebar from '../components/dashboard/Sidebar';
 import {
-    Plus, BookOpen, Loader2, Search
+    Plus, BookOpen, Loader2, Search, Menu
 } from 'lucide-react';
+import { toggleSidebar } from '../redux/slices/uiSlice';
 import toast from 'react-hot-toast';
 import CourseCard from '../components/dashboard/CourseCard';
 
@@ -41,6 +42,15 @@ const MyCourses = () => {
             <Sidebar />
 
             <div className={`flex-1 p-8 overflow-y-auto h-screen transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
+                {/* Mobile Menu Button */}
+                <div className="md:hidden flex items-center mb-6">
+                    <button 
+                        onClick={() => dispatch(toggleSidebar())} 
+                        className="p-2 -ml-2 text-[#1A1D2E] dark:text-[#E8EAF2] hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 transition-colors cursor-pointer"
+                    >
+                        <Menu size={24} />
+                    </button>
+                </div>
                 <div className="max-w-7xl mx-auto">
                     <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 pb-6">
                         <div>

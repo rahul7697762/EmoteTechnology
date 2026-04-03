@@ -222,8 +222,8 @@ const CourseDetails = () => {
 
 
             {/* Hero Section */}
-            <div className="bg-[#1A1D2E] text-[#E8EAF2] pt-32 pb-20 relative overflow-hidden border-b border-[#6C7EF5]/10">
-                <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+            <div className="bg-[#1A1D2E] text-[#E8EAF2] pt-24 md:pt-32 pb-16 md:pb-20 relative overflow-hidden border-b border-[#6C7EF5]/10">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
                         <div className="lg:col-span-2">
                             <div className="flex items-center gap-2 text-[#F5A623] font-bold tracking-[0.2em] uppercase text-xs mb-6" style={{ fontFamily: MONO }}>
@@ -258,7 +258,7 @@ const CourseDetails = () => {
                 </div>
             </div>
 
-            <main className="max-w-7xl mx-auto px-6 lg:px-8 py-12 relative z-20">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 relative z-20">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
                     {/* Left Column: Description & Syllabus */}

@@ -201,9 +201,9 @@ router.get("/certificates", protect, restrictTo("STUDENT"), async (req, res) => 
 // @access  Private (Student)
 router.get("/weekly-streak", protect, restrictTo("STUDENT"), async (req, res) => {
     try {
-        const progressRecords = await Progress.find({
-            userId: req.user._id
-        }).select('updatedAt');
+        const progressRecords = await Progress.find({ userId: req.user._id }).select('createdAt updatedAt');
+        const enrollments = await Enrollment.find({ userId: req.user._id }).select('createdAt updatedAt');
+        const submissions = await Submission.find({ userId: req.user._id }).select('createdAt updatedAt');
 
         const oneDay = 24 * 60 * 60 * 1000;
         const now = new Date();
@@ -212,11 +212,19 @@ router.get("/weekly-streak", protect, restrictTo("STUDENT"), async (req, res) =>
         const activeDays = new Set();
         const activityCounts = {};
 
-        progressRecords.forEach(record => {
-            const date = new Date(record.updatedAt);
+        // Helper to process dates
+        const processDate = (dateField) => {
+            if (!dateField) return;
+            const date = new Date(dateField);
             const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
             activeDays.add(startOfDay);
             activityCounts[startOfDay] = (activityCounts[startOfDay] || 0) + 1;
+        };
+
+        // Combine all activity to generate a dense log
+        [...progressRecords, ...enrollments, ...submissions].forEach(record => {
+            processDate(record.createdAt);
+            processDate(record.updatedAt);
         });
 
         // Calculate current streak

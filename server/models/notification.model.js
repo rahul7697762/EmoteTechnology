@@ -17,6 +17,7 @@ const notificationSchema = new mongoose.Schema({
             "CERTIFICATE_ISSUED",
             "NEW_APPLICATION",
             "APPLICATION_STATUS",
+            "NEW_MESSAGE",
             "SYSTEM"
         ],
         required: true

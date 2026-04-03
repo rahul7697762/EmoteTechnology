@@ -123,9 +123,16 @@ const PostJob = ({ editMode, jobId }) => {
   };
 
   const handleAddTag = () => {
-    if (newTag.trim() && formData.tags.length < 10) {
-      setFormData(prev => ({ ...prev, tags: [...prev.tags, newTag.trim()] }));
-      setNewTag('');
+    const tag = newTag.trim();
+    if (tag) {
+      if (formData.tags.some(t => t.toLowerCase() === tag.toLowerCase())) {
+        showToast.error('This tag has already been added');
+        return;
+      }
+      if (formData.tags.length < 10) {
+        setFormData(prev => ({ ...prev, tags: [...prev.tags, tag] }));
+        setNewTag('');
+      }
     }
   };
 
@@ -134,9 +141,16 @@ const PostJob = ({ editMode, jobId }) => {
   };
 
   const handleAddQuestion = () => {
-    if (newQuestion.trim() && formData.applicationQuestions.length < 5) {
-      setFormData(prev => ({ ...prev, applicationQuestions: [...prev.applicationQuestions, newQuestion.trim()] }));
-      setNewQuestion('');
+    const question = newQuestion.trim();
+    if (question) {
+      if (formData.applicationQuestions.some(q => q.toLowerCase() === question.toLowerCase())) {
+        showToast.error('This question has already been added');
+        return;
+      }
+      if (formData.applicationQuestions.length < 5) {
+        setFormData(prev => ({ ...prev, applicationQuestions: [...prev.applicationQuestions, question] }));
+        setNewQuestion('');
+      }
     }
   };
 

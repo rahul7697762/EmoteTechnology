@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, MapPin, Building2, ArrowRight } from 'lucide-react';
+import { Briefcase, MapPin, Building2, ArrowRight, Banknote } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { getAllJobs } from '../../redux/slices/jobSlice';
@@ -34,7 +34,7 @@ const Jobs = () => {
     const jobs = jobsList?.jobs?.slice(0, 4) || [];
 
     useEffect(() => {
-        dispatch(getAllJobs({ limit: 4 }));
+        dispatch(getAllJobs({ limit: 4, sort: 'recent' }));
     }, [dispatch]);
 
     const handleJobClick = (job) => {
@@ -87,7 +87,13 @@ const Jobs = () => {
                     viewport={{ once: true }}
                     className="grid md:grid-cols-2 gap-6"
                 >
-                    {jobs.map((job, index) => (
+                    {jobs.map((job, index) => {
+                        const symbol = job.salaryCurrency === 'INR' ? '₹' : '$';
+                        const salary = job.salaryMin && job.salaryMax
+                            ? `${symbol}${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()}`
+                            : job.salaryMin ? `${symbol}${job.salaryMin.toLocaleString()}` : 'Not Disclosed';
+
+                        return (
                         <motion.div
                             key={job._id || index}
                             variants={itemVariants}
@@ -98,8 +104,8 @@ const Jobs = () => {
                             <div className="flex items-start justify-between">
                                 <div className="flex gap-5">
                                     <div className="w-14 h-14 shrink-0 bg-[#F7F8FF] dark:bg-[#1A1D2E] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 flex items-center justify-center text-[#1A1D2E] dark:text-[#E8EAF2] rounded-none group-hover:bg-[#3B4FD8] group-hover:text-white dark:group-hover:bg-[#6C7EF5] transition-colors overflow-hidden">
-                                        {job.company?.logo ? (
-                                            <img src={job.company.logo} alt={job.company.companyName} className="w-full h-full object-cover" />
+                                        {job.company?.logo?.url || job.company?.logo ? (
+                                            <img src={job.company?.logo?.url || job.company?.logo} alt={job.company.companyName} className="w-full h-full object-cover" />
                                         ) : (
                                             <span className="text-xl font-bold" style={{ fontFamily: SERIF }}>{job.company?.companyName?.charAt(0) || 'J'}</span>
                                         )}
@@ -109,6 +115,7 @@ const Jobs = () => {
                                         <div className="flex flex-wrap gap-x-5 gap-y-2 text-[10px] uppercase font-bold tracking-widest text-[#6B7194] dark:text-[#8B90B8]" style={{ fontFamily: MONO }}>
                                             <span className="flex items-center gap-1.5"><Building2 size={13} /> {job.company?.companyName}</span>
                                             <span className="flex items-center gap-1.5"><MapPin size={13} /> {job.location}</span>
+                                            <span className="flex items-center gap-1.5"><Banknote size={13} /> {salary}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -125,7 +132,8 @@ const Jobs = () => {
                                 </span>
                             </div>
                         </motion.div>
-                    ))}
+                        );
+                    })}
                 </motion.div>
             </div>
         </section>

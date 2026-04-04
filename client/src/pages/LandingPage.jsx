@@ -20,6 +20,8 @@ const LandingPage = () => {
             <UniversityCollabs />
             <CompanyCollabs />
             <AboutUs />
+            {/* Extra padding on mobile so nothing hides behind the bottom tab bar */}
+            <div className="md:hidden h-16" />
             <Footer />
         </div>
     );

@@ -1,9 +1,8 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Search, Menu, X } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Sun, Moon, Home, LayoutGrid, Briefcase, Sparkles, User as UserIcon } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleTheme } from '../../redux/slices/uiSlice';
-import { useState } from 'react';
 
 const SERIF = "'Cormorant Garamond', Georgia, serif";
 const MONO = "'Space Mono', 'Courier New', monospace";
@@ -15,20 +14,14 @@ const Navbar = () => {
 
     const { theme } = useSelector((state) => state.ui);
     const { user } = useSelector((state) => state.auth);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const goToDashboard = () => {
-        if (!user) {
-            navigate('/login');
-            return;
-        }
+        if (!user) { navigate('/login'); return; }
         const role = (user.role || '').toUpperCase();
         if (role === 'STUDENT') { navigate('/student-dashboard'); return; }
         if (role === 'COMPANY' || role === 'EMPLOYER') { navigate('/company/dashboard'); return; }
         navigate('/dashboard');
     };
-
-    const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
     const navItems = [
         { name: 'Home', path: '/' },
@@ -37,69 +30,77 @@ const Navbar = () => {
         { name: 'AI Interview', path: '/ai-interview' },
     ];
 
+    const mobileNavItems = [
+        { name: 'Home', path: '/', icon: Home },
+        { name: 'Courses', path: '/courses', icon: LayoutGrid },
+        { name: 'Jobs', path: '/jobs', icon: Briefcase },
+        { name: 'AI', path: '/ai-interview', icon: Sparkles },
+        { name: 'Account', path: '/dashboard', icon: UserIcon, onClick: goToDashboard },
+    ];
+
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F7F8FF]/92 dark:bg-[#1A1D2E]/92 backdrop-blur-md border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/8 transition-colors duration-300">
-            <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16">
+        <>
+            {/* ── Desktop / Top Navbar ── */}
+            <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F7F8FF]/92 dark:bg-[#1A1D2E]/92 backdrop-blur-md border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/8 transition-colors duration-300">
+                <div className="max-w-7xl mx-auto px-6 lg:px-8">
+                    <div className="flex items-center justify-between h-16">
 
-                    {/* Logo */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="flex items-baseline gap-0.5 cursor-pointer"
-                        onClick={() => navigate('/')}
-                    >
-                        <span
-                            className="text-[1.6rem] font-semibold leading-none text-[#3B4FD8] dark:text-[#6C7EF5]"
-                            style={{ fontFamily: SERIF }}
+                        {/* Logo */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="flex items-baseline gap-0.5 cursor-pointer"
+                            onClick={() => navigate('/')}
                         >
-                            Emote
-                        </span>
-                        <span className="text-base font-light text-[#1A1D2E] dark:text-[#E8EAF2] tracking-[0.04em]">
-                            Technology
-                        </span>
-                    </motion.div>
+                            <span
+                                className="text-[1.6rem] font-semibold leading-none text-[#3B4FD8] dark:text-[#6C7EF5]"
+                                style={{ fontFamily: SERIF }}
+                            >
+                                Emote
+                            </span>
+                            <span className="text-base font-light text-[#1A1D2E] dark:text-[#E8EAF2] tracking-[0.04em]">
+                                Technology
+                            </span>
+                        </motion.div>
 
-                    {/* Desktop nav */}
-                    <motion.div
-                        initial={{ opacity: 0, y: -8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="hidden md:flex items-center gap-8"
-                    >
-                        <div className="flex items-center gap-6">
-                            {navItems.map((item) => (
-                                <button
-                                    key={item.name}
-                                    onClick={() => navigate(item.path)}
-                                    className={`text-sm font-medium transition-colors relative pb-0.5 ${location.pathname === item.path
-                                        ? 'text-[#3B4FD8] dark:text-[#6C7EF5]'
-                                        : 'text-[#6B7194] dark:text-[#8B90B8] hover:text-[#1A1D2E] dark:hover:text-[#E8EAF2]'
+                        {/* Desktop nav links */}
+                        <motion.div
+                            initial={{ opacity: 0, y: -8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="hidden md:flex items-center gap-8"
+                        >
+                            <div className="flex items-center gap-6">
+                                {navItems.map((item) => (
+                                    <button
+                                        key={item.name}
+                                        onClick={() => navigate(item.path)}
+                                        className={`text-sm font-medium transition-colors relative pb-0.5 ${
+                                            location.pathname === item.path
+                                                ? 'text-[#3B4FD8] dark:text-[#6C7EF5]'
+                                                : 'text-[#6B7194] dark:text-[#8B90B8] hover:text-[#1A1D2E] dark:hover:text-[#E8EAF2]'
                                         }`}
-                                >
-                                    {item.name}
-                                    {location.pathname === item.path && (
-                                        <motion.div
-                                            layoutId="nav-underline"
-                                            className="absolute -bottom-0.5 left-0 right-0 h-px bg-[#3B4FD8] dark:bg-[#6C7EF5]"
-                                        />
-                                    )}
-                                </button>
-                            ))}
-                        </div>
+                                    >
+                                        {item.name}
+                                        {location.pathname === item.path && (
+                                            <motion.div
+                                                layoutId="nav-underline"
+                                                className="absolute -bottom-0.5 left-0 right-0 h-px bg-[#3B4FD8] dark:bg-[#6C7EF5]"
+                                            />
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+                        </motion.div>
 
-                        {/* Removed Search Component */}
-                    </motion.div>
+                        {/* Desktop Actions */}
+                        <div className="hidden md:flex items-center gap-4">
+                            <button
+                                onClick={() => dispatch(toggleTheme())}
+                                className="p-1.5 text-[#6B7194] dark:text-[#8B90B8] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors"
+                            >
+                                {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+                            </button>
 
-                    {/* Actions */}
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => dispatch(toggleTheme())}
-                            className="hidden md:block p-1.5 text-[#6B7194] dark:text-[#8B90B8] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors"
-                        >
-                            {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
-                        </button>
-
-                        <div className="hidden md:block">
                             <motion.button
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -110,69 +111,62 @@ const Navbar = () => {
                             </motion.button>
                         </div>
 
+                        {/* Mobile: theme toggle only on top bar */}
                         <button
-                            className="md:hidden p-1.5 text-[#6B7194] dark:text-[#8B90B8]"
-                            onClick={toggleMobileMenu}
+                            onClick={() => dispatch(toggleTheme())}
+                            className="md:hidden p-1.5 text-[#6B7194] dark:text-[#8B90B8] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors"
                         >
-                            {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+                            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
                         </button>
                     </div>
                 </div>
-            </div>
+            </nav>
 
-            {/* Mobile menu */}
-            <AnimatePresence>
-                {isMobileMenuOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="md:hidden bg-[#F7F8FF] dark:bg-[#1A1D2E] border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/8 overflow-hidden"
-                    >
-                        <div className="px-6 py-8 space-y-6">
-                            {/* Removed Search Component from Mobile Menu */}
-
-                            <div className="flex flex-col space-y-0">
-                                {navItems.map((item) => (
-                                    <button
-                                        key={item.name}
-                                        onClick={() => { navigate(item.path); toggleMobileMenu(); }}
-                                        className={`text-left py-3.5 font-medium transition-colors border-b border-[#3B4FD8]/8 dark:border-[#6C7EF5]/6 ${location.pathname === item.path
-                                            ? 'text-[#3B4FD8] dark:text-[#6C7EF5]'
-                                            : 'text-[#6B7194] dark:text-[#8B90B8] hover:text-[#1A1D2E] dark:hover:text-[#E8EAF2]'
-                                            }`}
-                                    >
-                                        {item.name}
-                                    </button>
-                                ))}
-                            </div>
-
-                            <div className="flex items-center justify-between pt-2">
+            {/* ── Mobile Bottom Tab Bar ── */}
+            <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#F7F8FF] dark:bg-[#1A1D2E] border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/8 shadow-[0_-4px_24px_rgba(59,79,216,0.08)] transition-colors duration-300">
+                <div className="flex justify-around items-stretch px-1">
+                    {mobileNavItems.map(item => {
+                        const isActive = item.path === '/'
+                            ? location.pathname === '/'
+                            : location.pathname.startsWith(item.path) && item.path !== '/dashboard';
+                        return (
+                            <button
+                                key={item.name}
+                                onClick={() => {
+                                    if (item.onClick) item.onClick();
+                                    else navigate(item.path);
+                                }}
+                                className={`flex flex-col items-center justify-center flex-1 py-3 gap-1 transition-all duration-200 relative ${
+                                    isActive
+                                        ? 'text-[#3B4FD8] dark:text-[#6C7EF5]'
+                                        : 'text-[#6B7194] dark:text-[#8B90B8] active:text-[#3B4FD8]'
+                                }`}
+                            >
+                                {/* Active indicator dot */}
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="mobile-tab-indicator"
+                                        className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-b-full bg-[#3B4FD8] dark:bg-[#6C7EF5]"
+                                    />
+                                )}
+                                <item.icon
+                                    size={20}
+                                    strokeWidth={isActive ? 2.2 : 1.6}
+                                />
                                 <span
-                                    className="text-[10px] tracking-[0.2em] uppercase text-[#6B7194] dark:text-[#8B90B8]"
+                                    className={`text-[9px] font-semibold tracking-wider uppercase ${
+                                        isActive ? 'opacity-100' : 'opacity-60'
+                                    }`}
                                     style={{ fontFamily: MONO }}
                                 >
-                                    Appearance
+                                    {item.name}
                                 </span>
-                                <button
-                                    onClick={() => dispatch(toggleTheme())}
-                                    className="p-1.5 text-[#6B7194] dark:text-[#8B90B8] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors"
-                                >
-                                    {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-                                </button>
-                            </div>
-
-                            <button
-                                onClick={() => { goToDashboard(); toggleMobileMenu(); }}
-                                className="w-full py-3.5 bg-[#F5A623] dark:bg-[#F9C74F] text-white dark:text-[#1A1D2E] font-medium tracking-wide hover:bg-[#d9911a] transition-colors"
-                            >
-                                {user ? 'Dashboard' : 'Get Started'}
                             </button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </nav>
+                        );
+                    })}
+                </div>
+            </div>
+        </>
     );
 };
 

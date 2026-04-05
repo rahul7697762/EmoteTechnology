@@ -5,14 +5,19 @@ dotenv.config();
 
 // Create a transporter using SMTP credentials from environment variables.
 // For production, replace with your actual SMTP server details.
+const port = parseInt(process.env.SMTP_PORT) || 465;
+
+// Create a transporter using SMTP credentials from environment variables.
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: process.env.SMTP_PORT || 465,
-  secure: process.env.SMTP_SECURE, // Use true for port 465, false for port 587
+  port: port,
+  secure: port === 465, // true for 465, false for 587 (TLS)
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASSWORD,
   },
+  connectionTimeout: 10000, // 10 seconds
+  greetingTimeout: 10000,
 });
 
 // Send an email using async/await

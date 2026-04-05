@@ -30,6 +30,7 @@ import companyRoutes from './routes/company.routes.js';
 import jobRoutes from './routes/job.routes.js';
 import applicationRoutes from './routes/application.routes.js';
 import uploadRoutes from './routes/upload.routes.js';
+import messageRoutes from './routes/message.routes.js';
 
 // ES Module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -56,6 +57,7 @@ const corsOptions = {
 
         const isAllowed = allowedOrigins.includes(origin) || 
                          (origin && origin.endsWith('.onrender.com')) ||
+                         (origin && origin.endsWith('.vercel.app')) ||
                          !origin; // Allow server-to-server or tools like Postman
 
         if (isAllowed) {
@@ -74,8 +76,8 @@ const corsOptions = {
 app.use(globalRateLimiter);
 
 app.use(cors(corsOptions));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '1024mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1024mb' }));
 app.use(cookieParser());
 
 // Connect to MongoDB
@@ -103,6 +105,7 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/messages', messageRoutes);
 
 // Static Files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

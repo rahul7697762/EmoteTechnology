@@ -44,8 +44,8 @@ const SubModuleModal = ({ isOpen, onClose, onSubmit, initialData = null, isLoadi
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            if (file.size > 500 * 1024 * 1024) { // 500MB
-                toast.error("File size exceeds 500MB limit");
+            if (file.size > 1024 * 1024 * 1024) { // 1GB
+                toast.error("File size exceeds 1GB limit");
                 return;
             }
             setVideoFile(file);
@@ -165,7 +165,7 @@ const SubModuleModal = ({ isOpen, onClose, onSubmit, initialData = null, isLoadi
                                     <p className="text-lg font-medium text-slate-700 dark:text-slate-300">
                                         {videoPreviewName || "Click to upload video"}
                                     </p>
-                                    <p className="text-sm text-slate-500 mt-2">MP4, MOV, WebM up to 500MB</p>
+                                    <p className="text-sm text-slate-500 mt-2">MP4, MOV, WebM up to 1GB</p>
                                     <input
                                         type="file"
                                         ref={fileInputRef}

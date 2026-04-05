@@ -249,6 +249,22 @@ export const getCompanyJobs = async (req, res) => {
       { $set: { status: 'CLOSED' } }
     );
 
+    // Auto-delete closed jobs that have been past their deadline for 60 days
+    const sixtyDaysAgo = new Date();
+    sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+    
+    const expiredJobs = await Job.find({ 
+      company: company._id, 
+      status: 'CLOSED', 
+      deadline: { $lt: sixtyDaysAgo } 
+    });
+
+    if (expiredJobs.length > 0) {
+      const expiredJobIds = expiredJobs.map(job => job._id);
+      await Application.deleteMany({ job: { $in: expiredJobIds } });
+      await Job.deleteMany({ _id: { $in: expiredJobIds } });
+    }
+
     const jobs = await Job.find({ company: company._id })
       .sort({ createdAt: -1 })
       .populate('company', 'companyName logo');
@@ -278,6 +294,22 @@ export const getCompanyStats = async (req, res) => {
       { company: company._id, status: 'ACTIVE', deadline: { $lt: now } },
       { $set: { status: 'CLOSED' } }
     );
+
+    // Auto-delete closed jobs that have been past their deadline for 60 days
+    const sixtyDaysAgo = new Date();
+    sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+
+    const expiredJobs = await Job.find({ 
+      company: company._id, 
+      status: 'CLOSED', 
+      deadline: { $lt: sixtyDaysAgo } 
+    });
+
+    if (expiredJobs.length > 0) {
+      const expiredJobIds = expiredJobs.map(job => job._id);
+      await Application.deleteMany({ job: { $in: expiredJobIds } });
+      await Job.deleteMany({ _id: { $in: expiredJobIds } });
+    }
 
     // Get job statistics
     const jobs = await Job.find({ company: company._id });

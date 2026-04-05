@@ -5,7 +5,8 @@ import { getFacultyCourseDetails } from '../redux/slices/courseSlice';
 import { getSubmissionsByCourse } from '../redux/slices/submissionSlice';
 import Sidebar from '../components/dashboard/Sidebar';
 import { Sidebar as LucideSidebar, MessageSquare } from 'lucide-react';
-import { ArrowLeft, FileText, Users } from 'lucide-react';
+import { ArrowLeft, FileText, Users, Menu } from 'lucide-react';
+import { toggleSidebar } from '../redux/slices/uiSlice';
 import SubmissionsTab from '../components/dashboard/manage-course/SubmissionsTab';
 import DiscussionFullPage from '../components/student-view/DiscussionFullPage';
 
@@ -53,6 +54,15 @@ const ManageCourse = () => {
                 {/* Top Bar with Back Button and Title */}
                 <div className="bg-white dark:bg-[#1E293B] border-b border-slate-200 dark:border-slate-700 px-8 py-4 sticky top-0 z-10">
                     <div className="flex items-center gap-4">
+                        {/* Mobile Menu Button */}
+                        <div className="md:hidden flex items-center">
+                            <button 
+                                onClick={() => dispatch(toggleSidebar())} 
+                                className="p-2 -ml-4 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-lg"
+                            >
+                                <Menu size={24} />
+                            </button>
+                        </div>
                         <button
                             onClick={() => navigate('/my-courses')}
                             className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"

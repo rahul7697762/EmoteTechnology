@@ -170,7 +170,7 @@ const JobListing = ({ jobs: initialJobs = [], loading: initialLoading = false, o
 
       {/* ── Main Grid ── */}
       {loading ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="p-6 bg-[#F7F8FF] dark:bg-[#1A1D2E] animate-pulse">
               <div className="h-4 bg-[#3B4FD8]/10 dark:bg-[#6C7EF5]/10 mb-4 w-3/4" />
@@ -188,9 +188,9 @@ const JobListing = ({ jobs: initialJobs = [], loading: initialLoading = false, o
           </button>
         </div>
       ) : (
-        <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <AnimatePresence>
-            {jobs.map((job) => <JobCard key={job._id} job={job} onViewJob={onViewJob} />)}
+            {jobs.filter(job => !featuredJobs.some(f => f._id === job._id)).map((job) => <JobCard key={job._id} job={job} onViewJob={onViewJob} />)}
           </AnimatePresence>
         </motion.div>
       )}

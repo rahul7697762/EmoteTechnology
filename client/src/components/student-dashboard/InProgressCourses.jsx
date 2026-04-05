@@ -69,13 +69,15 @@ const CourseCard = ({ course }) => {
                 LAST ACCESSED: {course.lastAccessed}
             </p>
 
-            <button className={`w-full py-4 flex items-center justify-center gap-3 text-xs uppercase tracking-widest font-bold transition-colors border border-transparent ${course.active
+            <Link 
+                to={`/course/${course._id}/learn`}
+                className={`w-full py-4 flex items-center justify-center gap-3 text-xs uppercase tracking-widest font-bold transition-colors border border-transparent ${course.active
                 ? 'bg-[#3B4FD8] hover:bg-[#2c3ea8] text-white shadow-sm'
                 : 'bg-[#F7F8FF] hover:bg-[#EDEEFF] dark:bg-[#1A1D2E] dark:hover:bg-black/20 text-[#6B7194] dark:text-[#8B90B8] border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10'
                 }`} style={{ fontFamily: MONO }}>
                 {course.active ? <Play size={14} fill="currentColor" /> : <Play size={14} />}
-                {course.actionText}
-            </button>
+                {course.actionText || 'Resume Learning'}
+            </Link>
         </div>
     );
 };

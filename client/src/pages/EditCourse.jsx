@@ -4,8 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getFacultyCourseDetails, updateCourse, updateCourseStatus } from '../redux/slices/courseSlice';
 import Sidebar from '../components/dashboard/Sidebar';
 import {
-    LayoutDashboard, Settings, Layers, Save, ArrowLeft, Loader2, Eye
+    LayoutDashboard, Settings, Layers, Save, ArrowLeft, Loader2, Eye, Menu
 } from 'lucide-react';
+import { toggleSidebar } from '../redux/slices/uiSlice';
 import toast from 'react-hot-toast';
 import {
     getModulesByCourse, createModule, updateModule,
@@ -332,6 +333,15 @@ const EditCourse = () => {
                 {/* Header */}
                 <header className="h-16 bg-white dark:bg-[#1E293B] border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6 shrink-0 z-10">
                     <div className="flex items-center gap-4">
+                        {/* Mobile Menu Button */}
+                        <div className="md:hidden flex items-center">
+                            <button 
+                                onClick={() => dispatch(toggleSidebar())} 
+                                className="p-2 -ml-4 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-lg"
+                            >
+                                <Menu size={24} />
+                            </button>
+                        </div>
                         <button onClick={() => navigate('/my-courses')} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-slate-500">
                             <ArrowLeft size={20} />
                         </button>

@@ -44,6 +44,7 @@ export const jobAPI = {
   getAllJobs: (params) => api.get('/jobs', { params }),
   getJobById: (id) => api.get(`/jobs/${id}`),
   getJobApplications: (id) => api.get(`/jobs/${id}/applications`),
+  deleteJob: (id) => api.delete(`/jobs/${id}`),
 };
 
 // Application APIs
@@ -79,6 +80,12 @@ export const notificationAPI = {
   getNotifications: () => api.get('/notifications'),
   markAsRead: (id) => api.patch(`/notifications/${id}/read`),
   markAllAsRead: () => api.patch('/notifications/read-all'),
+};
+
+// Message APIs
+export const messageAPI = {
+  sendMessage: (data) => api.post('/messages', data),
+  getMessages: (jobId, applicantId) => api.get(`/messages/${jobId}/${applicantId}`),
 };
 
 export default api;

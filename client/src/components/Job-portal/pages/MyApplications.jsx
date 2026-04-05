@@ -3,12 +3,14 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   FileText, Clock, CheckCircle, XCircle, Eye, Download,
-  Calendar, MapPin, Building2, Filter, Search, AlertCircle, Briefcase
+  Calendar, MapPin, Building2, Filter, Search, AlertCircle, Briefcase,
+  MessageSquare
 } from 'lucide-react';
 import { applicationAPI } from '../services/api';
 import { showToast } from '../services/toast';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import ChatModal from '../../chat/ChatModal';
 
 const SERIF = "'Cormorant Garamond', Georgia, serif";
 const MONO = "'Space Mono', 'Courier New', monospace";
@@ -23,6 +25,13 @@ const MyApplications = () => {
     status: '',
     search: '',
     sortBy: 'newest',
+  });
+  const [chatConfig, setChatConfig] = useState({
+    isOpen: false,
+    jobId: null,
+    applicantId: null,
+    jobTitle: '',
+    otherPartyName: ''
   });
 
   useEffect(() => {
@@ -367,6 +376,21 @@ const MyApplications = () => {
                         RESUME
                       </button>
 
+                      <button
+                        onClick={() => setChatConfig({
+                          isOpen: true,
+                          jobId: application.job._id,
+                          applicantId: user._id,
+                          jobTitle: application.job.title,
+                          otherPartyName: application.job.company?.companyName
+                        })}
+                        className="w-full px-4 py-3 text-center bg-[#1A1D2E] border border-[#1A1D2E] text-[#00E5FF] font-bold uppercase tracking-widest text-[10px] rounded-none hover:bg-[#3B4FD8] hover:text-white transition-colors flex items-center justify-center gap-2"
+                        style={{ fontFamily: MONO }}
+                      >
+                        <MessageSquare className="w-4 h-4" />
+                        MESSAGE COMPANY
+                      </button>
+
                       {application.status === 'PENDING' && (
                         <button
                           onClick={() => handleWithdraw(application._id)}
@@ -384,6 +408,15 @@ const MyApplications = () => {
           </motion.div>
         )}
       </div>
+
+      <ChatModal
+        isOpen={chatConfig.isOpen}
+        onClose={() => setChatConfig(prev => ({ ...prev, isOpen: false }))}
+        jobId={chatConfig.jobId}
+        applicantId={chatConfig.applicantId}
+        jobTitle={chatConfig.jobTitle}
+        otherPartyName={chatConfig.otherPartyName}
+      />
     </div>
   );
 };

@@ -442,7 +442,7 @@ const courseSlice = createSlice({
             })
             .addCase(createReview.rejected, (state, action) => {
                 state.isSubmittingReview = false;
-                state.error = action.payload;
+                // We do not set state.error here to prevent crashing the global Course View
             })
 
             .addCase(getCourseReviews.pending, (state) => {

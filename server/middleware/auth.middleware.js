@@ -30,6 +30,14 @@ export const protect = async (req, res, next) => {
                 return res.status(401).json({ message: "Not authorized, user not found" });
             }
 
+            // Check if account is active
+            if (user.accountStatus !== 'ACTIVE') {
+                return res.status(403).json({ 
+                    success: false,
+                    message: `Your account is ${user.accountStatus.toLowerCase()}. Please contact support.` 
+                });
+            }
+
             req.user = user;
             req.userId = user._id;
             next();

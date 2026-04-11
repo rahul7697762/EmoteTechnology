@@ -42,6 +42,7 @@ import StudentApplications from './pages/StudentApplications';
 import { NotificationProvider } from './context/NotificationContext';
 import Blog from './pages/Blog';
 import CookieConsent from './components/common/CookieConsent';
+import WhatsAppWidget from './components/common/WhatsAppWidget';
 
 
 function App() {
@@ -304,6 +305,7 @@ function App() {
         </Routes>
         <Toaster />
         <CookieConsent />
+        <WhatsAppWidget />
       </Router>
     </NotificationProvider>
   );

@@ -24,6 +24,7 @@ import Courses from './pages/Courses';
 import CourseDetails from './pages/CourseDetails';
 import Jobs from './pages/Jobs';
 import AiInterview from './pages/AiInterview';
+import OAuthCallback from './pages/OAuthCallback';
 import './App.css';
 import { Toaster } from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux';
@@ -94,6 +95,7 @@ function App() {
           } />
           <Route path="/verify-email" element={<VerifyEmail />
           } />
+          <Route path="/auth/callback" element={<OAuthCallback />} />
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={

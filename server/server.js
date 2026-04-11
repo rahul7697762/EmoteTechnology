@@ -31,12 +31,15 @@ import jobRoutes from './routes/job.routes.js';
 import applicationRoutes from './routes/application.routes.js';
 import uploadRoutes from './routes/upload.routes.js';
 import messageRoutes from './routes/message.routes.js';
+import passport from 'passport';
+import './config/passport.config.js';
 
 // ES Module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+app.set('trust proxy', 1);
 const httpServer = createServer(app);
 const io = initSocket(httpServer);
 const port = process.env.PORT || 5000;
@@ -79,6 +82,7 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: '1024mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1024mb' }));
 app.use(cookieParser());
+app.use(passport.initialize());
 
 // Connect to MongoDB
 connectDB();

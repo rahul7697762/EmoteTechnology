@@ -20,11 +20,17 @@ export const signup = async (req, res) => {
 
         // checking is email already exists
         const existingUser = await User.findOne({ email });
+        
         if (existingUser) {
-            return res.status(400).json({
-                success: false,
-                message: 'Email is already registered'
-            });
+            // If the account was previously "deleted" (soft-deleted), allow them to sign up again
+            if (existingUser.accountStatus === 'DEACTIVATED') {
+                await User.findByIdAndDelete(existingUser._id);
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Email is already registered'
+                });
+            }
         }
 
         // hashing the password for security 
@@ -411,5 +417,33 @@ export const verifyEmail = async (req, res) => {
             success: false,
             message: 'Internal Server Error',
         });
+    }
+};
+
+/**
+ * @route   GET /api/auth/google/callback
+ * @desc    Handle Google OAuth callback - set JWT cookie and redirect to frontend
+ * @access  Public (called by passport after Google auth)
+ */
+export const googleAuthCallback = async (req, res) => {
+    try {
+        const user = req.user;
+
+        if (!user) {
+            return res.redirect(`${process.env.FRONTEND_URL}/login?error=google_failed`);
+        }
+
+        // Set JWT cookie (same pattern as regular login)
+        generateToken(user._id, res);
+
+        // Update last login
+        user.lastLoginAt = new Date();
+        await user.save();
+
+        // Redirect to frontend OAuth callback handler
+        res.redirect(`${process.env.FRONTEND_URL}/auth/callback`);
+    } catch (error) {
+        console.error('Google Auth Callback error:', error);
+        res.redirect(`${process.env.FRONTEND_URL}/login?error=google_failed`);
     }
 };

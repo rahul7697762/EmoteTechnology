@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Sun, Moon, Home, LayoutGrid, Briefcase, Sparkles, User as UserIcon } from 'lucide-react';
+import { Sun, Moon, Home, LayoutGrid, Briefcase, Sparkles, User as UserIcon, BookOpen } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleTheme } from '../../redux/slices/uiSlice';
@@ -23,20 +23,24 @@ const Navbar = () => {
         navigate('/dashboard');
     };
 
-    const navItems = [
-        { name: 'Home', path: '/' },
+    const allNavItems = [
+        { name: 'Home', path: '/', authHide: true },
         { name: 'Courses', path: '/courses' },
         { name: 'Jobs', path: '/jobs' },
         { name: 'AI Interview', path: '/ai-interview' },
+        { name: 'Blog', path: '/blog' },
     ];
+    const navItems = allNavItems.filter(item => !(item.authHide && user));
 
-    const mobileNavItems = [
-        { name: 'Home', path: '/', icon: Home },
+    const allMobileNavItems = [
+        { name: 'Home', path: '/', icon: Home, authHide: true },
         { name: 'Courses', path: '/courses', icon: LayoutGrid },
         { name: 'Jobs', path: '/jobs', icon: Briefcase },
+        { name: 'Blog', path: '/blog', icon: BookOpen },
         { name: 'AI', path: '/ai-interview', icon: Sparkles },
         { name: 'Account', path: '/dashboard', icon: UserIcon, onClick: goToDashboard },
     ];
+    const mobileNavItems = allMobileNavItems.filter(item => !(item.authHide && user));
 
     return (
         <>

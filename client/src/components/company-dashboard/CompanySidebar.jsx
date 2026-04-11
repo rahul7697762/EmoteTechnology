@@ -37,7 +37,7 @@ const CompanySidebar = () => {
                             <button onClick={() => dispatch(toggleSidebar())} className="text-[#6B7194] dark:text-[#8B90B8] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors">
                                 <Menu size={24} />
                             </button>
-                            <NavLink to="/" className="p-3 bg-[#3B4FD8]/10 text-[#3B4FD8] dark:bg-[#6C7EF5]/10 dark:text-[#6C7EF5] transition-colors">
+                            <NavLink to="/courses" className="p-3 bg-[#3B4FD8]/10 text-[#3B4FD8] dark:bg-[#6C7EF5]/10 dark:text-[#6C7EF5] transition-colors">
                                 <Home size={20} />
                             </NavLink>
                         </div>
@@ -47,7 +47,7 @@ const CompanySidebar = () => {
                                 <Menu size={20} />
                             </button>
 
-                            <NavLink to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                            <NavLink to="/courses" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                                 <div className="w-10 h-10 bg-[#3B4FD8] flex items-center justify-center text-white font-bold shadow-sm">
                                     <Briefcase size={20} strokeWidth={2} />
                                 </div>

@@ -40,10 +40,24 @@ import CompanySettingsPage from './pages/CompanySettingsPage';
 import StudentJobDashboard from './pages/StudentJobDashboard';
 import StudentApplications from './pages/StudentApplications';
 import { NotificationProvider } from './context/NotificationContext';
+import Blog from './pages/Blog';
+import CookieConsent from './components/common/CookieConsent';
+
 
 function App() {
   const dispatch = useDispatch();
   const { theme } = useSelector((state) => state.ui);
+  const { user } = useSelector((state) => state.auth);
+
+  // Redirect logged-in users away from the landing page
+  const HomeRoute = () => {
+    if (!user) return <LandingPage />;
+    const role = (user.role || '').toUpperCase();
+    if (role === 'STUDENT') return <Navigate to="/student-dashboard" replace />;
+    if (role === 'COMPANY' || role === 'EMPLOYER') return <Navigate to="/company/dashboard" replace />;
+    if (role === 'FACULTY' || role === 'ADMIN') return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/dashboard" replace />;
+  };
 
   useEffect(() => {
     dispatch(getMe());
@@ -61,12 +75,14 @@ function App() {
     <NotificationProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<HomeRoute />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/course/:id" element={<CourseDetails />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/jobs/:id" element={<Jobs />} />
           <Route path="/ai-interview" element={<AiInterview />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<Blog />} />
           <Route path="/login" element={
             <PublicRoute>
               <LoginPage />
@@ -287,6 +303,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <Toaster />
+        <CookieConsent />
       </Router>
     </NotificationProvider>
   );

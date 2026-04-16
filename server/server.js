@@ -31,8 +31,10 @@ import jobRoutes from './routes/job.routes.js';
 import applicationRoutes from './routes/application.routes.js';
 import uploadRoutes from './routes/upload.routes.js';
 import messageRoutes from './routes/message.routes.js';
+import blogRoutes from './routes/blog.routes.js';
 import passport from 'passport';
 import './config/passport.config.js';
+import { initFirebaseAdmin } from './utils/fcm.service.js';
 
 // ES Module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -86,6 +88,7 @@ app.use(passport.initialize());
 
 // Connect to MongoDB
 connectDB();
+initFirebaseAdmin();
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -110,6 +113,8 @@ app.use('/api/applications', applicationRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/blogs', blogRoutes);
+
 
 // Static Files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

@@ -26,8 +26,9 @@ import Jobs from './pages/Jobs';
 import AiInterview from './pages/AiInterview';
 import OAuthCallback from './pages/OAuthCallback';
 import './App.css';
-import { Toaster } from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux';
+import { requestForToken, onMessageListener } from './config/firebase';
 import { getMe } from './redux/slices/authSlice';
 import { useEffect } from 'react';
 import CompanyDashboard from './pages/CompanyDashboard';
@@ -70,6 +71,60 @@ function App() {
     root.classList.add(theme);
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  // Handle FCM Token and Foreground Notifications
+  useEffect(() => {
+    const setupFCM = async () => {
+      const savedToken = localStorage.getItem('fcm_token_synced');
+      const token = await requestForToken();
+      
+      if (token && token !== savedToken) {
+        try {
+          // Include auth header if user is logged in
+          const authObj = JSON.parse(localStorage.getItem('persist:auth') || '{}');
+          let tokenStr = authObj.token ? authObj.token.replace(/"/g, '') : '';
+          
+          const headers = { 'Content-Type': 'application/json' };
+          if (tokenStr) headers['Authorization'] = `Bearer ${tokenStr}`;
+
+          const res = await fetch('/api/notifications/store-fcm-token', {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ token, deviceInfo: navigator.userAgent })
+          });
+          if (res.ok) {
+            localStorage.setItem('fcm_token_synced', token);
+          }
+        } catch (e) {
+          console.error('Failed to store FCM token on backend', e);
+        }
+      }
+    };
+    
+    setupFCM();
+
+    // Listener for foreground notifications
+    const setupListener = async () => {
+      try {
+        const payload = await onMessageListener();
+        console.log('Received foreground message:', payload);
+        toast.success(
+          <div style={{ cursor: 'pointer' }} onClick={() => {
+            if (payload?.data?.url) window.location.href = payload.data.url;
+          }}>
+            <b style={{display: 'block'}}>{payload?.notification?.title}</b>
+            <span style={{fontSize: '0.9em'}}>{payload?.notification?.body}</span>
+          </div>,
+          { duration: 6000, position: 'top-right' }
+        );
+        setupListener(); // Re-attach listener
+      } catch (err) {
+        console.log('Notification listener error:', err);
+      }
+    };
+
+    setupListener();
+  }, []);
 
   return (
     <NotificationProvider>

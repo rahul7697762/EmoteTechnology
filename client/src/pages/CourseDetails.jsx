@@ -387,15 +387,20 @@ const CourseDetails = () => {
                     {/* Right Column: Floating Card */}
                     <div className="lg:col-span-1">
                         <div className="sticky top-28 bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 p-6 shadow-sm">
-                            <div className="mb-6 relative aspect-video group cursor-pointer border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 overflow-hidden" onClick={handlePreviewOpen}>
+                            <div 
+                                className={`mb-6 relative aspect-video overflow-hidden border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 ${course.previewVideo ? 'group cursor-pointer' : ''}`} 
+                                onClick={course.previewVideo ? handlePreviewOpen : undefined}
+                            >
                                 <img
                                     src={course.thumbnail || 'https://via.placeholder.com/400x250'}
                                     alt={course.title}
-                                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                                    className={`w-full h-full object-cover transition-transform duration-500 ${course.previewVideo ? 'transform group-hover:scale-105' : ''}`}
                                 />
-                                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                                    <PlayCircle size={48} className="text-white opacity-80 group-hover:scale-110 transition-transform duration-300 drop-shadow-lg" strokeWidth={1.5} />
-                                </div>
+                                {course.previewVideo && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-colors group-hover:bg-black/10">
+                                        <PlayCircle size={48} strokeWidth={1.5} className="text-white drop-shadow-lg transition-transform duration-300 opacity-80 group-hover:scale-110" />
+                                    </div>
+                                )}
                             </div>
 
                             <div className="flex flex-col mb-8">

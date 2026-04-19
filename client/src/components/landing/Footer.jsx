@@ -17,8 +17,8 @@ const links = {
         { label: 'Terms of Use', href: '#' }
     ],
     Support: [
-        { label: 'Help Center', href: '#' },
-        { label: 'Contact', href: '#' }
+        { label: 'Help Center', href: '/help' },
+        { label: 'Contact', href: '/help/contact' }
     ],
 };
 

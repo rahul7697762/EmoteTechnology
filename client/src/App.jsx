@@ -43,6 +43,8 @@ import { NotificationProvider } from './context/NotificationContext';
 import Blog from './pages/Blog';
 import CookieConsent from './components/common/CookieConsent';
 import WhatsAppWidget from './components/common/WhatsAppWidget';
+import HelpCenter from './pages/helpCenter/HelpCenter';
+import ContactSupport from './pages/helpCenter/ContactSupport';
 
 
 function App() {
@@ -84,6 +86,8 @@ function App() {
           <Route path="/ai-interview" element={<AiInterview />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<Blog />} />
+          <Route path="/help" element={<HelpCenter />} />
+          <Route path="/help/contact" element={<ContactSupport />} />
           <Route path="/login" element={
             <PublicRoute>
               <LoginPage />

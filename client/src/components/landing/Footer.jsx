@@ -1,13 +1,25 @@
 import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Zap, MapPin, Mail, Phone, ArrowUpRight, Twitter, Linkedin, Github, Youtube } from 'lucide-react';
+import ContactModal from './ContactModal';
 
 const SERIF = "'Cormorant Garamond', Georgia, serif";
 const MONO = "'Space Mono', 'Courier New', monospace";
 
 const links = {
-    Learn: ['All Courses', 'AI Interview Prep', 'Certificates', 'Live Sessions'],
-    Company: ['About Us', 'Careers', 'Blog', 'Press'],
-    Support: ['Help Center', 'Privacy Policy', 'Terms of Use', 'Contact'],
+    Learn: [
+        { label: 'All Courses', href: '/courses' },
+        { label: 'AI Interview Prep', href: '/ai-interview' }
+    ],
+    Company: [
+        { label: 'Privacy Policy', href: '/privacy-policy' },
+        { label: 'Terms of Use', href: '#' }
+    ],
+    Support: [
+        { label: 'Help Center', href: '#' },
+        { label: 'Contact', href: '#' }
+    ],
 };
 
 const socials = [
@@ -18,6 +30,8 @@ const socials = [
 ];
 
 const Footer = () => {
+    const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
     return (
         <footer className="bg-[#1A1D2E] dark:bg-[#0F1120] border-t border-[#3B4FD8]/20 dark:border-[#6C7EF5]/15 transition-colors duration-300">
 
@@ -102,14 +116,35 @@ const Footer = () => {
                         </h4>
                         <ul className="space-y-4">
                             {items.map((item) => (
-                                <li key={item}>
-                                    <a
-                                        href="#"
-                                        className="text-[#8B90B8] text-sm hover:text-[#E8EAF2] transition-colors group flex items-center gap-1.5"
-                                    >
-                                        <span className="w-0 h-px bg-[#6C7EF5] group-hover:w-3 transition-all duration-200" />
-                                        {item}
-                                    </a>
+                                <li key={item.label}>
+                                    {item.label === 'Contact' ? (
+                                        <button
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setIsContactModalOpen(true);
+                                            }}
+                                            className="text-[#8B90B8] text-sm hover:text-[#E8EAF2] transition-colors group flex items-center gap-1.5 focus:outline-none text-left w-full"
+                                        >
+                                            <span className="w-0 h-px bg-[#6C7EF5] group-hover:w-3 transition-all duration-200" />
+                                            {item.label}
+                                        </button>
+                                    ) : item.href.startsWith('/') ? (
+                                        <Link
+                                            to={item.href}
+                                            className="text-[#8B90B8] text-sm hover:text-[#E8EAF2] transition-colors group flex items-center gap-1.5"
+                                        >
+                                            <span className="w-0 h-px bg-[#6C7EF5] group-hover:w-3 transition-all duration-200" />
+                                            {item.label}
+                                        </Link>
+                                    ) : (
+                                        <a
+                                            href={item.href}
+                                            className="text-[#8B90B8] text-sm hover:text-[#E8EAF2] transition-colors group flex items-center gap-1.5"
+                                        >
+                                            <span className="w-0 h-px bg-[#6C7EF5] group-hover:w-3 transition-all duration-200" />
+                                            {item.label}
+                                        </a>
+                                    )}
                                 </li>
                             ))}
                         </ul>
@@ -138,6 +173,12 @@ const Footer = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Contact Modal */}
+            <ContactModal 
+                isOpen={isContactModalOpen}
+                onClose={() => setIsContactModalOpen(false)}
+            />
         </footer>
     );
 };

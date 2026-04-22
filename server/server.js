@@ -56,6 +56,8 @@ const corsOptions = {
             'http://localhost:3000',
             'http://localhost:5000',
             'https://emotetechnology.onrender.com', // Explicitly add production URL
+            'https://edu.emotetechnology.com',       // Education subdomain
+            'https://www.emotetechnology.com',       // WWW domain
             process.env.FRONTEND_URL,
             process.env.RENDER_EXTERNAL_URL
         ].filter(Boolean);

@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -47,6 +48,27 @@ const Courses = () => {
 
     return (
         <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] transition-colors duration-300">
+            <Helmet>
+                <title>Explore Courses | Emote Technology – Industry-Focused Tech Learning</title>
+                <meta name="description" content="Browse Emote Technology's catalog of industry-relevant tech courses. Learn programming, AI, data science, and more with hands-on projects, expert mentorship, and career support." />
+                <link rel="canonical" href="https://emotetechnology.in/courses" />
+                <meta property="og:title" content="Explore Courses | Emote Technology" />
+                <meta property="og:description" content="Industry-relevant tech courses with hands-on projects, expert mentorship, and career support. Find the right course to become job-ready." />
+                <meta property="og:url" content="https://emotetechnology.in/courses" />
+                <meta property="og:type" content="website" />
+                <script type="application/ld+json">{JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "ItemList",
+                    "name": "Emote Technology Courses",
+                    "description": "Industry-focused tech courses with hands-on projects and expert mentorship",
+                    "url": "https://emotetechnology.in/courses",
+                    "provider": {
+                        "@type": "EducationalOrganization",
+                        "name": "Emote Technology",
+                        "url": "https://emotetechnology.in"
+                    }
+                })}</script>
+            </Helmet>
             <Navbar />
 
             {/* ── Page header ── */}

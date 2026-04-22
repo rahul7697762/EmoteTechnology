@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/landing/Navbar';
 import Footer from '../../components/landing/Footer';
@@ -22,6 +23,38 @@ const HelpCenter = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-[#0F1120] font-sans">
+      <Helmet>
+        <title>Help Center | Emote Technology – FAQs & Support</title>
+        <meta name="description" content="Find answers to frequently asked questions about Emote Technology's courses, payments, account management, and technical support. Get help fast." />
+        <link rel="canonical" href="https://emotetechnology.in/help" />
+        <meta property="og:title" content="Help Center | Emote Technology" />
+        <meta property="og:description" content="Find answers to FAQs about courses, payments, and account management at Emote Technology." />
+        <meta property="og:url" content="https://emotetechnology.in/help" />
+        <meta property="og:type" content="website" />
+        <script type="application/ld+json">{JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "name": "Emote Technology Help Center",
+            "url": "https://emotetechnology.in/help",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "How do I enroll in a course?",
+                    "acceptedAnswer": { "@type": "Answer", "text": "Browse our course catalog, select a course, and click Enroll. You can pay securely online and start learning immediately." }
+                },
+                {
+                    "@type": "Question",
+                    "name": "What payment methods are accepted?",
+                    "acceptedAnswer": { "@type": "Answer", "text": "We accept UPI, credit/debit cards, net banking, and other popular payment methods via Razorpay." }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Can I get a certificate after completing a course?",
+                    "acceptedAnswer": { "@type": "Answer", "text": "Yes, you receive a verifiable certificate upon successfully completing all course requirements." }
+                }
+            ]
+        })}</script>
+      </Helmet>
       <Navbar />
       
       <main className="flex-grow pt-24 pb-16">

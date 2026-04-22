@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { User, Mail, MessageSquare, Send, MapPin, Phone } from 'lucide-react';
 import Navbar from '../components/landing/Navbar';
@@ -35,6 +36,35 @@ const Contact = () => {
 
     return (
         <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] transition-colors duration-300">
+            <Helmet>
+                <title>Contact Us | Emote Technology – Get in Touch</title>
+                <meta name="description" content="Contact Emote Technology for course enquiries, support, or partnership opportunities. Reach us at hr@emotetechnology.in or call +91 8757363225. Located in Zirakpur, Punjab, India." />
+                <link rel="canonical" href="https://emotetechnology.in/contact" />
+                <meta property="og:title" content="Contact Emote Technology" />
+                <meta property="og:description" content="Reach out to Emote Technology for course enquiries, support, or partnerships." />
+                <meta property="og:url" content="https://emotetechnology.in/contact" />
+                <meta property="og:type" content="website" />
+                <script type="application/ld+json">{JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "ContactPage",
+                    "name": "Contact Emote Technology",
+                    "url": "https://emotetechnology.in/contact",
+                    "mainEntity": {
+                        "@type": "Organization",
+                        "name": "Emote Technology",
+                        "telephone": "+91-8757363225",
+                        "email": "hr@emotetechnology.in",
+                        "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "DSS-15, Trishala City Road, Behind Gopal Sweets",
+                            "addressLocality": "Zirakpur",
+                            "addressRegion": "Punjab",
+                            "postalCode": "140603",
+                            "addressCountry": "IN"
+                        }
+                    }
+                })}</script>
+            </Helmet>
             <Navbar />
 
             <div className="border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/8">

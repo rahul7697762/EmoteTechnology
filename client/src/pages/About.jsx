@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { Target, Eye, BookOpen, ArrowRight } from 'lucide-react';
 import Navbar from '../components/landing/Navbar';
@@ -14,6 +15,34 @@ const fadeUp = {
 const About = () => {
     return (
         <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] transition-colors duration-300">
+            <Helmet>
+                <title>About Us | Emote Technology – Bridging Education & Real-World Experience</title>
+                <meta name="description" content="Emote Technology is a dynamic EdTech platform founded in 2021, dedicated to bridging education and real-world experience through industry-relevant courses and internships in India." />
+                <link rel="canonical" href="https://emotetechnology.in/about" />
+                <meta property="og:title" content="About Emote Technology | Bridging Education & Real-World Experience" />
+                <meta property="og:description" content="Our mission: empowering learners with real-world skills. Our vision: bridging education and industry globally. Learn about Emote Technology's story." />
+                <meta property="og:url" content="https://emotetechnology.in/about" />
+                <meta property="og:type" content="website" />
+                <script type="application/ld+json">{JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "AboutPage",
+                    "name": "About Emote Technology",
+                    "url": "https://emotetechnology.in/about",
+                    "description": "Emote Technology is an EdTech platform bridging education and industry through career-focused courses, internships, and AI-powered interview prep.",
+                    "publisher": {
+                        "@type": "EducationalOrganization",
+                        "name": "Emote Technology",
+                        "url": "https://emotetechnology.in",
+                        "foundingDate": "2021",
+                        "address": {
+                            "@type": "PostalAddress",
+                            "addressLocality": "Zirakpur",
+                            "addressRegion": "Punjab",
+                            "addressCountry": "IN"
+                        }
+                    }
+                })}</script>
+            </Helmet>
             <Navbar />
 
             {/* ── Hero Header ── */}

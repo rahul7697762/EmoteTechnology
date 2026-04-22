@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCourseDetails, enrollInCourse, getCourseReviews } from '../redux/slices/courseSlice';
@@ -169,6 +170,49 @@ const CourseDetails = () => {
 
     return (
         <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] font-sans transition-colors duration-300">
+            {course && (
+                <Helmet>
+                    <title>{course.title} | Emote Technology</title>
+                    <meta name="description" content={course.description ? course.description.slice(0, 160) : `Learn ${course.title} with hands-on projects and expert mentorship at Emote Technology.`} />
+                    <link rel="canonical" href={`https://emotetechnology.in/course/${id}`} />
+                    <meta property="og:title" content={`${course.title} | Emote Technology`} />
+                    <meta property="og:description" content={course.description ? course.description.slice(0, 160) : `Learn ${course.title} with hands-on projects and expert mentorship.`} />
+                    <meta property="og:url" content={`https://emotetechnology.in/course/${id}`} />
+                    <meta property="og:type" content="product" />
+                    <script type="application/ld+json">{JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "Course",
+                        "name": course.title,
+                        "description": course.description || `Learn ${course.title} with hands-on projects and expert mentorship.`,
+                        "url": `https://emotetechnology.in/course/${id}`,
+                        "provider": {
+                            "@type": "EducationalOrganization",
+                            "name": "Emote Technology",
+                            "url": "https://emotetechnology.in"
+                        },
+                        ...(course.instructor && {
+                            "instructor": {
+                                "@type": "Person",
+                                "name": typeof course.instructor === 'string' ? course.instructor : course.instructor?.name
+                            }
+                        }),
+                        ...(course.price != null && {
+                            "offers": {
+                                "@type": "Offer",
+                                "price": course.price,
+                                "priceCurrency": course.currency || "INR"
+                            }
+                        }),
+                        ...(course.rating != null && {
+                            "aggregateRating": {
+                                "@type": "AggregateRating",
+                                "ratingValue": course.rating,
+                                "bestRating": 5
+                            }
+                        })
+                    })}</script>
+                </Helmet>
+            )}
             <Navbar />
 
             {/* Video Preview Modal */}

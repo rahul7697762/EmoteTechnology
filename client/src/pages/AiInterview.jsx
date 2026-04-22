@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/landing/Navbar';
 import Footer from '../components/landing/Footer';
 import { Bot, Mic, Video } from 'lucide-react';
@@ -9,6 +10,15 @@ const MONO = "'Space Mono', 'Courier New', monospace";
 const AiInterview = () => {
     return (
         <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] transition-colors duration-300">
+            <Helmet>
+                <title>AI Interview Prep | Practice Mock Interviews with AI – Emote Technology</title>
+                <meta name="description" content="Prepare for job interviews with Emote Technology's AI-powered mock interview tool. Practice technical, behavioral, and case interviews with real-time AI feedback." />
+                <link rel="canonical" href="https://emotetechnology.in/ai-interview" />
+                <meta property="og:title" content="AI Interview Prep | Emote Technology" />
+                <meta property="og:description" content="Practice mock interviews with AI and get real-time feedback to ace your next job interview." />
+                <meta property="og:url" content="https://emotetechnology.in/ai-interview" />
+                <meta property="og:type" content="website" />
+            </Helmet>
             <Navbar />
             <main className="pt-32 pb-24 px-6 lg:px-8 max-w-7xl mx-auto text-center border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10">
                 <div className="max-w-3xl mx-auto flex flex-col items-center">

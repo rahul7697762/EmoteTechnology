@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -828,18 +829,8 @@ const Blog = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedPost, setSelectedPost] = useState(null);
 
-    // Update document title and meta for SEO
     useEffect(() => {
-        if (selectedPost) {
-            document.title = `${selectedPost.title} | Emote Technology Blog`;
-            const metaDesc = document.querySelector('meta[name="description"]');
-            if (metaDesc) metaDesc.setAttribute('content', selectedPost.excerpt);
-            window.scrollTo(0, 0);
-        } else {
-            document.title = 'Blog – Career & Learning Insights | Emote Technology';
-            const metaDesc = document.querySelector('meta[name="description"]');
-            if (metaDesc) metaDesc.setAttribute('content', 'Expert articles on AI interview prep, tech careers, online learning, and in-demand skills. Updated regularly by the Emote Technology team.');
-        }
+        if (selectedPost) window.scrollTo(0, 0);
     }, [selectedPost]);
 
     // Handle URL slug if present
@@ -874,8 +865,44 @@ const Blog = () => {
     const featured = filtered.filter(p => p.featured);
     const regular = filtered.filter(p => !p.featured);
 
+    const seoTitle = selectedPost
+        ? `${selectedPost.title} | Emote Technology Blog`
+        : 'Blog – Career & Learning Insights | Emote Technology';
+    const seoDesc = selectedPost
+        ? selectedPost.excerpt
+        : 'Expert articles on AI interview prep, tech careers, online learning, and in-demand skills. Updated regularly by the Emote Technology team.';
+    const seoUrl = selectedPost
+        ? `https://emotetechnology.in/blog/${selectedPost.slug}`
+        : 'https://emotetechnology.in/blog';
+
     return (
         <div className="min-h-screen bg-[#1A1D2E] text-[#E8EAF2] overflow-x-hidden">
+            <Helmet>
+                <title>{seoTitle}</title>
+                <meta name="description" content={seoDesc} />
+                <link rel="canonical" href={seoUrl} />
+                <meta property="og:title" content={seoTitle} />
+                <meta property="og:description" content={seoDesc} />
+                <meta property="og:url" content={seoUrl} />
+                <meta property="og:type" content={selectedPost ? 'article' : 'website'} />
+                {selectedPost && (
+                    <script type="application/ld+json">{JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "BlogPosting",
+                        "headline": selectedPost.title,
+                        "description": selectedPost.excerpt,
+                        "url": `https://emotetechnology.in/blog/${selectedPost.slug}`,
+                        "datePublished": selectedPost.date,
+                        "author": { "@type": "Organization", "name": selectedPost.author },
+                        "publisher": {
+                            "@type": "Organization",
+                            "name": "Emote Technology",
+                            "url": "https://emotetechnology.in"
+                        },
+                        "keywords": selectedPost.tags?.join(', ')
+                    })}</script>
+                )}
+            </Helmet>
             <Background />
             <Navbar />
 

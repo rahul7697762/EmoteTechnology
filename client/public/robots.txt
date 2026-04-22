@@ -1,0 +1,42 @@
+User-agent: *
+Allow: /
+
+# Allow AI search crawlers to index and cite this site
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+# Block training-only crawlers (not search/citation bots)
+User-agent: CCBot
+Disallow: /
+
+# Block private/dashboard routes from all crawlers
+User-agent: *
+Disallow: /dashboard
+Disallow: /faculty
+Disallow: /student
+Disallow: /company
+Disallow: /settings
+Disallow: /api/
+
+Sitemap: https://emotetechnology.in/sitemap.xml

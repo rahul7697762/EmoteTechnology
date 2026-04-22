@@ -33,11 +33,11 @@ export const getFacultyCourses = createAsyncThunk('course/getFacultyCourses', as
     }
 });
 
-export const fetchCourses = createAsyncThunk('course/fetchCourses', async ({ searchQuery = '', page = 1 } = {}, { rejectWithValue }) => {
+export const fetchCourses = createAsyncThunk('course/fetchCourses', async ({ searchQuery = '', page = 1, limit } = {}, { rejectWithValue }) => {
     try {
-        let endpoint = `/courses?page=${page}`;
+        let endpoint = `/courses?page=${page}${limit ? `&limit=${limit}` : ''}`;
         if (searchQuery.trim()) {
-            endpoint = `/courses/search?query=${encodeURIComponent(searchQuery)}&page=${page}`;
+            endpoint = `/courses/search?query=${encodeURIComponent(searchQuery)}&page=${page}${limit ? `&limit=${limit}` : ''}`;
         }
         const response = await courseAPI.getAllCourses(endpoint);
         return response; // { success: true, courses: [...], pagination: {...} }

@@ -34,7 +34,7 @@ const Courses = () => {
 
     useEffect(() => {
         if (courses.length > 0 && searchQuery === storedSearch && currentPage === (pagination?.page || 1)) return;
-        const id = setTimeout(() => dispatch(fetchCourses({ searchQuery, page: currentPage })), 500);
+        const id = setTimeout(() => dispatch(fetchCourses({ searchQuery, page: currentPage, limit: 50 })), 500);
         return () => clearTimeout(id);
     }, [searchQuery, currentPage, dispatch, courses.length, storedSearch, pagination?.page]);
 

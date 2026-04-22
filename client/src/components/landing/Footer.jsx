@@ -9,7 +9,7 @@ const MONO = "'Space Mono', 'Courier New', monospace";
 const links = {
     Learn: [
         { label: 'All Courses', path: '/courses' },
-        { label: 'AI Interview Prep', path: '/ai-interview-prep' }
+        { label: 'AI Interview Prep', path: '/ai-interview' }
     ],
     Company: [
         { label: 'About Us', path: '/about' },
@@ -34,7 +34,7 @@ const Footer = () => {
         <footer className="bg-[#1A1D2E] dark:bg-[#0F1120] border-t border-[#3B4FD8]/20 dark:border-[#6C7EF5]/15 transition-colors duration-300">
 
             {/* ── Main grid ── */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 grid grid-cols-2 md:grid-cols-12 gap-8 lg:gap-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 grid grid-cols-3 md:grid-cols-12 gap-6 lg:gap-8">
 
                 {/* Brand + contact */}
                 <motion.div
@@ -42,7 +42,7 @@ const Footer = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="col-span-2 md:col-span-5 lg:col-span-3 mb-6 md:mb-0"
+                    className="col-span-3 md:col-span-5 lg:col-span-3 mb-6 md:mb-0"
                 >
                     {/* Logo */}
                     <div className="flex items-baseline gap-0.5 mb-4">
@@ -76,7 +76,7 @@ const Footer = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.6, delay: 0.08 * (ci + 1) }}
-                        className="col-span-1 md:col-span-2 lg:col-span-2"
+                        className="col-span-1 md:col-span-2 lg:col-span-2 min-w-0"
                     >
                         <h4
                             className="text-[10px] tracking-[0.22em] uppercase text-[#6C7EF5] mb-6"
@@ -106,7 +106,7 @@ const Footer = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: 0.3 }}
-                    className="col-span-2 md:col-span-7 lg:col-span-3 mt-4 md:mt-8 lg:mt-0"
+                    className="col-span-3 md:col-span-7 lg:col-span-3 mt-4 md:mt-8 lg:mt-0"
                 >
                     <h4
                         className="text-[10px] tracking-[0.22em] uppercase text-[#6C7EF5] mb-6"

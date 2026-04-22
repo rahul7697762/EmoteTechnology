@@ -23,15 +23,15 @@ const Courses = () => {
     const [selectedCategory, setSelectedCategory] = useState("All");
 
     useEffect(() => {
-        dispatch(fetchCourses({ page: 1 }));
+        dispatch(fetchCourses({ page: 1, limit: 50 }));
     }, [dispatch]);
 
     // Derive categories dynamically from available courses
     const categories = ["All", ...Array.from(new Set(courses.map(c => c.category)))];
 
-    const filteredCourses = selectedCategory === "All"
+    const filteredCourses = (selectedCategory === "All"
         ? courses
-        : courses.filter(course => course.category === selectedCategory);
+        : courses.filter(course => course.category === selectedCategory)).slice(0, 6);
 
     return (
         <section className="py-32 px-6 lg:px-8 bg-[#EDEEFF]/60 dark:bg-[#252A41] border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/8 transition-colors duration-300">

@@ -99,26 +99,7 @@ const AboutUs = () => {
                             ))}
                         </div>
 
-                        {/* Stats */}
-                        <div className="grid grid-cols-3 gap-3 mt-8">
-                            {[
-                                { num: '5,000+', label: 'Learners' },
-                                { num: '50+', label: 'Courses' },
-                                { num: '200+', label: 'Partners' },
-                            ].map((s, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, y: 12 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.4 + i * 0.08, duration: 0.5 }}
-                                    viewport={{ once: true }}
-                                    className="about-stat-card rounded-xl px-4 py-5 text-center"
-                                >
-                                    <div className="about-stat-num text-2xl font-semibold mb-1" style={{ fontFamily: SERIF }}>{s.num}</div>
-                                    <div className="about-body text-[10px] tracking-widest uppercase" style={{ fontFamily: MONO }}>{s.label}</div>
-                                </motion.div>
-                            ))}
-                        </div>
+
 
                         {/* CTA */}
                         <motion.button

@@ -1,184 +1,72 @@
-import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import HeroCanvas from './HeroCanvas';
-
-const SERIF = "'Cormorant Garamond', Georgia, serif";
-const MONO = "'Space Mono', 'Courier New', monospace";
-
-const stagger = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.11 } },
-};
-
-const fadeUp = {
-    hidden: { opacity: 0, y: 24 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] } },
-};
 
 const Hero = () => {
     const navigate = useNavigate();
 
-    const stats = [
-        { number: '5,000+', label: 'Active Learners' },
-        { number: '98%', label: 'Satisfaction Rate' },
-        { number: '50+', label: 'Expert Courses' },
-        { number: '200+', label: 'Hiring Partners' },
-    ];
-
     return (
-        <section className="relative min-h-screen flex flex-col justify-center pt-16 overflow-hidden">
-            <HeroCanvas />
-
-            {/* Large ambient section number */}
+        <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#021124]">
+            {/* Background Image with Left-to-Right Subtle Overlay */}
             <div
-                className="absolute right-4 top-1/2 -translate-y-1/2 select-none pointer-events-none leading-none hidden lg:block"
+                className="absolute inset-0 z-0"
                 style={{
-                    fontFamily: SERIF,
-                    fontSize: 'clamp(10rem, 22vw, 20rem)',
-                    fontWeight: 700,
-                    color: 'rgba(59,79,216,0.040)',
+                    backgroundImage: 'url(/hero.jpg)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
                 }}
             >
-                01
+                <div className="absolute inset-0 bg-[#021124]/30" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#021124]/80 via-[#021124]/50 to-transparent" />
             </div>
+
+            {/* Giant Watermark Text */}
             <div
-                className="absolute right-4 top-1/2 -translate-y-1/2 select-none pointer-events-none leading-none hidden lg:dark:block"
-                style={{
-                    fontFamily: SERIF,
-                    fontSize: 'clamp(10rem, 22vw, 20rem)',
-                    fontWeight: 700,
-                    color: 'rgba(108,126,245,0.045)',
-                }}
+                className="absolute top-[6%] md:top-[10%] left-0 w-full flex justify-center pointer-events-none select-none z-0"
             >
-                01
+                <span className="text-[6.5vw] lg:text-[7.5vw] font-bold text-white/[0.04] tracking-widest whitespace-nowrap" style={{ textShadow: '0px 4px 20px rgba(0,0,0,0.1)' }}>
+                    EMOTE TECHNOLOGY
+                </span>
             </div>
 
             <div className="max-w-7xl mx-auto w-full px-6 lg:px-8 relative z-10">
-                <div className="grid lg:grid-cols-[1fr_300px] min-h-[calc(100vh-4rem)]">
+                <div className="flex items-center min-h-[calc(100vh-4rem)]">
 
-                    {/* ── Left: Content ── */}
-                    <motion.div
-                        className="flex flex-col items-start text-left justify-center py-20 lg:pr-16 lg:border-r border-[#3B4FD8]/10 dark:border-[#6C7EF5]/8"
-                        initial="hidden"
-                        animate="visible"
-                        variants={stagger}
-                    >
-                        {/* Section label */}
-                        <motion.div variants={fadeUp} className="flex items-center justify-start gap-4 mb-10">
-                            <div className="w-8 h-px bg-[#3B4FD8] dark:bg-[#6C7EF5]" />
-                            <span
-                                className="text-[#3B4FD8] dark:text-[#6C7EF5] text-[10px] tracking-[0.28em] uppercase"
-                                style={{ fontFamily: MONO }}
-                            >
-                                01 / Intelligent Education
+                    {/* ── Content ── */}
+                    <div className="flex flex-col items-start text-left justify-center py-20 max-w-3xl">
+
+                        {/* Kicker Tag */}
+                        <div className="flex items-center justify-start gap-2 mb-3">
+                            <span className="text-white text-sm">🎓</span>
+                            <span className="text-white font-semibold text-xs md:text-sm tracking-wide">
+                                India's Leading Platform for Tech Excellence
                             </span>
-                        </motion.div>
+                        </div>
 
                         {/* Headline */}
-                        <motion.h1 variants={fadeUp} className="mb-8 leading-[0.93]" style={{ fontFamily: SERIF }}>
-                            <span
-                                className="block font-semibold text-[#1A1D2E] dark:text-[#E8EAF2]"
-                                style={{ fontSize: 'clamp(3.2rem,7vw,6.2rem)' }}
-                            >
-                                The Future
-                            </span>
-                            <span
-                                className="block font-semibold text-[#1A1D2E] dark:text-[#E8EAF2]"
-                                style={{ fontSize: 'clamp(3.2rem,7vw,6.2rem)' }}
-                            >
-                                of Learning
-                            </span>
-                            <span
-                                className="block font-light italic text-[#3B4FD8] dark:text-[#6C7EF5]"
-                                style={{ fontSize: 'clamp(3.2rem,7vw,6.2rem)' }}
-                            >
-                                is Intelligent.
-                            </span>
-                        </motion.h1>
+                        <h1 className="mb-6 font-bold leading-[1.15] text-white" style={{ fontSize: 'clamp(2.5rem, 4.5vw, 4.5rem)' }}>
+                            Master <span className="text-[#6C7EF5]">Transformative Skills</span> with Industry-Focused Learning
+                        </h1>
 
                         {/* Body text */}
-                        <motion.p
-                            variants={fadeUp}
-                            className="text-[#6B7194] dark:text-[#8B90B8] font-light text-lg leading-relaxed max-w-[480px] mb-10"
-                        >
-                            Engaging AI teachers and advanced learning tools to upskill your students anywhere, anytime. Built for the institutions of tomorrow.
-                        </motion.p>
+                        <p className="text-gray-200 mt-2 font-normal text-sm md:text-[15px] leading-relaxed max-w-[600px] mb-8">
+                            Build a strong foundation in emerging technologies through practical, hands-on learning designed for real-world success. We equip students with industry-relevant skills, transforming them into confident, job-ready professionals.
+                        </p>
 
-                        {/* CTAs */}
-                        <motion.div variants={fadeUp} className="flex justify-start gap-3 mb-16">
+                        {/* CTA */}
+                        <div className="flex justify-start gap-3">
                             <button
-                                onClick={() => navigate('/login')}
-                                className="group flex items-center justify-center gap-3 px-8 py-4 bg-[#F5A623] dark:bg-[#F9C74F] text-white dark:text-[#1A1D2E] text-sm font-medium tracking-[0.06em] hover:bg-[#d9911a] dark:hover:bg-[#F5A623] transition-colors"
+                                onClick={() => navigate('/signup')}
+                                className="group flex items-center justify-center gap-2 px-6 py-2.5 md:px-8 md:py-3 bg-[#3B4FD8] text-white text-[13px] md:text-sm font-semibold rounded hover:bg-[#2A3CB8] transition-colors"
                             >
                                 Start Free Trial
-                                <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+                                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                             </button>
-                            <button
-                                onClick={() => navigate('/courses')}
-                                className="flex items-center justify-center gap-3 px-8 py-4 border border-[#3B4FD8]/18 dark:border-[#6C7EF5]/14 text-[#1A1D2E] dark:text-[#E8EAF2] text-sm font-medium tracking-[0.06em] hover:border-[#3B4FD8] dark:hover:border-[#6C7EF5] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors"
-                            >
-                                Explore Courses
-                            </button>
-                        </motion.div>
-
-                        {/* Trusted by */}
-                        <motion.div
-                            variants={fadeUp}
-                            className="border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/8 pt-8 w-full flex flex-col items-start"
-                        >
-                            <p
-                                className="text-[10px] tracking-[0.25em] uppercase text-[#6B7194] dark:text-[#8B90B8] mb-5"
-                                style={{ fontFamily: MONO }}
-                            >
-                                Trusted by Leading Institutions
-                            </p>
-                            <div className="flex flex-wrap justify-start gap-8 items-center">
-                                {['Stanford', 'Pearson', 'Zoom', 'OpenAI'].map((name) => (
-                                    <span
-                                        key={name}
-                                        className="text-lg font-semibold text-[#1A1D2E]/35 dark:text-[#E8EAF2]/25 hover:text-[#3B4FD8]/70 dark:hover:text-[#6C7EF5]/70 transition-colors cursor-default"
-                                        style={{ fontFamily: SERIF }}
-                                    >
-                                        {name}
-                                    </span>
-                                ))}
-                            </div>
-                        </motion.div>
-                    </motion.div>
-
-                    {/* ── Right: Stats ── */}
-                    <motion.div
-                        className="hidden lg:flex flex-col border-l border-[#3B4FD8]/10 dark:border-[#6C7EF5]/8"
-                        initial={{ opacity: 0, x: 30 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                        {stats.map((stat, i) => (
-                            <div
-                                key={i}
-                                className={`flex-1 flex flex-col justify-center px-10 group hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/4 transition-colors cursor-default ${i < stats.length - 1 ? 'border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/8' : ''
-                                    }`}
-                            >
-                                <div
-                                    className="text-5xl font-semibold text-[#1A1D2E] dark:text-[#E8EAF2] mb-2 group-hover:text-[#3B4FD8] dark:group-hover:text-[#6C7EF5] transition-colors"
-                                    style={{ fontFamily: SERIF }}
-                                >
-                                    {stat.number}
-                                </div>
-                                <div
-                                    className="text-[10px] tracking-[0.22em] uppercase text-[#6B7194] dark:text-[#8B90B8]"
-                                    style={{ fontFamily: MONO }}
-                                >
-                                    {stat.label}
-                                </div>
-                            </div>
-                        ))}
-                    </motion.div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
     );
 };
-
 export default Hero;

@@ -32,6 +32,7 @@ import applicationRoutes from './routes/application.routes.js';
 import uploadRoutes from './routes/upload.routes.js';
 import messageRoutes from './routes/message.routes.js';
 import blogRoutes from './routes/blog.routes.js';
+import whatsappRoutes from './routes/whatsapp.routes.js';
 import passport from 'passport';
 import './config/passport.config.js';
 import { initFirebaseAdmin } from './utils/fcm.service.js';
@@ -53,6 +54,7 @@ const corsOptions = {
 
         const allowedOrigins = [
             'http://localhost:5173',
+            'http://localhost:5174',
             'http://localhost:3000',
             'http://localhost:5000',
             'https://emotetechnology.onrender.com', // Explicitly add production URL
@@ -81,8 +83,8 @@ const corsOptions = {
 app.use(globalRateLimiter);
 
 app.use(cors(corsOptions));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '1024mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1024mb' }));
 app.use(cookieParser());
 app.use(passport.initialize());
 
@@ -115,6 +117,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/blogs', blogRoutes);
 
+app.use('/api/whatsapp', whatsappRoutes);
 
 // Static Files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

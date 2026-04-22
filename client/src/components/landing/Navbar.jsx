@@ -35,6 +35,7 @@ const Navbar = () => {
         { name: 'Courses', path: '/courses' },
         { name: 'Jobs', path: '/jobs' },
         { name: 'AI Interview', path: '/ai-interview' },
+        { name: 'About', path: '/about' },
     ];
 
     return (

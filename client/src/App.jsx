@@ -23,6 +23,7 @@ import VerifyEmail from './pages/VerifyEmail';
 import Courses from './pages/Courses';
 import CourseDetails from './pages/CourseDetails';
 import Jobs from './pages/Jobs';
+import About from './pages/About';
 import AiInterview from './pages/AiInterview';
 import './App.css';
 import { Toaster } from 'react-hot-toast'
@@ -66,6 +67,7 @@ function App() {
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/jobs/:id" element={<Jobs />} />
           <Route path="/ai-interview" element={<AiInterview />} />
+          <Route path="/about" element={<About />} />
           <Route path="/login" element={
             <PublicRoute>
               <LoginPage />
@@ -190,54 +192,6 @@ function App() {
           } />
 
 
-
-          <Route path="/company/dashboard" element={
-            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
-              <CompanyDashboard />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/company/profile" element={
-            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
-              <CompanyProfilePage />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/company/post-job" element={
-            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
-              <CompanyPostJobPage />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/company/jobs/edit/:id" element={
-            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
-              <CompanyPostJobPage />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/company/jobs/:id" element={
-            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
-              <CompanyJobDetailPage />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/company/applicants" element={
-            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
-              <CompanyApplicantsPage />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/company/onboarding" element={
-            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
-              <CompanyOnboardingPage />
-            </ProtectedRoute>
-          } />
-
-          <Route path="/company/settings" element={
-            <ProtectedRoute allowedRoles={['COMPANY', 'EMPLOYER', 'ADMIN']}>
-              <CompanySettingsPage />
-            </ProtectedRoute>
-          } />
 
           <Route path="/student-courses" element={
             <ProtectedRoute allowedRoles={['STUDENT', 'FACULTY', 'ADMIN']}>

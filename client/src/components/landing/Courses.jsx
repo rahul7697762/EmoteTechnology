@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, Star, Clock, ArrowUpRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { fetchCourses } from '../../redux/slices/courseSlice';
 
 const SERIF = "'Cormorant Garamond', Georgia, serif";
@@ -16,6 +17,7 @@ const getImageUrl = (url) => {
 
 const Courses = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { courses, isFetchingPublicCourses } = useSelector((state) => state.course);
     const [selectedCategory, setSelectedCategory] = useState("All");
 
@@ -85,6 +87,7 @@ const Courses = () => {
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0, scale: 0.97 }}
                                 transition={{ duration: 0.3 }}
+                                onClick={() => navigate(`/course/${course._id}`)}
                                 className="group bg-[#F7F8FF] dark:bg-[#1A1D2E] border-b border-r border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 overflow-hidden cursor-pointer hover:bg-[#EDEEFF] dark:hover:bg-[#2D3350] transition-colors duration-300"
                             >
                                 {/* Image */}
@@ -169,7 +172,10 @@ const Courses = () => {
 
                 {/* View all */}
                 <div className="mt-12 flex justify-center">
-                    <button className="group flex items-center gap-2 px-8 py-3.5 border border-[#1A1D2E]/18 dark:border-[#E8EAF2]/14 text-sm font-medium text-[#1A1D2E] dark:text-[#E8EAF2] tracking-[0.05em] hover:border-[#3B4FD8] dark:hover:border-[#6C7EF5] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors">
+                    <button
+                        onClick={() => navigate('/courses')}
+                        className="group flex items-center gap-2 px-8 py-3.5 border border-[#1A1D2E]/18 dark:border-[#E8EAF2]/14 text-sm font-medium text-[#1A1D2E] dark:text-[#E8EAF2] tracking-[0.05em] hover:border-[#3B4FD8] dark:hover:border-[#6C7EF5] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors"
+                    >
                         View All Courses
                         <ArrowUpRight size={15} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </button>

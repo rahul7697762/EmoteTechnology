@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#c4b5fd"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+
+  <!-- Circuit node dots -->
+  <circle cx="10" cy="10" r="2.5" fill="url(#accent)" opacity="0.6"/>
+  <circle cx="54" cy="10" r="2.5" fill="url(#accent)" opacity="0.6"/>
+  <circle cx="10" cy="54" r="2.5" fill="url(#accent)" opacity="0.6"/>
+  <circle cx="54" cy="54" r="2.5" fill="url(#accent)" opacity="0.6"/>
+
+  <!-- Horizontal circuit lines -->
+  <line x1="12.5" y1="10" x2="24" y2="10" stroke="url(#accent)" stroke-width="1.2" opacity="0.4"/>
+  <line x1="40" y1="10" x2="51.5" y2="10" stroke="url(#accent)" stroke-width="1.2" opacity="0.4"/>
+  <line x1="12.5" y1="54" x2="24" y2="54" stroke="url(#accent)" stroke-width="1.2" opacity="0.4"/>
+  <line x1="40" y1="54" x2="51.5" y2="54" stroke="url(#accent)" stroke-width="1.2" opacity="0.4"/>
+
+  <!-- Letter E -->
+  <rect x="13" y="18" width="16" height="3.5" rx="1.5" fill="white"/>
+  <rect x="13" y="18" width="3.5" height="28" rx="1.5" fill="white"/>
+  <rect x="13" y="30.25" width="13" height="3.5" rx="1.5" fill="white"/>
+  <rect x="13" y="42.5" width="16" height="3.5" rx="1.5" fill="white"/>
+
+  <!-- Letter T -->
+  <rect x="33" y="18" width="18" height="3.5" rx="1.5" fill="white"/>
+  <rect x="39.25" y="18" width="5.5" height="28" rx="1.5" fill="white"/>
+
+  <!-- Small glowing dot accent -->
+  <circle cx="32" cy="56" r="2" fill="white" opacity="0.3"/>
+</svg>

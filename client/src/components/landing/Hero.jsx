@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Play } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import HeroCanvas from './HeroCanvas';
 
@@ -114,9 +114,11 @@ const Hero = () => {
                                 Start Free Trial
                                 <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
                             </button>
-                            <button className="flex items-center justify-center gap-3 px-8 py-4 border border-[#3B4FD8]/18 dark:border-[#6C7EF5]/14 text-[#1A1D2E] dark:text-[#E8EAF2] text-sm font-medium tracking-[0.06em] hover:border-[#3B4FD8] dark:hover:border-[#6C7EF5] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors">
-                                <Play size={13} fill="currentColor" />
-                                Watch Demo
+                            <button
+                                onClick={() => navigate('/courses')}
+                                className="flex items-center justify-center gap-3 px-8 py-4 border border-[#3B4FD8]/18 dark:border-[#6C7EF5]/14 text-[#1A1D2E] dark:text-[#E8EAF2] text-sm font-medium tracking-[0.06em] hover:border-[#3B4FD8] dark:hover:border-[#6C7EF5] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors"
+                            >
+                                Explore Courses
                             </button>
                         </motion.div>
 

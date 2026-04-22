@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Target, Users, Shield, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const SERIF = "'Cormorant Garamond', Georgia, serif";
 const MONO = "'Space Mono', 'Courier New', monospace";
@@ -11,6 +12,7 @@ const pillars = [
 ];
 
 const AboutUs = () => {
+    const navigate = useNavigate();
     return (
         <section
             className="about-section py-32 px-6 lg:px-8 border-t transition-colors duration-300"
@@ -125,6 +127,7 @@ const AboutUs = () => {
                             transition={{ delay: 0.6 }}
                             viewport={{ once: true }}
                             whileHover={{ x: 4 }}
+                            onClick={() => navigate('/about')}
                             className="about-cta flex items-center gap-3 px-6 py-3.5 mt-8 text-sm font-medium tracking-wide transition-colors"
                         >
                             Our Story <ArrowRight size={15} />

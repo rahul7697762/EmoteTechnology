@@ -9,12 +9,14 @@ import ProfileTab from '../components/setting/ProfileTab';
 import NotificationsTab from '../components/setting/NotificationsTab';
 import SecurityTab from '../components/setting/SecurityTab';
 import DeleteAccountTab from '../components/setting/DeleteAccountTab';
-import { User, Bell, Shield, AlertTriangle } from 'lucide-react';
+import { User, Bell, Shield, AlertTriangle, ArrowLeft } from 'lucide-react';
 
 const SERIF = "'Cormorant Garamond', Georgia, serif";
 const MONO = "'Space Mono', 'Courier New', monospace";
 
 const Settings = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
     const [activeTab, setActiveTab] = useState('profile'); // profile, notifications, security, danger
 
@@ -26,9 +28,17 @@ const Settings = () => {
         <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] flex transition-colors duration-300">
             <SidebarComponent />
 
-            <main className={`flex-1 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'} md:py-8 md:pr-8 pl-6 overflow-y-auto h-screen scrollbar-hide transition-all duration-300`}>
+            <main className={`flex-1 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'} p-4 sm:px-6 md:p-8 overflow-y-auto h-screen scrollbar-hide transition-all duration-300`}>
                 <div className="pb-20 max-w-7xl mx-auto">
                     <div className="mb-8 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 pb-6 mt-8">
+                        <button 
+                            onClick={() => navigate(-1)}
+                            className="flex items-center gap-2 mb-6 text-[10px] uppercase tracking-widest font-bold text-[#6B7194] dark:text-[#8B90B8] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors w-fit"
+                            style={{ fontFamily: MONO }}
+                        >
+                            <ArrowLeft size={14} />
+                            <span>Go Back</span>
+                        </button>
                         <h1 className="text-4xl font-semibold mb-2" style={{ fontFamily: SERIF }}>Account Settings</h1>
                         <p className="text-[#6B7194] dark:text-[#8B90B8] text-sm uppercase tracking-widest font-semibold" style={{ fontFamily: MONO }}>
                             Manage your personal information and preferences

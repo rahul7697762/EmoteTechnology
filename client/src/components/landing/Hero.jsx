@@ -59,13 +59,13 @@ const Hero = () => {
 
                     {/* ── Left: Content ── */}
                     <motion.div
-                        className="flex flex-col items-center text-center justify-center py-20 lg:pr-16 lg:border-r border-[#3B4FD8]/10 dark:border-[#6C7EF5]/8"
+                        className="flex flex-col items-start text-left justify-center py-20 lg:pr-16 lg:border-r border-[#3B4FD8]/10 dark:border-[#6C7EF5]/8"
                         initial="hidden"
                         animate="visible"
                         variants={stagger}
                     >
                         {/* Section label */}
-                        <motion.div variants={fadeUp} className="flex items-center justify-center gap-4 mb-10">
+                        <motion.div variants={fadeUp} className="flex items-center justify-start gap-4 mb-10">
                             <div className="w-8 h-px bg-[#3B4FD8] dark:bg-[#6C7EF5]" />
                             <span
                                 className="text-[#3B4FD8] dark:text-[#6C7EF5] text-[10px] tracking-[0.28em] uppercase"
@@ -100,13 +100,13 @@ const Hero = () => {
                         {/* Body text */}
                         <motion.p
                             variants={fadeUp}
-                            className="text-[#6B7194] dark:text-[#8B90B8] font-light text-lg leading-relaxed max-w-[480px] mb-10 mx-auto"
+                            className="text-[#6B7194] dark:text-[#8B90B8] font-light text-lg leading-relaxed max-w-[480px] mb-10"
                         >
                             Engaging AI teachers and advanced learning tools to upskill your students anywhere, anytime. Built for the institutions of tomorrow.
                         </motion.p>
 
                         {/* CTAs */}
-                        <motion.div variants={fadeUp} className="flex flex-col sm:flex-row justify-center gap-3 mb-16">
+                        <motion.div variants={fadeUp} className="flex justify-start gap-3 mb-16">
                             <button
                                 onClick={() => navigate('/login')}
                                 className="group flex items-center justify-center gap-3 px-8 py-4 bg-[#F5A623] dark:bg-[#F9C74F] text-white dark:text-[#1A1D2E] text-sm font-medium tracking-[0.06em] hover:bg-[#d9911a] dark:hover:bg-[#F5A623] transition-colors"
@@ -125,7 +125,7 @@ const Hero = () => {
                         {/* Trusted by */}
                         <motion.div
                             variants={fadeUp}
-                            className="border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/8 pt-8 w-full flex flex-col items-center"
+                            className="border-t border-[#3B4FD8]/10 dark:border-[#6C7EF5]/8 pt-8 w-full flex flex-col items-start"
                         >
                             <p
                                 className="text-[10px] tracking-[0.25em] uppercase text-[#6B7194] dark:text-[#8B90B8] mb-5"
@@ -133,7 +133,7 @@ const Hero = () => {
                             >
                                 Trusted by Leading Institutions
                             </p>
-                            <div className="flex flex-wrap justify-center gap-8 items-center">
+                            <div className="flex flex-wrap justify-start gap-8 items-center">
                                 {['Stanford', 'Pearson', 'Zoom', 'OpenAI'].map((name) => (
                                     <span
                                         key={name}

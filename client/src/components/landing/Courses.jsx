@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { fetchCourses } from '../../redux/slices/courseSlice';
 
+
 const SERIF = "'Cormorant Garamond', Georgia, serif";
 const MONO = "'Space Mono', 'Courier New', monospace";
 
@@ -172,7 +173,7 @@ const Courses = () => {
 
                 {/* View all */}
                 <div className="mt-12 flex justify-center">
-                    <button
+                    <button 
                         onClick={() => navigate('/courses')}
                         className="group flex items-center gap-2 px-8 py-3.5 border border-[#1A1D2E]/18 dark:border-[#E8EAF2]/14 text-sm font-medium text-[#1A1D2E] dark:text-[#E8EAF2] tracking-[0.05em] hover:border-[#3B4FD8] dark:hover:border-[#6C7EF5] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors"
                     >

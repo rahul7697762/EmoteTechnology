@@ -24,7 +24,11 @@ import Courses from './pages/Courses';
 import CourseDetails from './pages/CourseDetails';
 import Jobs from './pages/Jobs';
 import About from './pages/About';
+import Contact from './pages/Contact';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfUse from './pages/TermsOfUse';
 import AiInterview from './pages/AiInterview';
+import OAuthCallback from './pages/OAuthCallback';
 import './App.css';
 import { Toaster } from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux';
@@ -40,10 +44,27 @@ import CompanySettingsPage from './pages/CompanySettingsPage';
 import StudentJobDashboard from './pages/StudentJobDashboard';
 import StudentApplications from './pages/StudentApplications';
 import { NotificationProvider } from './context/NotificationContext';
+import Blog from './pages/Blog';
+import CookieConsent from './components/common/CookieConsent';
+import WhatsAppWidget from './components/common/WhatsAppWidget';
+import HelpCenter from './pages/helpCenter/HelpCenter';
+import ContactSupport from './pages/helpCenter/ContactSupport';
+import ScrollToTop from './components/common/ScrollToTop';
 
 function App() {
   const dispatch = useDispatch();
   const { theme } = useSelector((state) => state.ui);
+  const { user } = useSelector((state) => state.auth);
+
+  // Redirect logged-in users away from the landing page
+  const HomeRoute = () => {
+    if (!user) return <LandingPage />;
+    const role = (user.role || '').toUpperCase();
+    if (role === 'STUDENT') return <Navigate to="/student-dashboard" replace />;
+    if (role === 'COMPANY' || role === 'EMPLOYER') return <Navigate to="/company/dashboard" replace />;
+    if (role === 'FACULTY' || role === 'ADMIN') return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/dashboard" replace />;
+  };
 
   useEffect(() => {
     dispatch(getMe());
@@ -60,14 +81,22 @@ function App() {
   return (
     <NotificationProvider>
       <Router>
+        <ScrollToTop />
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<HomeRoute />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/course/:id" element={<CourseDetails />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/jobs/:id" element={<Jobs />} />
           <Route path="/ai-interview" element={<AiInterview />} />
           <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfUse />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<Blog />} />
+          <Route path="/help" element={<HelpCenter />} />
+          <Route path="/help/contact" element={<ContactSupport />} />
           <Route path="/login" element={
             <PublicRoute>
               <LoginPage />
@@ -96,6 +125,7 @@ function App() {
           } />
           <Route path="/verify-email" element={<VerifyEmail />
           } />
+          <Route path="/auth/callback" element={<OAuthCallback />} />
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={
@@ -239,6 +269,8 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <Toaster />
+        <CookieConsent />
+        <WhatsAppWidget />
       </Router>
     </NotificationProvider>
   );

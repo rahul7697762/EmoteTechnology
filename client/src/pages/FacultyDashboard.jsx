@@ -4,9 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import Sidebar from '../components/dashboard/Sidebar';
 import StatsCard from '../components/dashboard/StatsCard';
 import RecentCoursesTable from '../components/dashboard/RecentCoursesTable';
-import { Users, BookOpen, DollarSign, Star, Search, Bell, Settings, LogOut, User } from 'lucide-react';
+import { Users, BookOpen, DollarSign, Star, Search, Bell, Settings, LogOut, User, Menu } from 'lucide-react';
 import { getFacultyCourses, getDashboardStats } from '../redux/slices/courseSlice';
 import { logout } from '../redux/slices/authSlice';
+import { toggleSidebar } from '../redux/slices/uiSlice';
 
 const SERIF = "'Cormorant Garamond', Georgia, serif";
 const MONO = "'Space Mono', 'Courier New', monospace";
@@ -56,9 +57,19 @@ const FacultyDashboard = () => {
         <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#1A1D2E] text-[#1A1D2E] dark:text-[#E8EAF2] transition-colors duration-300">
             <Sidebar />
 
-            <main className={`p-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
+            <main className={`p-4 md:p-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
                 {/* Top Header Row: Search & Profile */}
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 pb-6">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6 md:mb-10 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 pb-4 md:pb-6">
+                    {/* Mobile Menu (Visible only on mobile) */}
+                    <div className="flex items-center justify-start w-full md:hidden">
+                        <button 
+                            onClick={() => dispatch(toggleSidebar())} 
+                            className="p-2 -ml-2 text-[#1A1D2E] dark:text-[#E8EAF2] hover:bg-black/5 dark:hover:bg-[#E8EAF2]/10 transition-colors rounded-lg"
+                        >
+                            <Menu size={24} />
+                        </button>
+                    </div>
+
                     {/* Search Bar */}
                     <div className="relative w-full md:max-w-xl">
                         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#6B7194] dark:text-[#8B90B8]" size={18} />
@@ -123,8 +134,8 @@ const FacultyDashboard = () => {
                     </div>
                 </div>
 
-                <div className="mb-10">
-                    <h1 className="text-4xl font-semibold mb-2" style={{ fontFamily: SERIF }}>
+                <div className="mb-6 md:mb-10">
+                    <h1 className="text-3xl md:text-4xl font-semibold mb-2" style={{ fontFamily: SERIF }}>
                         Welcome back, <span className="italic text-[#3B4FD8] dark:text-[#6C7EF5]">{user?.name?.split(' ')[0] || 'Faculty'}</span>
                     </h1>
                     <p className="text-[#6B7194] dark:text-[#8B90B8] text-sm font-mono tracking-tight">
@@ -133,7 +144,7 @@ const FacultyDashboard = () => {
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12">
                     <StatsCard
                         title="Total Revenue"
                         value={`₹${(stats?.totalRevenue || 0).toLocaleString()}`}
@@ -162,8 +173,8 @@ const FacultyDashboard = () => {
 
                 {/* Recent Courses Section */}
                 <section>
-                    <div className="flex items-center justify-between mb-6 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 pb-4">
-                        <h2 className="text-2xl font-bold" style={{ fontFamily: SERIF }}>Your Recent Courses</h2>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 md:mb-6 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 pb-4">
+                        <h2 className="text-xl md:text-2xl font-bold" style={{ fontFamily: SERIF }}>Your Recent Courses</h2>
                         <button
                             onClick={() => navigate('/my-courses')}
                             className="px-5 py-2 text-xs font-semibold uppercase tracking-widest text-[#3B4FD8] dark:text-[#6C7EF5] border border-[#3B4FD8]/20 dark:border-[#6C7EF5]/20 hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 transition-colors"

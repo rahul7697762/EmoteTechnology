@@ -21,7 +21,15 @@ const Sidebar = () => {
     ];
 
     return (
-        <aside className={`${isCollapsed ? 'w-20' : 'w-64'} bg-white dark:bg-[#252A41] border-r border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 h-screen fixed left-0 top-0 overflow-y-auto z-20 hidden md:flex flex-col transition-all duration-300`}>
+        <>
+            {/* Mobile Overlay */}
+            {!isCollapsed && (
+                <div 
+                    className="fixed inset-0 bg-black/50 z-20 md:hidden transition-opacity"
+                    onClick={() => dispatch(toggleSidebar())}
+                />
+            )}
+            <aside className={`${isCollapsed ? '-translate-x-full md:translate-x-0 md:w-20' : 'translate-x-0 w-64'} bg-white dark:bg-[#252A41] border-r border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 h-screen fixed left-0 top-0 overflow-y-auto z-30 flex flex-col transition-all duration-300`}>
             {/* Header */}
             <div className={`p-6 flex items-center ${isCollapsed ? 'justify-center border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 mb-2' : 'gap-4 border-b border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 mb-2'}`}>
                 {isCollapsed ? (
@@ -29,7 +37,7 @@ const Sidebar = () => {
                         <button onClick={() => dispatch(toggleSidebar())} className="text-[#6B7194] dark:text-[#8B90B8] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5]">
                             <Menu size={20} />
                         </button>
-                        <Link to="/" className="text-[#3B4FD8] dark:text-[#6C7EF5] hover:opacity-80 transition-opacity">
+                        <Link to="/courses" className="text-[#3B4FD8] dark:text-[#6C7EF5] hover:opacity-80 transition-opacity">
                             <Home size={20} />
                         </Link>
                     </div>
@@ -38,7 +46,7 @@ const Sidebar = () => {
                         <button onClick={() => dispatch(toggleSidebar())} className="p-2 -ml-2 text-[#6B7194] dark:text-[#8B90B8] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5] transition-colors">
                             <Menu size={20} />
                         </button>
-                        <Link to="/">
+                        <Link to="/courses">
                             <h1 className="text-2xl font-bold text-[#1A1D2E] dark:text-[#E8EAF2]" style={{ fontFamily: SERIF }}>
                                 Emote<span className="italic text-[#3B4FD8] dark:text-[#6C7EF5]">Tech</span>
                             </h1>
@@ -86,6 +94,7 @@ const Sidebar = () => {
                 </button>
             </div>
         </aside>
+        </>
     );
 };
 

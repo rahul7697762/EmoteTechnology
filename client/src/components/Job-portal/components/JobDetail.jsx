@@ -5,6 +5,7 @@ import {
   MapPin,
   Briefcase,
   IndianRupee,
+  DollarSign,
   Calendar,
   Clock,
   RotateCcw,
@@ -74,6 +75,9 @@ const JobDetail = ({ jobId, onApply, applied = false }) => {
     );
   }
 
+  const CurrencyIcon = job.salaryCurrency === 'INR' ? IndianRupee : DollarSign;
+  const currencySymbol = job.salaryCurrency === 'INR' ? '₹' : '$';
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -136,11 +140,11 @@ const JobDetail = ({ jobId, onApply, applied = false }) => {
           </div>
           <div>
             <div className="flex items-center gap-2 text-[#3B4FD8] mb-2">
-              <IndianRupee size={16} />
+              <CurrencyIcon size={16} />
               <span className="text-[10px] font-black uppercase tracking-widest">STIPEND</span>
             </div>
             <p className="text-[#1A1D2E] font-bold uppercase text-sm">
-              {job.salaryMin && job.salaryMax ? `₹${job.salaryMin.toLocaleString()}–${job.salaryMax.toLocaleString()}/MO` : 'NEGOTIABLE'}
+              {job.salaryMin && job.salaryMax ? `${currencySymbol}${job.salaryMin.toLocaleString()}–${job.salaryMax.toLocaleString()}/MO` : (job.salaryMin ? `${currencySymbol}${job.salaryMin.toLocaleString()}/MO` : 'NEGOTIABLE')}
             </p>
           </div>
           <div>

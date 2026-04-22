@@ -1,27 +1,24 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Mail, Phone, ArrowUpRight, Twitter, Linkedin, Github, Youtube } from 'lucide-react';
+import { Zap, MapPin, Mail, Phone, ArrowUpRight, Twitter, Linkedin, Github, Youtube } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const SERIF = "'Cormorant Garamond', Georgia, serif";
 const MONO = "'Space Mono', 'Courier New', monospace";
 
 const links = {
     Learn: [
-        { label: 'All Courses', href: '/courses' },
-        { label: 'AI Interview Prep', href: '/ai-interview' },
-        { label: 'Certificates', href: '#' },
-        { label: 'Live Sessions', href: '#' },
+        { label: 'All Courses', path: '/courses' },
+        { label: 'AI Interview Prep', path: '/ai-interview-prep' }
     ],
     Company: [
-        { label: 'About Us', href: '/about' },
-        { label: 'Careers', href: '/jobs' },
-        { label: 'Blog', href: '#' },
-        { label: 'Press', href: '#' },
+        { label: 'About Us', path: '/about' },
+        { label: 'Blog', path: '/blog' }
     ],
     Support: [
-        { label: 'Help Center', href: '#' },
-        { label: 'Privacy Policy', href: '#' },
-        { label: 'Terms of Use', href: '#' },
-        { label: 'Contact', href: '#' },
+        { label: 'Privacy Policy', path: '/privacy' },
+        { label: 'Terms of Use', path: '/terms' },
+        { label: 'Contact', path: '/contact' }
     ],
 };
 
@@ -67,7 +64,7 @@ const Footer = () => {
             </motion.div>
 
             {/* ── Main grid ── */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 grid grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-12">
 
                 {/* Brand + contact — full width on mobile */}
                 <motion.div
@@ -75,7 +72,7 @@ const Footer = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="md:hidden mb-10 sm:mb-12 pb-10 sm:pb-12 border-b border-[#3B4FD8]/15"
+                    className="col-span-3 lg:col-span-2 mb-10 lg:mb-0 pb-10 lg:pb-0 border-b lg:border-b-0 border-[#3B4FD8]/15"
                 >
                     {/* Logo */}
                     <div className="flex items-baseline gap-0.5 mb-4">
@@ -101,93 +98,36 @@ const Footer = () => {
                     </div>
                 </motion.div>
 
-                {/* Link columns — 3-col grid on mobile, inline on desktop */}
-                <div className="grid grid-cols-3 md:hidden gap-6 mt-2">
-                    {Object.entries(links).map(([category, items], ci) => (
-                        <motion.div
-                            key={category}
-                            initial={{ opacity: 0, y: 16 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: 0.08 * (ci + 1) }}
+                {/* Link columns */}
+                {Object.entries(links).map(([category, items], ci) => (
+                    <motion.div
+                        key={category}
+                        initial={{ opacity: 0, y: 16 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: 0.08 * (ci + 1) }}
+                    >
+                        <h4
+                            className="text-[10px] tracking-[0.22em] uppercase text-[#6C7EF5] mb-6"
+                            style={{ fontFamily: MONO }}
                         >
-                            <h4
-                                className="text-[9px] tracking-[0.18em] uppercase text-[#6C7EF5] mb-4"
-                                style={{ fontFamily: MONO }}
-                            >
-                                {category}
-                            </h4>
-                            <ul className="space-y-3">
-                                {items.map((item) => (
-                                    <li key={item.label}>
-                                        <a
-                                            href={item.href}
-                                            className="text-[#8B90B8] text-xs hover:text-[#E8EAF2] transition-colors leading-snug block"
-                                        >
-                                            {item.label}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </motion.div>
-                    ))}
-                </div>
-
-                {/* Desktop: 4-col grid (brand + 3 link cols) */}
-                <div className="hidden md:grid md:grid-cols-[1.4fr_1fr_1fr_1fr] gap-12 mt-0">
-                    {/* Empty first cell — brand column already rendered above (shared markup); re-render inline for desktop layout */}
-                    <div>
-                        <div className="flex items-baseline gap-0.5 mb-4">
-                            <span className="text-[1.5rem] font-semibold text-[#6C7EF5]" style={{ fontFamily: SERIF }}>Emote</span>
-                            <span className="text-base font-light text-[#E8EAF2] tracking-[0.04em]">Technology</span>
-                        </div>
-                        <p className="text-[#8B90B8] text-sm leading-relaxed mb-6 max-w-xs">
-                            AI-powered education platform bridging the gap between learners and industry — built for the institutions of tomorrow.
-                        </p>
-                        <div className="space-y-3">
-                            {[
-                                { icon: MapPin, text: 'DSS-15, Trishala City Road, Behind Gopal Sweets, Zirakpur, Punjab 140603' },
-                                { icon: Phone, text: '+91 8757363225' },
-                                { icon: Mail, text: 'hr@emotetechnology.in' },
-                            ].map(({ icon: Icon, text }) => (
-                                <div key={text} className="flex items-start gap-3 text-[#8B90B8] text-xs">
-                                    <Icon size={13} className="text-[#6C7EF5] shrink-0 mt-0.5" />
-                                    <span className="leading-relaxed">{text}</span>
-                                </div>
+                            {category}
+                        </h4>
+                        <ul className="space-y-4">
+                            {items.map((item) => (
+                                <li key={item.label}>
+                                    <Link
+                                        to={item.path}
+                                        className="text-[#8B90B8] text-sm hover:text-[#E8EAF2] transition-colors group flex items-center gap-1.5"
+                                    >
+                                        <span className="w-0 h-px bg-[#6C7EF5] group-hover:w-3 transition-all duration-200" />
+                                        {item.label}
+                                    </Link>
+                                </li>
                             ))}
-                        </div>
-                    </div>
-
-                    {Object.entries(links).map(([category, items], ci) => (
-                        <motion.div
-                            key={category}
-                            initial={{ opacity: 0, y: 16 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: 0.08 * (ci + 1) }}
-                        >
-                            <h4
-                                className="text-[10px] tracking-[0.22em] uppercase text-[#6C7EF5] mb-6"
-                                style={{ fontFamily: MONO }}
-                            >
-                                {category}
-                            </h4>
-                            <ul className="space-y-4">
-                                {items.map((item) => (
-                                    <li key={item.label}>
-                                        <a
-                                            href={item.href}
-                                            className="text-[#8B90B8] text-sm hover:text-[#E8EAF2] transition-colors group flex items-center gap-1.5"
-                                        >
-                                            <span className="w-0 h-px bg-[#6C7EF5] group-hover:w-3 transition-all duration-200" />
-                                            {item.label}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </motion.div>
-                    ))}
-                </div>
+                        </ul>
+                    </motion.div>
+                ))}
             </div>
 
             {/* ── Bottom bar ── */}

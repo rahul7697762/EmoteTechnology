@@ -30,6 +30,7 @@ const Courses = () => {
 
     const [searchQuery, setSearchQuery] = useState(storedSearch || '');
     const [currentPage, setCurrentPage] = useState(pagination?.page || 1);
+    const [selectedCategory, setSelectedCategory] = useState("All");
 
     useEffect(() => {
         if (courses.length > 0 && searchQuery === storedSearch && currentPage === (pagination?.page || 1)) return;
@@ -78,6 +79,26 @@ const Courses = () => {
                                 />
                             </motion.div>
                         </div>
+                        
+                        {/* Category filter */}
+                        {!loading && courses.length > 0 && (
+                            <motion.div variants={fadeUp} className="mt-8 flex gap-2 flex-wrap">
+                                {["All", ...Array.from(new Set(courses.map(c => c.category || 'Course')))].map(category => (
+                                    <button
+                                        key={category}
+                                        onClick={() => setSelectedCategory(category)}
+                                        className={`px-4 py-1.5 text-[10px] tracking-widest uppercase transition-all border ${
+                                            selectedCategory === category
+                                                ? 'bg-[#3B4FD8] dark:bg-[#6C7EF5] text-white border-[#3B4FD8] dark:border-[#6C7EF5]'
+                                                : 'text-[#6B7194] dark:text-[#8B90B8] border-[#1A1D2E]/15 dark:border-[#E8EAF2]/10 hover:border-[#3B4FD8] dark:hover:border-[#6C7EF5] hover:text-[#3B4FD8] dark:hover:text-[#6C7EF5]'
+                                        }`}
+                                        style={{ fontFamily: MONO }}
+                                    >
+                                        {category}
+                                    </button>
+                                ))}
+                            </motion.div>
+                        )}
                     </motion.div>
                 </div>
             </div>
@@ -113,7 +134,7 @@ const Courses = () => {
                         className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-[#3B4FD8]/10 dark:bg-[#6C7EF5]/10 border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10"
                     >
                         <AnimatePresence>
-                            {courses.map((course) => {
+                            {(selectedCategory === "All" ? courses : courses.filter(c => (c.category || 'Course') === selectedCategory)).map((course) => {
                                 const price    = course.price;
                                 const discount = course.discount;
                                 const symbol   = getCurrencySymbol(course.currency);

@@ -316,3 +316,46 @@ export const getJobApplications = async (req, res) => {
     });
   }
 };
+
+export const deleteJob = async (req, res) => {
+  try {
+    const company = await Company.findOne({ user: req.userId });
+
+    if (!company) {
+      return res.status(403).json({
+        message: 'Company profile required'
+      });
+    }
+
+    const job = await Job.findOne({
+      _id: req.params.id,
+      company: company._id
+    });
+
+    if (!job) {
+      return res.status(404).json({
+        message: 'Job not found'
+      });
+    }
+
+    // Delete associated applications
+    await Application.deleteMany({ job: job._id });
+
+    // Delete the job
+    await Job.findByIdAndDelete(job._id);
+
+    if (company.totalJobsPosted > 0) {
+      company.totalJobsPosted -= 1;
+      await company.save();
+    }
+
+    res.json({
+      message: 'Job and associated applications deleted successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Server error',
+      error: error.message
+    });
+  }
+};

@@ -1,9 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bell, Check, Clock as ClockIcon } from 'lucide-react';
 import { useNotifications } from '../../context/NotificationContext';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const NotificationBell = () => {
     const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
+    const { user } = useSelector((state) => state.auth);
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const bellRef = useRef(null);
 
@@ -16,6 +20,22 @@ const NotificationBell = () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    const handleNotificationClick = async (notification) => {
+        if (!notification.isRead) {
+            await markAsRead(notification._id);
+        }
+        setIsOpen(false);
+        
+        // Navigation logic based on notification type
+        if (notification.type === 'APPLICATION_STATUS') {
+            navigate('/student/applications');
+        } else if (notification.type === 'NEW_APPLICATION') {
+            navigate('/company/applicants');
+        } else if (notification.metadata && notification.metadata.courseId) {
+            navigate(`/course/${notification.metadata.courseId}`);
+        }
+    };
 
     return (
         <div className="relative" ref={bellRef}>
@@ -58,7 +78,8 @@ const NotificationBell = () => {
                                 {notifications.map((notification) => (
                                     <div
                                         key={notification._id}
-                                        className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group relative ${!notification.isRead ? 'bg-teal-50/10 dark:bg-teal-500/5' : ''}`}
+                                        onClick={() => handleNotificationClick(notification)}
+                                        className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group relative cursor-pointer ${!notification.isRead ? 'bg-teal-50/10 dark:bg-teal-500/5' : ''}`}
                                     >
                                         <div className="flex gap-4">
                                             <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${notification.type === 'APPLICATION_STATUS' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400'
@@ -79,7 +100,10 @@ const NotificationBell = () => {
                                             </div>
                                             {!notification.isRead && (
                                                 <button
-                                                    onClick={() => markAsRead(notification._id)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        markAsRead(notification._id);
+                                                    }}
                                                     className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/20 opacity-0 group-hover:opacity-100 transition-all shadow-sm border border-teal-100 dark:border-teal-900/30 bg-white dark:bg-gray-800"
                                                     title="Mark as read"
                                                 >

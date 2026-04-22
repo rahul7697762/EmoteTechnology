@@ -222,8 +222,8 @@ const CourseDetails = () => {
 
 
             {/* Hero Section */}
-            <div className="bg-[#1A1D2E] text-[#E8EAF2] pt-32 pb-20 relative overflow-hidden border-b border-[#6C7EF5]/10">
-                <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+            <div className="bg-[#1A1D2E] text-[#E8EAF2] pt-24 md:pt-32 pb-16 md:pb-20 relative overflow-hidden border-b border-[#6C7EF5]/10">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
                         <div className="lg:col-span-2">
                             <div className="flex items-center gap-2 text-[#F5A623] font-bold tracking-[0.2em] uppercase text-xs mb-6" style={{ fontFamily: MONO }}>
@@ -258,7 +258,7 @@ const CourseDetails = () => {
                 </div>
             </div>
 
-            <main className="max-w-7xl mx-auto px-6 lg:px-8 py-12 relative z-20">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 relative z-20">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
                     {/* Left Column: Description & Syllabus */}
@@ -387,15 +387,20 @@ const CourseDetails = () => {
                     {/* Right Column: Floating Card */}
                     <div className="lg:col-span-1">
                         <div className="sticky top-28 bg-white dark:bg-[#252A41] border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 p-6 shadow-sm">
-                            <div className="mb-6 relative aspect-video group cursor-pointer border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 overflow-hidden" onClick={handlePreviewOpen}>
+                            <div 
+                                className={`mb-6 relative aspect-video overflow-hidden border border-[#3B4FD8]/10 dark:border-[#6C7EF5]/10 ${course.previewVideo ? 'group cursor-pointer' : ''}`} 
+                                onClick={course.previewVideo ? handlePreviewOpen : undefined}
+                            >
                                 <img
                                     src={course.thumbnail || 'https://via.placeholder.com/400x250'}
                                     alt={course.title}
-                                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                                    className={`w-full h-full object-cover transition-transform duration-500 ${course.previewVideo ? 'transform group-hover:scale-105' : ''}`}
                                 />
-                                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                                    <PlayCircle size={48} className="text-white opacity-80 group-hover:scale-110 transition-transform duration-300 drop-shadow-lg" strokeWidth={1.5} />
-                                </div>
+                                {course.previewVideo && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-colors group-hover:bg-black/10">
+                                        <PlayCircle size={48} strokeWidth={1.5} className="text-white drop-shadow-lg transition-transform duration-300 opacity-80 group-hover:scale-110" />
+                                    </div>
+                                )}
                             </div>
 
                             <div className="flex flex-col mb-8">

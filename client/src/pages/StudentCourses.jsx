@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import StudentSidebar from '../components/student-dashboard/StudentSidebar';
 import { useDispatch, useSelector } from 'react-redux';
 import { getStudentCourses } from '../redux/slices/courseSlice';
-import { Search, BookOpen, ChevronRight, Clock, PlayCircle } from 'lucide-react';
+import { Search, BookOpen, ChevronRight, Clock, PlayCircle, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { toggleSidebar } from '../redux/slices/uiSlice';
 
 const SERIF = "'Cormorant Garamond', Georgia, serif";
 const MONO = "'Space Mono', 'Courier New', monospace";
@@ -39,10 +40,19 @@ const StudentCourses = () => {
         <div className="min-h-screen bg-[#F7F8FF] dark:bg-[#0A0B10] text-[#1A1D2E] dark:text-[#E8EAF2] font-sans flex transition-colors duration-300">
             <StudentSidebar />
 
-            <main className={`flex-1 p-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
+            <main className={`flex-1 p-4 md:p-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
+                {/* Mobile Menu Button */}
+                <div className="md:hidden flex items-center mb-6">
+                    <button 
+                        onClick={() => dispatch(toggleSidebar())} 
+                        className="p-2 -ml-2 text-[#1A1D2E] dark:text-[#E8EAF2] hover:bg-[#3B4FD8]/5 dark:hover:bg-[#6C7EF5]/5 transition-colors cursor-pointer"
+                    >
+                        <Menu size={24} />
+                    </button>
+                </div>
 
                 {/* Hero / Welcome Section */}
-                <div className="mb-10 flex flex-col md:flex-row justify-between items-end gap-6 bg-[#3B4FD8] text-white p-10 shadow-sm relative overflow-hidden">
+                <div className="mb-10 flex flex-col md:flex-row justify-between items-end gap-6 bg-[#3B4FD8] text-white p-6 md:p-10 shadow-sm relative overflow-hidden">
                     <div className="relative z-10">
                         <div className="flex items-center gap-3 mb-4 text-[#F5A623] font-bold uppercase tracking-[0.2em] text-[10px]" style={{ fontFamily: MONO }}>
                             <Clock size={14} />
